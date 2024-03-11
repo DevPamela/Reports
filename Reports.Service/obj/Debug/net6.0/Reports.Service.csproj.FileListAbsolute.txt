@@ -1,0 +1,34 @@
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.deps.json
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.dll
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.pdb
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Domain.dll
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Infrastructure.dll
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Domain.pdb
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\bin\Debug\net6.0\Reports.Infrastructure.pdb
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.AssemblyReference.cache
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.AssemblyInfoInputs.cache
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.AssemblyInfo.cs
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.CoreCompileInputs.cache
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.CopyComplete
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.dll
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\refint\Reports.Service.dll
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.pdb
+D:\projetos\ReportsV3\Nova pasta\Reports\Reports.Service\obj\Debug\net6.0\ref\Reports.Service.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.deps.json
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Service.pdb
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Domain.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Infrastructure.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Domain.pdb
+D:\projetos\Reportsv4\Reports\Reports.Service\bin\Debug\net6.0\Reports.Infrastructure.pdb
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.AssemblyReference.cache
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.AssemblyInfoInputs.cache
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.AssemblyInfo.cs
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.CoreCompileInputs.cache
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.csproj.CopyComplete
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\refint\Reports.Service.dll
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\Reports.Service.pdb
+D:\projetos\Reportsv4\Reports\Reports.Service\obj\Debug\net6.0\ref\Reports.Service.dll

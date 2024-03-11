@@ -1,0 +1,20 @@
+﻿@using Reports.Application.Models;
+@using Reports.Domain.Models;
+@model DataViewModel;
+@{
+    ViewData["Title"] = "Gerar relatórios";
+}
+
+<h1>Informe os dados:</h1>
+ 
+ @using (Html.BeginForm("CreateReport", "Reports", FormMethod.Post))
+{
+    @Html.TextBoxFor(model => model.Report.FirtsParagraph, new { placeholder = "primeiro paragrafo" })
+
+    @Html.TextBoxFor(model => model.Report.LastParagraph, new { placeholder = "segundo paragrafo" })
+  
+    @Html.TextBox("path", null, new { placeholder = "Caminho" })
+
+    <input type="submit" value="@ViewBag.ValorDoBotao" />
+}  
+

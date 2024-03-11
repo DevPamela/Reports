@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Adicionar aluno";
+}
+
+<div class="row">
+    <div class"col-sm-12">
+        <div class="card">
+            <div class"card-header">Escolher arquivo excel</div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class"col-sm-4">
+                        <input class="form-control-file" type="file" id="inputExcel" />
+                    </div>
+                    <div class"col-sm-4">
+                        <button class="btn btn-warning" onclick="showData()">Mostar dados</button>
+                        <button class="btn btn-success" onclick="enviarDados">Enviar dados</button>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table id="tbData" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Data de nascimento</th>
+                                    <th>Faltas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function showData() {
+            const input = document.getElementById("inputExcel")
+
+            const formData = new FormData()
+            formData.append("excelFile", input.files[0])
+
+            fetch("Student/ShowData", {
+                method: "POST",
+                body: formData
+            })
+                .then((response) => { return response.json() })
+                .then((dataJson) => { console.log(dataJson) })
+
+        }
+
+    </script>
+
+}
