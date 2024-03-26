@@ -1,49 +1,218 @@
+/* _content/Reports.Application/Views/Goals/Index.cshtml.rz.scp.css */
+h1[b-mu63c21i2b] {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+h2[b-mu63c21i2b] {
+    color: black;
+    font-family: verdana;
+    font-size: 14px; /* Aqui você controla o tamanho da fonte */
+    text-align: center;
+  
+}
+h3[b-mu63c21i2b] {
+    color: red;
+    font-family: verdana;
+    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    text-align: justify;
+    font-weight: bold;
+}
+body[b-mu63c21i2b] {
+    background-color: lightblue; /* Aqui você muda a cor de fundo */
+}
+.placeholder-small[b-mu63c21i2b] {
+    font-size: 8px; /* ou qualquer tamanho desejado */
+}
+.body-buttons[b-mu63c21i2b] {
+    text-align: center;
+    color: black;
+    font-family: Arial;
+    font-size: 17px;
+    font-weight: bold;
+   
+}
+/* _content/Reports.Application/Views/Goals/SaveStudentGoalsResults.cshtml.rz.scp.css */
+
+.vertical-text[b-xf7a8n0eaq] {
+    writing-mode: vertical-lr; /* Definindo o modo de escrita vertical */
+    transform: rotate(180deg); /* Rotacionando o texto em 180 graus */
+}
+/* _content/Reports.Application/Views/Goals/SelectGoalsForReport.cshtml.rz.scp.css */
+h1[b-ukvu68jcwi] {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+h2[b-ukvu68jcwi] {
+    color: black;
+    font-family: verdana;
+    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    text-align:center;
+}
+h3[b-ukvu68jcwi] {
+    color: red;
+    font-family: verdana;
+    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    text-align: left;
+}
+.button[b-ukvu68jcwi] {
+    color: black;
+    font-family: Arial;
+    font-size: 15px; /* Aqui você controla o tamanho da fonte */
+    text-align: center;
+    font-weight: bold;
+    align-content: center;
+}
+.center-button[b-ukvu68jcwi] {
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+/* _content/Reports.Application/Views/Home/Index.cshtml.rz.scp.css */
+h1[b-d990mhkb0m] {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+/* _content/Reports.Application/Views/Reports/Index.cshtml.rz.scp.css */
+h1[b-xmtzgsj78q] {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+h2[b-xmtzgsj78q] {
+    color: black;
+    font-family: verdana;
+    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    text-align: justify;
+  
+}
+h3[b-xmtzgsj78q] {
+    color: red;
+    font-family: verdana;
+    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    text-align: justify;
+    font-weight: bold;
+}
+body[b-xmtzgsj78q] {
+    background-color: lightblue; /* Aqui você muda a cor de fundo */
+}
+.placeholder-small[b-xmtzgsj78q] {
+    font-size: 8px; /* ou qualquer tamanho desejado */
+}
+.body-buttons[b-xmtzgsj78q] {
+    text-align: center;
+    color: black;
+    font-family: Arial;
+    font-size: 17px;
+    font-weight: bold;
+   
+}
 /* _content/Reports.Application/Views/Shared/_Layout.cshtml.rz.scp.css */
-/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand[b-ig6d3pt8zx] {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/*.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}*/
+/*.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}*/
+/*.border-top {
+    border-top: 1px solid #e5e5e5;
 }
 
-a[b-ig6d3pt8zx] {
-  color: #0077cc;
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
 }
 
-.btn-primary[b-ig6d3pt8zx] {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active[b-ig6d3pt8zx], .nav-pills .show > .nav-link[b-ig6d3pt8zx] {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.border-top[b-ig6d3pt8zx] {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom[b-ig6d3pt8zx] {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow[b-ig6d3pt8zx] {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}*/
 button.accept-policy[b-ig6d3pt8zx] {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
+}
+.menu[b-ig6d3pt8zx] {
+  
+    margin-left: 100px;
 }
 
-.footer[b-ig6d3pt8zx] {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+.navbar-toggler[b-ig6d3pt8zx] {
+    position: absolute;
+    right: 0;
+}
+
+
+
+.logo[b-ig6d3pt8zx] {
+    position: absolute;
+    height: 90px;
+    display: block;
+    margin: auto;
+    left: 5px;
+    top: -5px;
+    z-index: 2;
+}
+
+/*.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}*/
+
+
+.navbar[b-ig6d3pt8zx] {
+    flex-grow: 1;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 2rem; /* Aumentando o preenchimento */
+    background: radial-gradient(circle, #FF8C00, #FF69B4, #9370DB);
+    border-bottom: 1px solid #000;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1); /* Ajustando a sombra */
+}
+
+.navbar-light[b-ig6d3pt8zx] {
+    background-color: #fff;
+    Adapte a cor de fundo conforme necessário
+}
+
+.bg-white[b-ig6d3pt8zx] {
+    background-color: #fff;
+}
+
+.mb-3[b-ig6d3pt8zx] {
+    margin-bottom: 1rem;
+}
+/* _content/Reports.Application/Views/Student/Index.cshtml.rz.scp.css */
+.title[b-w04dhvaz9z] {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+.warning[b-w04dhvaz9z] {
+    color: red;
+    font-weight: bold;
 }

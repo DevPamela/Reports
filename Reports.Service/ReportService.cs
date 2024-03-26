@@ -1,26 +1,45 @@
-﻿using Reports.Domain.Interfaces.Service;
-using DocumentFormat.OpenXml.Packaging;
+﻿using NPOI.XWPF.UserModel;
+using Reports.Domain.Interfaces;
 using Reports.Domain.Models;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Reports.Service
 {
     public class ReportService : IReportService
     {
-        // private readonly IFormatterService _formatterService;
-        public ReportService()
+        private readonly IFormatterService _formatterService;
+        private IStudentService _studentService;
+        public ReportService(IFormatterService formatterService, IStudentService studentService)
         {
-            // _formatterService = formatterService;
+            _formatterService = formatterService;
+            _studentService = studentService;
         }
 
         /// <inheritdoc />
-        public void CreateReport(Report Report, string path)
+        public void CreateReport(Report report, string path)
         {
-            foreach (var r in Report.Students)
+            var students = _studentService.GetStudentsList();
+            var teacher = new Teacher
             {
+                Name = "Ana"
+            };
+            var classroom = new ClassRoom
+            {
+                Name = "Infantil 3"
+            };
+            var school = new School
+            {
+                Name = " Colegio Aprendiz"
+            };
+            report.Students = students;
+            foreach (var r in report.Students)
+            {
+                r.Teacher = teacher;
+                r.Class = classroom;
+                r.School = school;
+                r.Genre = "F";
                 r.IsSatisfatory();
             }
-            CreateDocument(Report, path);
+            CreateDocument(report, path);
         }
 
         /// <summary>
@@ -32,37 +51,27 @@ namespace Reports.Service
         {
             try
             {
-                using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(@path, DocumentFormat.OpenXml.WordprocessingDocumentType.Document))
+                XWPFDocument doc = new XWPFDocument();
+
+                foreach (var r in report.Students)
                 {
-                    MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                    mainPart.Document = new Document();
-                    Body body = mainPart.Document.AppendChild(new Body());
+                    CreateHeader(r, doc);
+                    CreateParagraph(report.FirtsParagraph, doc);
 
-
-
-                    foreach (var r in report.Students)
+                    var IsAGirl = r.IsAGirl();
+                    foreach (var g in r.Goals)
                     {
-                        CreateHeader(r, body);
-                        CreateParagraph(report.FirtsParagraph, body);
-                        // _formatterService.SetDefaultFormatForReport(firstParagraph, word, doc);
-
-                        var IsAGirl = r.IsAGirl();
-                        foreach (var g in r.Goals)
-                        {
-                            string validation = IsAGirl ? "a" : "o";
-                            string param = string.Format(g.Name, validation, r.Name);
-                            CreateParagraph(param, body);
-                            //_formatterService.SetDefaultFormatForReport(paragraph, word, doc);
-                        }
-
-                        CreateParagraph(report.LastParagraph, body);
-                        // _formatterService.SetDefaultFormatForReport(lastParagraph, word, doc);
-
-                        //doc.Words.Last.InsertBreak(WdBreakType.wdPageBreak);
-                        //SaveDocumentAsPdf(doc, word, path);
-                        mainPart.Document.Save();
+                        var studentName = r.Name.Substring(0, 1).ToUpper() + r.Name.Substring(1).ToLower();
+                        string validation = IsAGirl ? "a" : "o";
+                        var name = studentName.Split(' ');
+                        string param = string.Format(g.Name, validation, name[0]);
+                        CreateParagraph(param, doc);
                     }
 
+                    CreateParagraph(report.LastParagraph, doc);
+                    XWPFParagraph pageBreak = doc.CreateParagraph();
+                    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
+                    SaveDocument(path, doc);
                 }
             }
             catch (Exception e)
@@ -70,6 +79,7 @@ namespace Reports.Service
                 Console.WriteLine("Exception: " + e.Message);
             }
         }
+
         /// <summary>
         /// Creates the paragraphs.
         /// </summary>
@@ -77,46 +87,60 @@ namespace Reports.Service
         /// <param name="doc"></param>
         /// <param name="application"></param>
         /// <returns></returns>
-        private void CreateParagraph(string param, Body body)
+        private void CreateParagraph(string param, XWPFDocument doc)
         {
-            Paragraph para = body.AppendChild(new Paragraph());
-            Run run = para.AppendChild(new Run());
-            run.AppendChild(new Text(param));
+            XWPFParagraph paragraph = doc.CreateParagraph();
+            XWPFRun run = paragraph.CreateRun();
+            run.SetText(param);
+            _formatterService.SetDefaultFormatForReport(paragraph, run, doc);
         }
+
+        /// <summary>
+        /// Creates the header.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="doc"></param>
+        private void CreateParagraphForHeader(string param, XWPFDocument doc)
+        {
+            XWPFParagraph paragraph = doc.CreateParagraph();
+            XWPFRun run = paragraph.CreateRun();
+            run.SetText(param);
+            _formatterService.SetDefaultFormatForHeader(run, paragraph);
+        }
+
         /// <summary>
         /// Saves al reports as a single PDF document.
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="word"></param>
         /// <param name="path"></param>
-        //static void SaveDocumentAsPdf(Document doc, Application word, string path)
-        //{
-        //    // string path = @"D:\Documento.pdf";
-        //    doc.SaveAs2(path, WdSaveFormat.wdFormatPDF);
-        //    doc.Saved = true;
-        //    doc.Close();
-        //    word.Quit();
-        // }
+        static void SaveDocument(string path, XWPFDocument doc)
+        {
+            using (FileStream fs = new FileStream($"{path}\\Relatorios.docx", FileMode.Create, FileAccess.Write))
+            {
+                doc.Write(fs);
+            };
+        }
+
         /// <summary>
         /// Generates the header with students basics informations.
         /// </summary>
         /// <param name="student"></param>
         /// <param name="doc"></param>
         /// <param name="application"></param>
-        private void CreateHeader(Student student, Body body)
+        private void CreateHeader(Student student, XWPFDocument doc)
         {
-            var firstLine = $"Nome: {student.Name}" + "\t" + $"Professora: {student.Teacher.Name}";
-            var secondLine = $"Data de nascimento: {student.Birthday}" + "\t" + $"Escola: {student.School.Name}";
+            var firstLine = student.School.Name.ToUpper();
+            var secondLine = student.Name.ToUpper();
+            var thirdLine = $"PROFESSORA: {student.Teacher.Name.ToUpper()}";
+            var fourthLine = $"DATA DE NASCIMENTO: {student.Birthday}";
+            var fifthLine = $"TURMA: {student.Class.Name.ToUpper()}";
+            string[] param = { firstLine, secondLine, thirdLine, fourthLine, fifthLine };
 
-            CreateParagraph(firstLine, body);
-            CreateParagraph(secondLine, body);
-
-
-
-            //    //_formatterService.SetDefaultFormatForHeader(firstParagraph);
-            //    //_formatterService.SetDefaultFormatForHeader(secondParagraph);
-            //    //_formatterService.SetDefaultFormatForReport(secondParagraph, application, doc);
-            //}
+            foreach (var p in param)
+            {
+                CreateParagraphForHeader(p, doc);
+            }
         }
     }
 }

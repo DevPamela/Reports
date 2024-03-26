@@ -1,0 +1,42 @@
+﻿@using Reports.Domain.Models;
+@model List<Student>
+@{
+}
+<br />
+<br />
+<br />
+<br />
+@using (Html.BeginForm("Index", "Reports", FormMethod.Post))
+{
+    <table border="1">
+        <tr>
+            <th>Nome</th>
+            @{
+                var uniqueGoals = Model.SelectMany(e => e.Goals).Select(g => g.Name).Distinct();
+            }
+
+            @foreach (var goalName in uniqueGoals)
+            {
+                <th class="vertical-text">@goalName</th>
+            }
+        </tr>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Name</td>
+                @foreach (var objetivo in student.Goals)
+                {
+                    <td>
+                        <select name="avaliacao[@student.Name][@objetivo.Name]" value="" style="width: 2em;" maxlength="1">
+                            <option value="S">S -Satisfatório</option>
+                            <option value="PS">PS Parcialmente Satisfatório</option>
+                            <option value="I">I - Insatisfatório</option>
+                        </select>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+
+    <button type="submit">Salvar</button>
+}

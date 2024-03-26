@@ -7,11 +7,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Goals\Index.cshtml.css" />
+    <None Remove="Views\Goals\SaveStudentGoalsResults.cshtml.css" />
+    <None Remove="Views\Goals\SelectGoalsForReport.cshtml.css" />
+    <None Remove="Views\Home\Index.cshtml.css" />
+    <None Remove="Views\Reports\Index.cshtml.css" />
+    <None Remove="Views\Student\Index.cshtml.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\Goals\Index.cshtml.css" />
+    <Content Include="Views\Goals\SaveStudentGoalsResults.cshtml.css" />
+    <Content Include="Views\Goals\SelectGoalsForReport.cshtml.css" />
+    <Content Include="Views\Home\Index.cshtml.css" />
+    <Content Include="Views\Reports\Index.cshtml.css" />
+    <Content Include="Views\Student\Index.cshtml.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
     <PackageReference Include="NPOI" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Reports.Domain\Reports.Domain.csproj" />
+    <ProjectReference Include="..\Reports.Infrastructure\Reports.Infrastructure.csproj" />
     <ProjectReference Include="..\Reports.Service\Reports.Service.csproj" />
   </ItemGroup>
 

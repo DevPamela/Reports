@@ -1,23 +1,38 @@
 ﻿@{
     ViewData["Title"] = "Adicionar aluno";
 }
-
+<br/>
+<br/>
+<br/>
 <div class="row">
     <div class"col-sm-12">
         <div class="card">
-            <div class"card-header">Escolher arquivo excel</div>
+            <div class="title">
+            <div class"card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
+            </div>
+            <br />
+            <div class"card-header">Clique no botão abaixo e escolha o arquivo excel que contém a sua lista de alunos.</div>
+            <br/>
+            <div class="warning">
+                Atenção: Não se esqueça de se certificar de que em seu arquivo os campos nome, data de nascimento e faltas estão devidamente preenchidos, a ausência desses itens vai
+                impossibilitar a geração dos relatórios
+            </div>
+            <br/>
+            <div class="text-center">
             <div class="card-body">
 
                 <div class="row">
                     <div class"col-sm-4">
                         <input class="form-control-file" type="file" id="inputExcel" />
                     </div>
+                    <br />
                     <div class"col-sm-4">
-                        <button class="btn btn-warning" onclick="showData()">Mostar dados</button>
-                        <button class="btn btn-success" onclick="enviarDados">Enviar dados</button>
+                        <br />
+                        <button class="btn btn btn-secondary" onclick="showData()">Mostar dados</button>
+                        <button class="btn btn-secondary" onclick="enviarDados">Enviar dados</button>
                     </div>
                 </div>
-
+                </div>
                 <hr />
                 <div class="row">
                     <div class="col-sm-12">
@@ -53,9 +68,7 @@
             })
                 .then((response) => { return response.json() })
                 .then((dataJson) => { console.log(dataJson) })
-
         }
-
     </script>
 
 }

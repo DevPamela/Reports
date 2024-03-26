@@ -1,0 +1,18 @@
+﻿@model GoalsViewModel;
+@{
+    ViewData["Title"] = "AddGoal";
+}
+
+<h1>AddGoal</h1>
+
+@using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post))
+{
+    @Html.TextBoxFor(model => model.Name, new {style = "width: 350px;", placeholder = "Qual o nome do seu Objetivo?"})
+    <br />
+    <br />
+    @Html.TextBoxFor(model => model.Description, new {style = "width: 350px;", placeholder = "Escreva seu paragrafo" })
+    <br />
+     <br />
+    <br />
+    <input type="submit" value="Enviar" />
+}

@@ -8,11 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
     <PackageReference Include="NPOI" Version="2.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Reports.Infrastructure\Reports.Infrastructure.csproj" />
+    <Folder Include="Interfaces\Service\" />
   </ItemGroup>
 
 </Project>

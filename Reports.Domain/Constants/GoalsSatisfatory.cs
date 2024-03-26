@@ -1,7 +1,13 @@
-﻿namespace Reports.Domain.Constants
+﻿using System.Reflection;
+
+namespace Reports.Domain.Constants
 {
-    public static class GoalsSatisfatory
+    public  class GoalsSatisfatory
     {
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+
         public const string Adaptação = "Para {1} a adaptação foi muito tranquila, não chorou em nenhum momento, adaptou-se ao novo grupo," +
            " a nova sala e funcionários da escola, com naturalidade, sempre demonstrou muita alegria em estar no ambiente escolar.";
 
@@ -26,6 +32,35 @@
 
         public const string SilabicoAlfabetico = "É possível perceber que {0} alun{0} passou a demonstrar interesse pela linguagem escrita e já percebe que a  escrita representa a fala. Segundo algumas atividades coletivas," +
             " atividades de escrita espontânea e uma sondagem de palavras, {1} encontra - se na hipótese de escrita silábico alfabético.";
+        
+        public bool ConstantExiste(Type tipo, string constantName)
+        {
+            FieldInfo[] fields = tipo.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+            foreach (FieldInfo field in fields)
+            {
+                if (field.IsLiteral && !field.IsInitOnly && field.Name == constantName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public string GetConst(Type type, string constantName)
+        {
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+
+            foreach (FieldInfo field in fields)
+            {
+                if (field.IsLiteral && !field.IsInitOnly && field.Name == constantName)
+                {
+                    return field.GetValue(field.Name).ToString();
+                }
+            }
+            return null;
+        }
     }
 }
 

@@ -31,6 +31,9 @@
               "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
                 "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
               },
+              "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
+              },
               "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj": {
                 "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj"
               }
@@ -47,6 +50,14 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.15, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[7.0.12, )"
+            },
             "NPOI": {
               "target": "Package",
               "version": "[2.6.2, )"
@@ -98,11 +109,7 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -118,6 +125,10 @@
             "Microsoft.AspNetCore.Http": {
               "target": "Package",
               "version": "[2.2.2, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.24.0, )"
             },
             "NPOI": {
               "target": "Package",
@@ -167,7 +178,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -179,6 +194,16 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.24.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -225,6 +250,9 @@
             "projectReferences": {
               "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
                 "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+              },
+              "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
               }
             }
           }
@@ -246,6 +274,14 @@
             "Microsoft.AspNetCore.Http": {
               "target": "Package",
               "version": "[2.2.2, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.15, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.24.0, )"
             },
             "NPOI": {
               "target": "Package",

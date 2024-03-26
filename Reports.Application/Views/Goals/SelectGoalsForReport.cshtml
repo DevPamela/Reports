@@ -1,0 +1,34 @@
+﻿@using Reports.Domain.Models;
+@model List<string>
+@{
+    ViewBag.Title = "Selecionar Objetivos";
+}
+
+<br />
+<br />
+<br />
+<h1>ETAPA 1- SELECIONAR OBJETIVOS</h1>
+<br />
+<h2>Escolha quais objetivos você deseja incluir no seu relatório:</h2>
+<br />
+<h3>Atenção: Os relatórios terão apenas os objetivos que você selecionar. Para isso, clique na caixinha à esquerda de cada objetivo desejado</h3>
+<br />
+
+@using (Html.BeginForm("SaveStudentGoalsResults", "Goals", FormMethod.Post))
+{
+    foreach (var objetivo in Model)
+    {
+        <div>
+            <label>
+                <input type="checkbox" name="goals" value="@objetivo"> @objetivo
+            </label>
+        </div>
+    }
+    <br />
+    <button class="button center-button" type="submit">Enviar</button>
+}
+
+<h2>Quer tornar seu relatório personalizado? Clique no botão abaixo e crie se próprio objetivo para os relatórios</h2>
+<a href="@Url.Action("Index", "Goals")">Ir para OutraView</a>
+
+

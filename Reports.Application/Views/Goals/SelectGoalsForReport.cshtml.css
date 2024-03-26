@@ -1,0 +1,33 @@
+﻿h1 {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+h2 {
+    color: black;
+    font-family: verdana;
+    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    text-align:center;
+}
+h3 {
+    color: red;
+    font-family: verdana;
+    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    text-align: left;
+}
+.button {
+    color: black;
+    font-family: Arial;
+    font-size: 15px; /* Aqui você controla o tamanho da fonte */
+    text-align: center;
+    font-weight: bold;
+    align-content: center;
+}
+.center-button {
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}

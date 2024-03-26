@@ -1,0 +1,35 @@
+﻿h1 {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+h2 {
+    color: black;
+    font-family: verdana;
+    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    text-align: justify;
+  
+}
+h3 {
+    color: red;
+    font-family: verdana;
+    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    text-align: justify;
+    font-weight: bold;
+}
+body {
+    background-color: lightblue; /* Aqui você muda a cor de fundo */
+}
+.placeholder-small {
+    font-size: 8px; /* ou qualquer tamanho desejado */
+}
+.body-buttons {
+    text-align: center;
+    color: black;
+    font-family: Arial;
+    font-size: 17px;
+    font-weight: bold;
+   
+}

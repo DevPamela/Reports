@@ -1,0 +1,5 @@
+﻿
+.vertical-text {
+    writing-mode: vertical-lr; /* Definindo o modo de escrita vertical */
+    transform: rotate(180deg); /* Rotacionando o texto em 180 graus */
+}

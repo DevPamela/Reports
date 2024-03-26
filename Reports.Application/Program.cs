@@ -1,11 +1,26 @@
-using Reports.Domain.Interfaces.Service;
+using Reports.Domain.Interfaces;
+using Reports.Infrastructure;
 using Reports.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ContextMongoDb.ConnectionString = builder.Configuration
+    .GetSection("MongoConnection:ConnectionString").Value;
+
+ContextMongoDb.DatabaseName = builder.Configuration
+    .GetSection("MongoConnection:Database").Value;
+
+ContextMongoDb.IsSSL = Convert.ToBoolean(builder.Configuration
+    .GetSection("MongoConnection:IsSSL").Value);
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IReportService, ReportService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IFormatterService, FormatterService>();
+builder.Services.AddScoped<IGoalService, GoalService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

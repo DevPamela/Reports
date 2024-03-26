@@ -1,0 +1,50 @@
+﻿
+@model List<GoalsViewModel>;
+@{
+    ViewData["Title"] = "AddGoal";
+}
+
+<br />
+<br />
+<br />
+<br />
+<h1>ADICIONAR OBJETIVOS</h1>
+<br/>
+<h2>Não encontrou um objetivo que faz sentido para a sua turma?</h2>
+<h2>Sem problemas! Você pode criar os parágrafos do seu relatório de maneira personalizada!</h2>
+<br/>
+<div class="body-buttons">
+
+    @using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post))
+    {
+        string nomeDoObjetivo = Model[0].Name;
+        @Html.TextBoxFor(model => model[0].Name, new { @class = "form-control", placeholder = "Qual o nome do objetivo? (usaremos esse nome para facilitar a identificação na próxima etapa", required = "required" })
+        <br />
+        <br />
+
+        string[] nomesDosCampos = new string[] { "Satisfatório", "Parcialmente satisfatório", "Insatisfatório" };
+        for (int i = 0; i < 3; i++)
+        {
+            Model[i].Name = nomeDoObjetivo;
+            Model[i].collectionName = nomesDosCampos[i];
+            @Html.HiddenFor(model => model[i].Name)
+            @Html.HiddenFor(model => model[i].collectionName)
+            <br />
+            <br />
+            @Html.TextBox("NomeDoCampo", nomesDosCampos[i], new { @readonly = "readonly", @class = "form-control text-center" })
+            <br />
+            <br />
+            @Html.TextAreaFor(model => model[i].Description, new { style = "width: 500px; height: 100px;  text-align: center;", placeholder = "Escreva aqui", required = "required" })
+            <br />
+            <br />
+            <br />
+        }
+        <input type="submit" value="Enviar" />
+    }
+
+
+
+
+    </div>
+
+

@@ -16,8 +16,8 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\projetos\Reportsv4\Reports\Reports.Application
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Home/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Goals/AddGoal.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR29hbHNcQWRkR29hbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/projetos/Reportsv4/Reports/Reports.Application/Views/Home/Privacy.cshtml]
@@ -32,10 +32,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xDcmVhdGVSZXBvcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Reports/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xJbmRleC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
 [D:/projetos/Reportsv4/Reports/Reports.Application/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -44,8 +40,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Student/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxJbmRleC5jc2h0bWw=
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Student/ShowData.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxTaG93RGF0YS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/projetos/Reportsv4/Reports/Reports.Application/_ViewImports.cshtml]
@@ -56,6 +52,30 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = X1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Goals/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR29hbHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-mu63c21i2b
+
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Goals/SaveStudentGoalsResults.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR29hbHNcU2F2ZVN0dWRlbnRHb2Fsc1Jlc3VsdHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-xf7a8n0eaq
+
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Goals/SelectGoalsForReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR29hbHNcU2VsZWN0R29hbHNGb3JSZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-ukvu68jcwi
+
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = b-d990mhkb0m
+
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Reports/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = b-xmtzgsj78q
+
 [D:/projetos/Reportsv4/Reports/Reports.Application/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-ig6d3pt8zx
+
+[D:/projetos/Reportsv4/Reports/Reports.Application/Views/Student/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = b-w04dhvaz9z
