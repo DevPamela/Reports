@@ -50,27 +50,11 @@ namespace Reports.Infrastructure
             }
         }
 
-        public IMongoCollection<GoalsPartiallySatisfactory> GoalsPartiallySatisfactory
+        public IMongoCollection<Goal> Goals
         {
             get
             {
-                return _database.GetCollection<GoalsPartiallySatisfactory>("GoalsPartiallySatisfactory");
-            }
-        }
-
-        public IMongoCollection<GoalsUnsatisfactory> GoalsUnsatisfactory
-        {
-            get
-            {
-                return _database.GetCollection<GoalsUnsatisfactory>("GoalsUnsatisfactory");
-            }
-        }
-
-        public IMongoCollection<GoalsSatisfatory> GoalsSatisfatory
-        {
-            get
-            {
-                return _database.GetCollection<GoalsSatisfatory>("GoalsSatisfatory");
+                return _database.GetCollection<Goal>("Goals");
             }
         }
     }

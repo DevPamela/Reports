@@ -2965,19 +2965,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\julio\\.nuget\\packages\\": {}
+    "C:\\Users\\keoma\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj",
+      "projectUniqueName": "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj",
       "projectName": "Reports.Service",
-      "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj",
-      "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
-      "outputPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\obj\\",
+      "projectPath": "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj",
+      "packagesPath": "C:\\Users\\keoma\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\others\\Reports\\Reports.Service\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\keoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -2991,11 +2991,11 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
-              "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+            "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+              "projectPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj"
             },
-            "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
-              "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
+            "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+              "projectPath": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
             }
           }
         }
@@ -3004,6 +3004,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -3051,7 +3056,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -3060,7 +3065,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "O pacote 'DocumentFormat.OpenXmlSDK 2.0.0' foi restaurado usando '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' em vez da estrutura de destino do projeto 'net6.0'. Esse pacote pode não ser totalmente compatível com o seu projeto.",
+      "message": "Package 'DocumentFormat.OpenXmlSDK 2.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "DocumentFormat.OpenXmlSDK",
       "targetGraphs": [
         "net6.0"

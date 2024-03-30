@@ -1,7 +1,7 @@
 ﻿@using Reports.Domain.Models;
 @model List<string>
 @{
-    ViewBag.Title = "Selecionar Objetivos";
+    ViewBag.Title = "Select goals";
 }
 
 <br />
@@ -28,7 +28,7 @@
     <button class="button center-button" type="submit">Enviar</button>
 }
 
-<h2>Quer tornar seu relatório personalizado? Clique no botão abaixo e crie se próprio objetivo para os relatórios</h2>
-<a href="@Url.Action("Index", "Goals")">Ir para OutraView</a>
+<h2>Quer tornar seu relatório personalizado? Clique no botão abaixo e <a href="@Url.Action("Index", "Goals")">crie se próprio objetivo</a> para os relatórios</h2>
+
 
 

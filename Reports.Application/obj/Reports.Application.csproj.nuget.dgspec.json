@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\projetos\\Reportsv4\\Reports\\Reports.Application\\Reports.Application.csproj": {}
+    "C:\\Projects\\others\\Reports\\Reports.Application\\Reports.Application.csproj": {}
   },
   "projects": {
-    "D:\\projetos\\Reportsv4\\Reports\\Reports.Application\\Reports.Application.csproj": {
+    "C:\\Projects\\others\\Reports\\Reports.Application\\Reports.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projetos\\Reportsv4\\Reports\\Reports.Application\\Reports.Application.csproj",
+        "projectUniqueName": "C:\\Projects\\others\\Reports\\Reports.Application\\Reports.Application.csproj",
         "projectName": "Reports.Application",
-        "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Application\\Reports.Application.csproj",
-        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
-        "outputPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Application\\obj\\",
+        "projectPath": "C:\\Projects\\others\\Reports\\Reports.Application\\Reports.Application.csproj",
+        "packagesPath": "C:\\Users\\keoma\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\others\\Reports\\Reports.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\keoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -28,14 +28,14 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj"
               },
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
               },
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj"
               }
             }
           }
@@ -44,6 +44,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -82,21 +87,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+    "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj",
+        "projectUniqueName": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj",
         "projectName": "Reports.Domain",
-        "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj",
-        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
-        "outputPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\obj\\",
+        "projectPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj",
+        "packagesPath": "C:\\Users\\keoma\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\keoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -116,6 +121,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -151,21 +161,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+    "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj",
         "projectName": "Reports.Infrastructure",
-        "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
-        "outputPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\obj\\",
+        "projectPath": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\keoma\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\keoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -179,8 +189,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj"
               }
             }
           }
@@ -189,6 +199,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -220,21 +235,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj": {
+    "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj",
+        "projectUniqueName": "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj",
         "projectName": "Reports.Service",
-        "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\Reports.Service.csproj",
-        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
-        "outputPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Service\\obj\\",
+        "projectPath": "C:\\Projects\\others\\Reports\\Reports.Service\\Reports.Service.csproj",
+        "packagesPath": "C:\\Users\\keoma\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\others\\Reports\\Reports.Service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\keoma\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -248,11 +263,11 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Domain\\Reports.Domain.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Domain\\Reports.Domain.csproj"
               },
-              "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
-                "projectPath": "D:\\projetos\\Reportsv4\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
+              "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj": {
+                "projectPath": "C:\\Projects\\others\\Reports\\Reports.Infrastructure\\Reports.Infrastructure.csproj"
               }
             }
           }
@@ -261,6 +276,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -308,7 +328,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

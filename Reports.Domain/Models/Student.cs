@@ -35,15 +35,15 @@ namespace Reports.Domain.Models
         /// <summary>
         /// Validates each objective, setting whether it has been achieved.
         /// </summary>
-        public void IsSatisfatory()
-        {
-            foreach (var g in Goals)
-            {
-                if (string.IsNullOrEmpty(g.Name)) continue;
+        //public void IsSatisfatory()
+        //{
+        //    foreach (var g in Goals)
+        //    {
+        //        if (string.IsNullOrEmpty(g.Name)) continue;
 
-                g.IsAtended();
-            }
-        }
+        //        g.IsAtended();
+        //    }
+        //}
 
         /// <summary>
         /// Check that the student is female in order to assign the pronouns correctly in the report.

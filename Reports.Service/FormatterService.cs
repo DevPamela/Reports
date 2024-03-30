@@ -8,7 +8,6 @@ namespace Reports.Service
     {
         public FormatterService()
         {
-
         }
 
         /// <inheritdoc />
@@ -19,7 +18,6 @@ namespace Reports.Service
             SetDefaultMargin(doc);
             SetFont(run);
             SetFirstLineIndent(paragraph);
-            // paragraph;
         }
 
 

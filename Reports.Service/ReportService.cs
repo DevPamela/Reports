@@ -8,16 +8,19 @@ namespace Reports.Service
     {
         private readonly IFormatterService _formatterService;
         private IStudentService _studentService;
-        public ReportService(IFormatterService formatterService, IStudentService studentService)
+        private readonly IGoalService _goalService;
+        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService)
         {
             _formatterService = formatterService;
             _studentService = studentService;
+            _goalService = goalService;
         }
 
         /// <inheritdoc />
         public void CreateReport(Report report, string path)
         {
             var students = _studentService.GetStudentsList();
+            
             var teacher = new Teacher
             {
                 Name = "Ana"
@@ -33,12 +36,14 @@ namespace Reports.Service
             report.Students = students;
             foreach (var r in report.Students)
             {
+                _goalService.GetDescriptionForParagraf(r);
                 r.Teacher = teacher;
                 r.Class = classroom;
                 r.School = school;
                 r.Genre = "F";
-                r.IsSatisfatory();
+                //r.IsSatisfatory();
             }
+            
             CreateDocument(report, path);
         }
 

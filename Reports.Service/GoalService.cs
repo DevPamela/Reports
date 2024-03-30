@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics.Distributions;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using MathNet.Numerics.Distributions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
@@ -12,19 +13,15 @@ namespace Reports.Service
     public class GoalService : IGoalService
     {
         private readonly IStudentService _studentService;
-        //private readonly IMongoClient _client;
-        //private readonly string _databaseName;
 
         public GoalService(IStudentService studentService)
         {
             _studentService = studentService;
-            //_client = new MongoClient(connectionString);
-            //_databaseName = databaseName;
         }
         public List<Student> SaveStudentsGoals(List<string> goals)
         {
             ContextMongoDb db = new ContextMongoDb();
-            var students = db.Student.Find(s => true).ToList();
+            var students = db.Student.Find(s => true).ToList();            
 
             foreach (var s in students)
             {
@@ -37,77 +34,76 @@ namespace Reports.Service
                         Name = g
                     };
                     goalList.Add(goal);
-
-
                 }
                 s.Goals.AddRange(goalList);
 
-                var filter = Builders<Student>.Filter.Eq("Name", s.Name);
-                var update = Builders<Student>.Update.Set("Goals", s.Goals);
-                db.Student.UpdateOne(filter, update);
+                var filter2 = Builders<Student>.Filter.Eq("Name", s.Name);
+                var update3 = Builders<Student>.Update.Set("Goals", s.Goals);
+                db.Student.UpdateOne(filter2, update3);
             }
             return students;
         }
-
-        //public IMongoCollection<BsonDocument> GetCollection(string collectionName)
-        //{
-        //    //var database = _client.GetDatabase(_databaseName);
-        //    //return database.GetCollection<BsonDocument>(collectionName);
-
-        //}
 
         public void AddGoalInColletion(string collectionName, string goalName, string Description)
         {
             ContextMongoDb db = new ContextMongoDb();
-            if (collectionName == "Satisfatório")
-            {
-                var goals = new GoalsSatisfatory
-                {
-                    Name = goalName,
-                    Description = Description
-                };
+            var name = db.Goals.Find(s => s.Name == goalName).FirstOrDefault();
+            var update = Builders<Goal>.Update;
 
-                db.GoalsSatisfatory.InsertOne(goals);
-            }
-            else if (collectionName == "Parcialmente satisfatório")
+            if (name == null)
             {
-                var goals = new GoalsPartiallySatisfactory
-                {
-                    Name = goalName,
-                    Description = Description
-                };
-                db.GoalsPartiallySatisfactory.InsertOne(goals);
+                var goals = new Goal { Name = goalName };
+                db.Goals.InsertOne(goals);
+                name = goals;
             }
-            else if (collectionName == "Insatisfatório")
+
+            switch (collectionName)
             {
-                var goals = new GoalsUnsatisfactory
-                {
-                    Name = goalName,
-                    Description = Description
-                };
-                db.GoalsUnsatisfactory.InsertOne(goals);
+                case "Satisfatório":
+                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.AtendedDescription, Description));
+                    break;
+                case "Parcialmente satisfatório":
+                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.ParciallyAtendedDescription, Description));
+                    break;
+                case "Insatisfatório":
+                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.UnatendedDescription, Description));
+                    break;
             }
         }
 
-        public List<GoalsSatisfatory> GetGoalsSatisfactoryList()
+
+        public Student GetDescriptionForParagraf(Student student)
         {
             ContextMongoDb db = new ContextMongoDb();
-            var students = db.GoalsSatisfatory.Find(s => true).ToList();
-            return students;
+
+            foreach (var g in student.Goals)
+            {
+                var name = db.Goals.Find(s => s.Name == g.Name).FirstOrDefault();
+
+                if (name != null)
+                {
+                    switch (g.IsSatisfactory)
+                    {
+                        case "S":
+                            g.Name = name.AtendedDescription;
+                            break;
+                        case "PS":
+                            g.Name = name.ParciallyAtendedDescription;
+                            break;
+                        default:
+                            g.Name = name.UnatendedDescription;
+                            break;
+                    }
+                }
+            }
+            return student;
         }
 
-        public List<GoalsUnsatisfactory> GetGoalsGoalsUnsatisfactoryList()
+        public List<Goal> GetGoalsList()
         {
             ContextMongoDb db = new ContextMongoDb();
-            var students = db.GoalsUnsatisfactory.Find(s => true).ToList();
-            return students;
-        }
-
-        public List<GoalsPartiallySatisfactory> GetGoalsPartiallySatisfactoryList()
-        {
-            ContextMongoDb db = new ContextMongoDb();
-            var students = db.GoalsPartiallySatisfactory.Find(s => true).ToList();
-            return students;
+            var goals = db.Goals.Find(g => true).ToList();
+            return goals;
         }
 
         public void SaveSelectedGoals(Dictionary<string, Dictionary<string, string>> avaliacoes)
@@ -116,7 +112,7 @@ namespace Reports.Service
             foreach (var aluno in avaliacoes)
             {
                 var alunoSalvo = _studentService.GetStudentByName(aluno.Key);
-                var students = _studentService.GetStudentsList();
+          
                 if (alunoSalvo != null)
                 {
                     var goals = new List<Goal>();

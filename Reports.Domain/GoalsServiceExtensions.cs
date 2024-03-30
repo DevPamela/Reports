@@ -7,9 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace Reports.Domain
 {
-    public static class GoalsServiceExtensions 
-    {
-        private readonly IGoalService _goalService;
+    public static class GoalsServiceExtensions
+    { 
         /// <summary>
         /// Assigns the value of each unsatisfactory Goal.Name received in the request body to the corresponding value of the paragraph to be built.
         /// </summary>
@@ -18,8 +17,9 @@ namespace Reports.Domain
         /// <exception cref="GoalNotFoundException"></exception>
         public static Goal GetGoalsReachedFromDB(this Goal goal)
         {
-          
-            var goalName = new GoalsPartiallySatisfactory();
+           
+            var cons = new GoalsPartiallySatisfactory();
+            var goalName = cons.GetConst(typeof(GoalsPartiallySatisfactory), goal.Name);
             if (cons.ConstantExiste(typeof(GoalsPartiallySatisfactory), goal.Name))
             {
                 goal.Name = goalName;

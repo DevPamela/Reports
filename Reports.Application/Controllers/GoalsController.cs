@@ -23,11 +23,13 @@ namespace Reports.Application.Controllers
 
         public ActionResult SelectGoalsForReport()
         {
-            //TODO pegar do context
-            List<string> objetivos = new List<string>() { "Adaptação", "interação", "roda De Conversa", "Coordenação Motora", "Resolucao De Conflitos" };
+            var goals = _goalService.GetGoalsList();
+            List<string> goalsName = goals.Select(g => g.Name).ToList();
 
-            ViewBag.Objetivos = objetivos;
-            return View(objetivos);
+            //List<string> objetivos = new List<string>() { "Adaptação", "interação", "roda De Conversa", "Coordenação Motora", "Resolucao De Conflitos" };
+
+            ViewBag.Objetivos = goalsName;
+            return View(goalsName);
         }
 
         [HttpPost]

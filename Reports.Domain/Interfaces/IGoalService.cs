@@ -15,8 +15,7 @@ namespace Reports.Domain.Interfaces
         List<Student> SaveStudentsGoals(List<string> goals);
         void SaveSelectedGoals(Dictionary<string, Dictionary<string, string>> avaliacoes);
         public void AddGoalInColletion(string collectionName, string goalName, string Description);
-        //void AddGoalForDataBase<T>(IMongoCollection<T> collection, T document);
-        //IMongoCollection<BsonDocument> GetCollection(string collectionName);
-        // Task AddGoalInColletion(string collectionName, GoalsSatisfatory goal);
+        Student GetDescriptionForParagraf(Student student);
+        List<Goal> GetGoalsList();
     }
 }
