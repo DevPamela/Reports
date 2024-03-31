@@ -4,7 +4,7 @@ using Reports.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastrucuture(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

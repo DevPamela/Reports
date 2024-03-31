@@ -5,9 +5,10 @@ using Reports.Domain.Interfaces.Repositories;
 using Reports.Infrastructure.Repositories;
 
 namespace Reports.Infrastructure;
+
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastrucuture(
+    public static IServiceCollection AddInfrastructure(
         this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<ReportsDatabaseSettings>(
