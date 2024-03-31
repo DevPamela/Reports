@@ -8,6 +8,12 @@ namespace Reports.Infrastructure;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Adds the infrastructure services to the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+    /// <param name="configuration">The application configuration properties.</param>
+    /// <returns>A referente to the <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services, IConfiguration configuration)
     {
