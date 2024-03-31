@@ -22,20 +22,20 @@ namespace Reports.Application.Controllers
         //TODO mudar o nome do metodo
         //TODO resolver o tratamento caso, a tabela não seja encontrada
         [HttpPost]
-        public ActionResult ShowData([FromForm] IFormFile excelFile)
+        public async Task<ActionResult> ShowData([FromForm] IFormFile excelFile)
         {
             //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
             var header = new ExcelFileHeaderService(_studentService);
             string[] param = { "nome", "faltas", "data de nascimento" };
-            var students = _studentService.AddStudentByList(excelFile, param);
+            var students = await _studentService.AddStudentByListAsync(excelFile, param);
 
             return View(students);
         }
 
         [HttpGet]
-        public ActionResult GetStudentByName(string name)
+        public async Task<ActionResult> GetStudentByName(string name)
         {
-            var student = _studentService.GetStudentByName(name);
+            var student = await _studentService.GetStudentByNameAsync(name);
             return Ok(student);
         }
 

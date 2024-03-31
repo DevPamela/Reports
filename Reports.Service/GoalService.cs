@@ -1,27 +1,27 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using MathNet.Numerics.Distributions;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Core.Configuration;
-using Reports.Domain.Constants;
-using Reports.Domain.Interfaces;
+﻿using Reports.Domain.Interfaces;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
-using Reports.Infrastructure;
 
 namespace Reports.Service
 {
     public class GoalService : IGoalService
     {
         private readonly IStudentService _studentService;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IGoalRepository _goalRepository;
 
-        public GoalService(IStudentService studentService)
+        public GoalService(
+            IStudentService studentService, 
+            IStudentRepository studentRepository, 
+            IGoalRepository goalRepository)
         {
             _studentService = studentService;
+            _studentRepository = studentRepository;
+            _goalRepository = goalRepository;
         }
-        public List<Student> SaveStudentsGoals(List<string> goals)
+        public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
         {
-            ContextMongoDb db = new ContextMongoDb();
-            var students = db.Student.Find(s => true).ToList();            
+            var students = await _studentRepository.GetAllAsync();
 
             foreach (var s in students)
             {
@@ -37,48 +37,45 @@ namespace Reports.Service
                 }
                 s.Goals.AddRange(goalList);
 
-                var filter2 = Builders<Student>.Filter.Eq("Name", s.Name);
-                var update3 = Builders<Student>.Update.Set("Goals", s.Goals);
-                db.Student.UpdateOne(filter2, update3);
+                await _studentRepository.UpdateOneStudentGoalsAsync(s.Name, s.Goals);
             }
             return students;
         }
 
-        public void AddGoalInColletion(string collectionName, string goalName, string Description)
+        public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
         {
-            ContextMongoDb db = new ContextMongoDb();
-            var name = db.Goals.Find(s => s.Name == goalName).FirstOrDefault();
-            var update = Builders<Goal>.Update;
+            var name = await _goalRepository.GetByNameAsync(goalName);
 
             if (name == null)
             {
                 var goals = new Goal { Name = goalName };
-                db.Goals.InsertOne(goals);
+                await _goalRepository.AddOneAsync(goals);
                 name = goals;
             }
 
             switch (collectionName)
             {
                 case "Satisfatório":
-                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.AtendedDescription, Description));
+                    await _goalRepository.UpdateOneGoalDescriptionAsync(
+                        goalName, nameof(name.AtendedDescription), description);
                     break;
                 case "Parcialmente satisfatório":
-                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.ParciallyAtendedDescription, Description));
+                    await _goalRepository.UpdateOneGoalDescriptionAsync(
+                        goalName, nameof(name.ParciallyAtendedDescription), description);
                     break;
                 case "Insatisfatório":
-                    db.Goals.UpdateOne(s => s.Name == goalName, update.Set(s => s.UnatendedDescription, Description));
+                    await _goalRepository.UpdateOneGoalDescriptionAsync(
+                        goalName, nameof(name.UnatendedDescription), description);
                     break;
             }
         }
 
 
-        public Student GetDescriptionForParagraf(Student student)
+        public async Task<Student> GetDescriptionForParagrafAsync(Student student)
         {
-            ContextMongoDb db = new ContextMongoDb();
-
             foreach (var g in student.Goals)
             {
-                var name = db.Goals.Find(s => s.Name == g.Name).FirstOrDefault();
+                var name = await _goalRepository.GetByNameAsync(g.Name);
 
                 if (name != null)
                 {
@@ -99,19 +96,14 @@ namespace Reports.Service
             return student;
         }
 
-        public List<Goal> GetGoalsList()
-        {
-            ContextMongoDb db = new ContextMongoDb();
-            var goals = db.Goals.Find(g => true).ToList();
-            return goals;
-        }
+        public async Task<List<Goal>> GetGoalsListAsync() =>
+            await _goalRepository.GetAllAsync();
 
-        public void SaveSelectedGoals(Dictionary<string, Dictionary<string, string>> avaliacoes)
+        public async Task SaveSelectedGoalsAsync(Dictionary<string, Dictionary<string, string>> avaliacoes)
         {
-            ContextMongoDb db = new ContextMongoDb();
             foreach (var aluno in avaliacoes)
             {
-                var alunoSalvo = _studentService.GetStudentByName(aluno.Key);
+                var alunoSalvo = await _studentService.GetStudentByNameAsync(aluno.Key);
           
                 if (alunoSalvo != null)
                 {
@@ -126,10 +118,8 @@ namespace Reports.Service
                         };
                         goals.Add(goal);
                     }
-                    var filter = Builders<Student>.Filter.Empty;
-                    var update = Builders<Student>.Update.Set("Goals", goals);
 
-                    db.Student.UpdateManyAsync(filter, update);
+                    await _studentRepository.UpdateOneStudentGoalsAsync(alunoSalvo.Name, goals);
                 }
             }
         }

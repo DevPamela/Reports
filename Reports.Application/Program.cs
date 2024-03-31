@@ -4,14 +4,7 @@ using Reports.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ContextMongoDb.ConnectionString = builder.Configuration
-    .GetSection("MongoConnection:ConnectionString").Value;
-
-ContextMongoDb.DatabaseName = builder.Configuration
-    .GetSection("MongoConnection:Database").Value;
-
-ContextMongoDb.IsSSL = Convert.ToBoolean(builder.Configuration
-    .GetSection("MongoConnection:IsSSL").Value);
+builder.Services.AddInfrastrucuture(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

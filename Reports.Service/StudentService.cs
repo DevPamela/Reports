@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
-using MongoDB.Driver;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using Reports.Domain.Interfaces;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
-using Reports.Infrastructure;
 
 namespace Reports.Service
 {
     public class StudentService : IStudentService
     {
+        private readonly IStudentRepository _studentRepository;
 
+        public StudentService(IStudentRepository studentRepository) => 
+            _studentRepository = studentRepository;
 
-        public List<Student> AddStudentByList(IFormFile excelFile, string[] param)
+        public async Task<List<Student>> AddStudentByListAsync(IFormFile excelFile, string[] param)
         {
-            ContextMongoDb db = new ContextMongoDb();
-
             var sheet1 = new ExcelFileHeaderService(this);
             var students = sheet1.HeadSheet(excelFile, param);
             var report = new Report();
@@ -23,7 +23,7 @@ namespace Reports.Service
 
             foreach (var student in students)
             {
-                db.Student.InsertOne(student);
+                await _studentRepository.AddOneAsync(student);
             }
             return students.ToList();
         }
@@ -68,19 +68,11 @@ namespace Reports.Service
         }
 
         //TODO implementar o banco 
-        public List<Student> GetStudentsList()
-        {
-            ContextMongoDb db = new ContextMongoDb();
-            var students = db.Student.Find(s => true).ToList();
-            return students;
-        }
+        public async Task<List<Student>> GetStudentsListAsync() => 
+            await _studentRepository.GetAllAsync();
 
-        public Student GetStudentByName(string name)
-        {
-            ContextMongoDb db = new ContextMongoDb();
-            var student = db.Student.Find(s => s.Name == name).FirstOrDefault();
-            return student;
-        }
+        public async Task<Student?> GetStudentByNameAsync(string name) => 
+            await _studentRepository.GetByNameAsync(name);
 
         //TODO pensar em como fazer isso
         //public Student UpdateStudent(Student student)

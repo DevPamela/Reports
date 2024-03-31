@@ -7,8 +7,8 @@ namespace Reports.Domain.Interfaces
         /// <summary>
         /// Creates the report.
         /// </summary>
-        /// <param name="Report"></param>
+        /// <param name="report"></param>
         /// <param name="path"></param>
-        void CreateReport(Report Report, string path);
+        Task CreateReportAsync(Report report, string path);
     }
 }

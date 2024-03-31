@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
-using Reports.Domain.Constants;
 using Reports.Domain.Interfaces;
-using Reports.Infrastructure;
 
 namespace Reports.Application.Controllers
 {
@@ -21,9 +19,9 @@ namespace Reports.Application.Controllers
             return View(viewModel);
         }
 
-        public ActionResult SelectGoalsForReport()
+        public async Task<ActionResult> SelectGoalsForReport()
         {
-            var goals = _goalService.GetGoalsList();
+            var goals = await _goalService.GetGoalsListAsync();
             List<string> goalsName = goals.Select(g => g.Name).ToList();
 
             //List<string> objetivos = new List<string>() { "Adaptação", "interação", "roda De Conversa", "Coordenação Motora", "Resolucao De Conflitos" };
@@ -33,15 +31,15 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveStudentGoalsResults(List<string> goals)
+        public async Task<ActionResult> SaveStudentGoalsResults(List<string> goals)
         {
-            var students = _goalService.SaveStudentsGoals(goals);
+            var students = await _goalService.SaveStudentsGoalsAsync(goals);
             return View(students);
 
         }
 
         [HttpPost]
-        public ActionResult AddGoal(List<GoalsViewModel> goalsViewModels)
+        public async Task<ActionResult> AddGoal(List<GoalsViewModel> goalsViewModels)
         {
             var goalName = goalsViewModels[0].Name;
 
@@ -50,7 +48,7 @@ namespace Reports.Application.Controllers
                 var collectionName = goalsViewModels[i].collectionName;
                 var description = goalsViewModels[i].Description;
 
-                _goalService.AddGoalInColletion(collectionName, goalName.ToString(), description);
+                await _goalService.AddGoalInColletionAsync(collectionName, goalName.ToString(), description);
             }
 
             return View();

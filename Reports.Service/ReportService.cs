@@ -7,7 +7,7 @@ namespace Reports.Service
     public class ReportService : IReportService
     {
         private readonly IFormatterService _formatterService;
-        private IStudentService _studentService;
+        private readonly IStudentService _studentService;
         private readonly IGoalService _goalService;
         public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService)
         {
@@ -17,9 +17,9 @@ namespace Reports.Service
         }
 
         /// <inheritdoc />
-        public void CreateReport(Report report, string path)
+        public async Task CreateReportAsync(Report report, string path)
         {
-            var students = _studentService.GetStudentsList();
+            var students = await _studentService.GetStudentsListAsync();
             
             var teacher = new Teacher
             {
@@ -36,7 +36,7 @@ namespace Reports.Service
             report.Students = students;
             foreach (var r in report.Students)
             {
-                _goalService.GetDescriptionForParagraf(r);
+                await _goalService.GetDescriptionForParagrafAsync(r);
                 r.Teacher = teacher;
                 r.Class = classroom;
                 r.School = school;

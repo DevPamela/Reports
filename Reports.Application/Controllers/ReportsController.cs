@@ -19,12 +19,12 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateReport(DataViewModel data)
+        public async Task<ActionResult> CreateReport(DataViewModel data)
         {
             var path = data.Path;
             var report = data.Report;
             
-            _service.CreateReport(report, path);
+            await _service.CreateReportAsync(report, path);
 
             //TODO retornar os relatórios
             return View();
