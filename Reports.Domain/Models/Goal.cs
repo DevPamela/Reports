@@ -1,52 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Reports.Domain.Models
+﻿namespace Reports.Domain.Models
 {
-    [Table("Goals")]
     public class Goal
     {
-        [Column("Id")]
-        [Display(Name = "GoalCode")]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string AtendedDescription { get; set; } = string.Empty;
+        public string ParciallyAtendedDescription { get; set; } = string.Empty;
+        public string UnatendedDescription { get; set; } = string.Empty;
+        //TODO: check nullability of foreign key
+        public int? TeacherId { get; set; }
+        public Teacher? Teacher { get; set; }
+        public List<Student> Students { get; set; } = new();
+        public List<Assessment> Assessments { get; set; } = new();
 
-        [Column("Name")]
-        [Display(Name = "Name")]
-        public string Name { get; set; }
+        //public void IsAtended()
+        //{
+        //    if (IsSatisfactory == "S")
+        //    {
+        //        this.GetGoalsReachedFromDB();
+        //    }
+        //    else if (IsSatisfactory == "PS")
+        //    {
+        //        this.GetGoalsPartiallyReachedFromDB();
 
-        [Column("Validation")]
-        [Display(Name = "Validation")]
-        public string IsSatisfactory { get; set; }
-
-        [Column("Atended")]
-        [Display(Name = "Atended")]
-        public string AtendedDescription { get; set; }
-
-        [Column("ParciallyAtended")]
-        [Display(Name = "ParciallyAtended")]
-        public string ParciallyAtendedDescription { get; set; }
-
-        [Column("Unatended")]
-        [Display(Name = "Unatended")]
-        public string UnatendedDescription { get; set; }
-
-
-
-        public void IsAtended()
-        {
-            if (IsSatisfactory == "S")
-            {
-                this.GetGoalsReachedFromDB();
-            }
-            else if (IsSatisfactory == "PS")
-            {
-                this.GetGoalsPartiallyReachedFromDB();
-
-            }
-            else
-            {
-                this.GetGoalsNotReachedFromDB();
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        this.GetGoalsNotReachedFromDB();
+        //    }
+        //}
     }
 }

@@ -16,7 +16,7 @@ public static class GoalGenerator
     private static Faker<Goal> GetFaker() =>
         new Faker<Goal>()
             .RuleFor(g => g.Name, f => f.Random.Word())
-            .RuleFor(g => g.IsSatisfactory, f => f.PickRandom(IsSatisfactory))
+            //.RuleFor(g => g.IsSatisfactory, f => f.PickRandom(IsSatisfactory))
             .RuleFor(g => g.AtendedDescription, f => f.Lorem.Paragraph())
             .RuleFor(g => g.ParciallyAtendedDescription, f => f.Lorem.Paragraph())
             .RuleFor(g => g.UnatendedDescription, f => f.Lorem.Paragraph());

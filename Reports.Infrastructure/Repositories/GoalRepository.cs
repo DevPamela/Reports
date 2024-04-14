@@ -1,36 +1,27 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
+using Reports.Infrastructure.DbContexts;
 
 namespace Reports.Infrastructure.Repositories;
 internal class GoalRepository : IGoalRepository
 {
-    private readonly MongoDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-    public GoalRepository(MongoDbContext dbContext) =>
+    public GoalRepository(AppDbContext dbContext) =>
         _dbContext = dbContext;
 
     /// <inheritdoc />
-    public async Task AddOneAsync(Goal goal) =>
-        await _dbContext.GoalsCollection
-            .InsertOneAsync(goal);
+    public void Add(Goal goal) =>
+        _dbContext.Goals.Add(goal);
 
     /// <inheritdoc />
     public async Task<List<Goal>> GetAllAsync() =>
-        await _dbContext.GoalsCollection
-            .Find(_ => true)
-            .ToListAsync();
+        await _dbContext.Goals.ToListAsync();
 
     /// <inheritdoc />
     public async Task<Goal?> GetByNameAsync(string name) =>
-        await _dbContext.GoalsCollection
-            .Find(g => g.Name == name)
-            .FirstOrDefaultAsync();
-
-    /// <inheritdoc />
-    public async Task UpdateOneGoalDescriptionAsync(string name, string field, string description)
-    {
-        var update = Builders<Goal>.Update.Set(field, description);
-        await _dbContext.GoalsCollection.UpdateOneAsync(g => g.Name == name, update);
-    }
+        await _dbContext.Goals
+            .FirstOrDefaultAsync(g => g.Name == name);
 }

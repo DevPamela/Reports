@@ -1,37 +1,45 @@
 using FluentAssertions;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Linq;
+using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Models;
+using Reports.Infrastructure.DbContexts;
 using Reports.Infrastructure.Repositories;
 
 namespace Reports.Infrastructure.Tests;
 
-public class GoalRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
+public class GoalRepositoryTests : IClassFixture<DatabaseFixture>
 {
-    private readonly MongoDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly GoalRepository _goalRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public GoalRepositoryTests(DatabaseFixture databaseFixture)
     {
         _dbContext = databaseFixture.DbContext;
+        _dbContext.Database.EnsureDeleted();
+        _dbContext.Database.EnsureCreated();
         _goalRepository = new GoalRepository(_dbContext);
+        _unitOfWork = _dbContext;
     }
 
     [Fact]
-    public async Task AddOneAsync_ShouldSaveGoalToDatabase()
+    public async Task AddAsync_ShouldSaveGoalToDatabase()
     {
         // Arrange
         var goal = GoalGenerator.GenerateOne();
 
         // Act
-        await _goalRepository.AddOneAsync(goal);
+        _goalRepository.Add(goal);
+        await _unitOfWork.SaveChangesAsync();
 
         // Assert
-        var result = await _dbContext.GoalsCollection
-            .Find(g => g.Name == goal.Name)
-            .FirstOrDefaultAsync();
+        _dbContext.ChangeTracker.Clear();
+        var result = await _dbContext.Goals
+            .FirstAsync(g => g.Id == goal.Id);
 
-        result.Id.Should().NotBeEmpty();
+        result.Id.Should().NotBe(0);
         result.Name.Should().Be(goal.Name);
-        result.IsSatisfactory.Should().Be(goal.IsSatisfactory);
         result.AtendedDescription.Should().Be(goal.AtendedDescription);
         result.ParciallyAtendedDescription.Should().Be(goal.ParciallyAtendedDescription);
         result.UnatendedDescription.Should().Be(goal.UnatendedDescription);
@@ -42,7 +50,9 @@ public class GoalRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     {
         // Arrange
         var goals = GoalGenerator.GenerateMany();
-        await _dbContext.GoalsCollection.InsertManyAsync(goals);
+        _dbContext.Goals.AddRange(goals);
+        await _dbContext.SaveChangesAsync();
+        _dbContext.ChangeTracker.Clear();
 
         // Act
         var result = await _goalRepository.GetAllAsync();
@@ -56,16 +66,19 @@ public class GoalRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
     {
         // Arrange
         var goal = GoalGenerator.GenerateOne();
-        await _dbContext.GoalsCollection.InsertOneAsync(goal);
+        _dbContext.Goals.Add(goal);
+        await _dbContext.SaveChangesAsync();
+        _dbContext.ChangeTracker.Clear();
 
         // Act
         var result = await _goalRepository.GetByNameAsync(goal.Name);
 
         // Assert
-        result.Name.Should().Be(goal.Name);
-        result.AtendedDescription.Should().Be(goal.AtendedDescription);
-        result.ParciallyAtendedDescription.Should().Be(goal.ParciallyAtendedDescription);
-        result.UnatendedDescription.Should().Be(goal.UnatendedDescription);
+        var goalFromDb = result.Should().BeOfType<Goal>().Subject;
+        goalFromDb.Name.Should().Be(goal.Name);
+        goalFromDb.AtendedDescription.Should().Be(goal.AtendedDescription);
+        goalFromDb.ParciallyAtendedDescription.Should().Be(goal.ParciallyAtendedDescription);
+        goalFromDb.UnatendedDescription.Should().Be(goal.UnatendedDescription);
     }
 
     [Fact]
@@ -80,31 +93,4 @@ public class GoalRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLifetim
         // Assert
         result.Should().BeNull();
     }
-
-    [Fact]
-    public async Task UpdateOneGoalDescriptionAsync_ShouldUpdateGoalDescription()
-    {
-        // Arrange
-        var goal = GoalGenerator.GenerateOne();
-        var description = "Updated Description";
-        await _dbContext.GoalsCollection.InsertOneAsync(goal);
-
-        // Act
-        await _goalRepository.UpdateOneGoalDescriptionAsync(
-            goal.Name, nameof(goal.AtendedDescription), description);
-
-        // Assert
-        var result = await _dbContext.GoalsCollection
-            .Find(g => g.Name == goal.Name)
-            .FirstOrDefaultAsync();
-
-        result.AtendedDescription.Should().Be(description);
-    }
-
-    public async Task InitializeAsync() =>
-        await _dbContext.GoalsCollection
-            .DeleteManyAsync(_ => true);
-
-    public Task DisposeAsync() =>
-        Task.CompletedTask;
 }

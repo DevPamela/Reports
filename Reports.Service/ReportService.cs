@@ -20,7 +20,7 @@ namespace Reports.Service
         public async Task CreateReportAsync(Report report, string path)
         {
             var students = await _studentService.GetStudentsListAsync();
-            
+
             var teacher = new Teacher
             {
                 Name = "Ana"
@@ -29,21 +29,22 @@ namespace Reports.Service
             {
                 Name = "Infantil 3"
             };
-            var school = new School
-            {
-                Name = " Colegio Aprendiz"
-            };
-            report.Students = students;
-            foreach (var r in report.Students)
-            {
-                await _goalService.GetDescriptionForParagrafAsync(r);
-                r.Teacher = teacher;
-                r.Class = classroom;
-                r.School = school;
-                r.Genre = "F";
-                //r.IsSatisfatory();
-            }
-            
+            //TODO: CHECK LATER
+            //var school = new School
+            //{
+            //    Name = " Colegio Aprendiz"
+            //};
+            //report.Students = students;
+            //foreach (var r in report.Students)
+            //{
+            //    await _goalService.GetDescriptionForParagrafAsync(r);
+            //    r.Teacher = teacher;
+            //    r.Class = classroom;
+            //    r.School = school;
+            //    r.Genre = "F";
+            //    //r.IsSatisfatory();
+            //}
+
             CreateDocument(report, path);
         }
 
@@ -58,26 +59,27 @@ namespace Reports.Service
             {
                 XWPFDocument doc = new XWPFDocument();
 
-                foreach (var r in report.Students)
-                {
-                    CreateHeader(r, doc);
-                    CreateParagraph(report.FirtsParagraph, doc);
+                //TODO: CHECK LATER
+                //foreach (var r in report.Students)
+                //{
+                //    CreateHeader(r, doc);
+                //    CreateParagraph(report.FirtsParagraph, doc);
 
-                    var IsAGirl = r.IsAGirl();
-                    foreach (var g in r.Goals)
-                    {
-                        var studentName = r.Name.Substring(0, 1).ToUpper() + r.Name.Substring(1).ToLower();
-                        string validation = IsAGirl ? "a" : "o";
-                        var name = studentName.Split(' ');
-                        string param = string.Format(g.Name, validation, name[0]);
-                        CreateParagraph(param, doc);
-                    }
+                //    var IsAGirl = r.IsAGirl();
+                //    foreach (var g in r.Goals)
+                //    {
+                //        var studentName = r.Name.Substring(0, 1).ToUpper() + r.Name.Substring(1).ToLower();
+                //        string validation = IsAGirl ? "a" : "o";
+                //        var name = studentName.Split(' ');
+                //        string param = string.Format(g.Name, validation, name[0]);
+                //        CreateParagraph(param, doc);
+                //    }
 
-                    CreateParagraph(report.LastParagraph, doc);
-                    XWPFParagraph pageBreak = doc.CreateParagraph();
-                    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
-                    SaveDocument(path, doc);
-                }
+                //    CreateParagraph(report.LastParagraph, doc);
+                //    XWPFParagraph pageBreak = doc.CreateParagraph();
+                //    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
+                //    SaveDocument(path, doc);
+                //}
             }
             catch (Exception e)
             {
@@ -135,12 +137,13 @@ namespace Reports.Service
         /// <param name="application"></param>
         private void CreateHeader(Student student, XWPFDocument doc)
         {
-            var firstLine = student.School.Name.ToUpper();
+            //TODO: CHECK LATER
+            //var firstLine = student.School.Name.ToUpper();
             var secondLine = student.Name.ToUpper();
             var thirdLine = $"PROFESSORA: {student.Teacher.Name.ToUpper()}";
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthday}";
             var fifthLine = $"TURMA: {student.Class.Name.ToUpper()}";
-            string[] param = { firstLine, secondLine, thirdLine, fourthLine, fifthLine };
+            string[] param = { /*firstLine,*/ secondLine, thirdLine, fourthLine, fifthLine };
 
             foreach (var p in param)
             {

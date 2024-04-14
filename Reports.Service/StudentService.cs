@@ -10,21 +10,30 @@ namespace Reports.Service
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _studentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public StudentService(IStudentRepository studentRepository) => 
+        public StudentService(
+            IStudentRepository studentRepository,
+            IUnitOfWork unitOfWork)
+        {
             _studentRepository = studentRepository;
+            _unitOfWork = unitOfWork;
+        }
 
         public async Task<List<Student>> AddStudentByListAsync(IFormFile excelFile, string[] param)
         {
             var sheet1 = new ExcelFileHeaderService(this);
             var students = sheet1.HeadSheet(excelFile, param);
             var report = new Report();
-            report.Students = students;
+            //TODO: CHECK LATER
+            //report.Students = students;
 
             foreach (var student in students)
             {
-                await _studentRepository.AddOneAsync(student);
+                _studentRepository.Add(student);
             }
+
+            await _unitOfWork.SaveChangesAsync();
             return students.ToList();
         }
 
@@ -68,10 +77,10 @@ namespace Reports.Service
         }
 
         //TODO implementar o banco 
-        public async Task<List<Student>> GetStudentsListAsync() => 
+        public async Task<List<Student>> GetStudentsListAsync() =>
             await _studentRepository.GetAllAsync();
 
-        public async Task<Student?> GetStudentByNameAsync(string name) => 
+        public async Task<Student?> GetStudentByNameAsync(string name) =>
             await _studentRepository.GetByNameAsync(name);
 
         //TODO pensar em como fazer isso

@@ -1,35 +1,43 @@
 using FluentAssertions;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
+using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Models;
+using Reports.Infrastructure.DbContexts;
 using Reports.Infrastructure.Repositories;
 
 namespace Reports.Infrastructure.Tests;
 
-public class StudentRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
+public class StudentRepositoryTests : IClassFixture<DatabaseFixture>
 {
-    private readonly MongoDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
     private readonly StudentRepository _studentRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public StudentRepositoryTests(DatabaseFixture databaseFixture)
     {
         _dbContext = databaseFixture.DbContext;
+        _dbContext.Database.EnsureDeleted();
+        _dbContext.Database.EnsureCreated();
         _studentRepository = new StudentRepository(_dbContext);
+        _unitOfWork = _dbContext;
     }
 
     [Fact]
-    public async Task AddOneAsync_ShouldSaveStudentToDatabase()
+    public async Task AddAsync_ShouldSaveStudentToDatabase()
     {
         // Arrange
         var student = StudentGenerator.GenerateOne();
 
         // Act
-        await _studentRepository.AddOneAsync(student);
+        _studentRepository.Add(student);
+        await _unitOfWork.SaveChangesAsync();
 
         // Assert
-        var result = await _dbContext.StudentsCollection
-            .Find(s => s.Name == student.Name)
-            .FirstOrDefaultAsync();
+        _dbContext.ChangeTracker.Clear();
+        var result = await _dbContext.Students
+            .FirstAsync(s => s.Id == student.Id);
 
-        result.Id.Should().NotBeEmpty();
+        result.Id.Should().NotBe(0);
         result.Name.Should().Be(student.Name);
         result.Genre.Should().Be(student.Genre);
         result.Birthday.Should().Be(student.Birthday);
@@ -41,7 +49,9 @@ public class StudentRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLife
     {
         // Arrange
         var students = StudentGenerator.GenerateMany();
-        await _dbContext.StudentsCollection.InsertManyAsync(students);
+        _dbContext.Students.AddRange(students);
+        await _dbContext.SaveChangesAsync();
+        _dbContext.ChangeTracker.Clear();
 
         // Act
         var result = await _studentRepository.GetAllAsync();
@@ -55,15 +65,18 @@ public class StudentRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLife
     {
         // Arrange
         var student = StudentGenerator.GenerateOne();
-        await _dbContext.StudentsCollection.InsertOneAsync(student);
+        _dbContext.Students.Add(student);
+        await _dbContext.SaveChangesAsync();
+        _dbContext.ChangeTracker.Clear();
 
         // Act
         var result = await _studentRepository.GetByNameAsync(student.Name);
 
         // Assert
-        result.Name.Should().Be(student.Name);
-        result.Birthday.Should().Be(student.Birthday);
-        result.Absences.Should().Be(student.Absences);
+        var studentFromDb = result.Should().BeOfType<Student>().Subject;
+        studentFromDb.Name.Should().Be(student.Name);
+        studentFromDb.Birthday.Should().Be(student.Birthday);
+        studentFromDb.Absences.Should().Be(student.Absences);
     }
 
     [Fact]
@@ -78,30 +91,4 @@ public class StudentRepositoryTests : IClassFixture<DatabaseFixture>, IAsyncLife
         // Assert
         result.Should().BeNull();
     }
-
-    [Fact]
-    public async Task UpdateOneStudentGoalsAsync_ShouldUpdateStudentGoals()
-    {
-        // Arrange
-        var student = StudentGenerator.GenerateOne();
-        var goals = GoalGenerator.GenerateMany();
-        await _dbContext.StudentsCollection.InsertOneAsync(student);
-
-        // Act
-        await _studentRepository.UpdateOneStudentGoalsAsync(student.Name, goals);
-
-        // Assert
-        var result = await _dbContext.StudentsCollection
-            .Find(s => s.Name == student.Name)
-            .FirstOrDefaultAsync();
-
-        result.Goals.Should().HaveCount(goals.Count);
-    }
-
-    public async Task InitializeAsync() =>
-        await _dbContext.StudentsCollection
-            .DeleteManyAsync(_ => true);
-
-    public Task DisposeAsync() =>
-        Task.CompletedTask;
 }

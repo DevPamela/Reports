@@ -6,18 +6,18 @@ namespace Reports.Service
 {
     public class GoalService : IGoalService
     {
-        private readonly IStudentService _studentService;
         private readonly IStudentRepository _studentRepository;
         private readonly IGoalRepository _goalRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         public GoalService(
-            IStudentService studentService, 
-            IStudentRepository studentRepository, 
-            IGoalRepository goalRepository)
+            IStudentRepository studentRepository,
+            IGoalRepository goalRepository,
+            IUnitOfWork unitOfWork)
         {
-            _studentService = studentService;
             _studentRepository = studentRepository;
             _goalRepository = goalRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
         {
@@ -37,37 +37,35 @@ namespace Reports.Service
                 }
                 s.Goals.AddRange(goalList);
 
-                await _studentRepository.UpdateOneStudentGoalsAsync(s.Name, s.Goals);
+                await _unitOfWork.SaveChangesAsync();
             }
             return students;
         }
 
         public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
         {
-            var name = await _goalRepository.GetByNameAsync(goalName);
+            var goal = await _goalRepository.GetByNameAsync(goalName);
 
-            if (name == null)
+            if (goal == null)
             {
-                var goals = new Goal { Name = goalName };
-                await _goalRepository.AddOneAsync(goals);
-                name = goals;
+                goal = new Goal { Name = goalName };
+                _goalRepository.Add(goal);
             }
 
             switch (collectionName)
             {
                 case "Satisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.AtendedDescription), description);
+                    goal.AtendedDescription = description;
                     break;
                 case "Parcialmente satisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.ParciallyAtendedDescription), description);
+                    goal.ParciallyAtendedDescription = description;
                     break;
                 case "Insatisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.UnatendedDescription), description);
+                    goal.UnatendedDescription = description;
                     break;
             }
+
+            await _unitOfWork.SaveChangesAsync();
         }
 
 
@@ -79,18 +77,19 @@ namespace Reports.Service
 
                 if (name != null)
                 {
-                    switch (g.IsSatisfactory)
-                    {
-                        case "S":
-                            g.Name = name.AtendedDescription;
-                            break;
-                        case "PS":
-                            g.Name = name.ParciallyAtendedDescription;
-                            break;
-                        default:
-                            g.Name = name.UnatendedDescription;
-                            break;
-                    }
+                    //TODO: CHECK LATER
+                    //switch (g.IsSatisfactory)
+                    //{
+                    //    case "S":
+                    //        g.Name = name.AtendedDescription;
+                    //        break;
+                    //    case "PS":
+                    //        g.Name = name.ParciallyAtendedDescription;
+                    //        break;
+                    //    default:
+                    //        g.Name = name.UnatendedDescription;
+                    //        break;
+                    //}
                 }
             }
             return student;
@@ -103,8 +102,8 @@ namespace Reports.Service
         {
             foreach (var aluno in avaliacoes)
             {
-                var alunoSalvo = await _studentService.GetStudentByNameAsync(aluno.Key);
-          
+                var alunoSalvo = await _studentRepository.GetByNameAsync(aluno.Key);
+
                 if (alunoSalvo != null)
                 {
                     var goals = new List<Goal>();
@@ -114,12 +113,13 @@ namespace Reports.Service
                         var goal = new Goal
                         {
                             Name = meta.Key,
-                            IsSatisfactory = meta.Value
+                            //TODO: CHECK LATER
+                            //IsSatisfactory = meta.Value
                         };
                         goals.Add(goal);
                     }
 
-                    await _studentRepository.UpdateOneStudentGoalsAsync(alunoSalvo.Name, goals);
+                    await _unitOfWork.SaveChangesAsync();
                 }
             }
         }
