@@ -1,6 +1,6 @@
 ﻿using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.XWPF.UserModel;
-using Reports.Domain.Interfaces;
+using Reports.Domain.Interfaces.Service;
 
 namespace Reports.Service
 {
@@ -11,18 +11,18 @@ namespace Reports.Service
         }
 
         /// <inheritdoc />
-        public void SetDefaultFormatForReport(XWPFParagraph paragraph, XWPFRun run, XWPFDocument doc)
+        public async Task SetDefaultFormatForReport(XWPFParagraph paragraph, XWPFRun run, XWPFDocument doc)
         {
-            SetJustifyAlighment(paragraph);
-            lineSpacingOneAndHalf(paragraph);
-            SetDefaultMargin(doc);
-            SetFont(run);
-            SetFirstLineIndent(paragraph);
+            await SetJustifyAlighment(paragraph);
+            await lineSpacingOneAndHalf(paragraph);
+            await SetDefaultMargin(doc);
+            await SetFont(run);
+            await SetFirstLineIndent(paragraph);
         }
 
 
         /// <inheritdoc />
-        public void SetDefaultFormatForHeader(XWPFRun run, XWPFParagraph paragraph)
+        public async Task SetDefaultFormatForHeader(XWPFRun run, XWPFParagraph paragraph)
         {
             CT_RPr runProperties = run.GetCTR().AddNewRPr();
             CT_Fonts fonts = runProperties.AddNewRFonts();
@@ -31,19 +31,19 @@ namespace Reports.Service
             runProperties.AddNewSz().val = 24; // Tamanho da fonte em meio ponto (12pt * 2)
             runProperties.AddNewB().val = true; // Negrito
             runProperties.AddNewI().val = false;
-            SetCentralizedAlighment(paragraph);
+            await SetCentralizedAlighment(paragraph);
         }
 
         /// <summary>
         /// Adds justified alignment to the paragraph.
         /// </summary>
         /// <param name="paragraph"></param>
-        private void SetJustifyAlighment(XWPFParagraph paragraph)
+        private async Task SetJustifyAlighment(XWPFParagraph paragraph)
         {
-            paragraph.Alignment = ParagraphAlignment.BOTH;
+             paragraph.Alignment =  ParagraphAlignment.BOTH;
         }
 
-        private void SetCentralizedAlighment(XWPFParagraph paragraph)
+        private async Task SetCentralizedAlighment(XWPFParagraph paragraph)
         {
             paragraph.Alignment = ParagraphAlignment.CENTER;
         }
@@ -51,7 +51,7 @@ namespace Reports.Service
         /// Set the line spacing to 1.5.
         /// </summary>
         /// <param name="paragraph"></param>
-        private void lineSpacingOneAndHalf(XWPFParagraph paragraph)
+        private async Task lineSpacingOneAndHalf(XWPFParagraph paragraph)
         {
             CT_PPr paraProperties = paragraph.GetCTP().AddNewPPr();
             CT_Spacing spacing = paraProperties.AddNewSpacing();
@@ -64,7 +64,7 @@ namespace Reports.Service
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="application"></param>
-        private void SetDefaultMargin(XWPFDocument doc)
+        private async Task SetDefaultMargin(XWPFDocument doc)
         {
             CT_SectPr sectPr = doc.Document.body.AddNewSectPr();
             CT_PageMar pageMar = sectPr.AddPageMar();
@@ -77,7 +77,7 @@ namespace Reports.Service
         /// Sets the paragraph font for Arial 12.
         /// </summary>
         /// <param name="paragraph"></param>
-        public void SetFont(XWPFRun run)
+        public async Task SetFont(XWPFRun run)
         {
             CT_RPr runProperties = run.GetCTR().AddNewRPr();
             CT_Fonts fonts = runProperties.AddNewRFonts();
@@ -92,9 +92,9 @@ namespace Reports.Service
         /// Idents de first line of the paragraph.
         /// </summary>
         /// <param name="paragraph"></param>
-        private void SetFirstLineIndent(XWPFParagraph paragraph)
+        private async Task SetFirstLineIndent(XWPFParagraph paragraph)
         {
-            CT_PPr paraProperties = paragraph.GetCTP().AddNewPPr();
+            CT_PPr paraProperties =  paragraph.GetCTP().AddNewPPr();
             CT_Ind ind = paraProperties.AddNewInd();
             ind.firstLine = 1440;
         }

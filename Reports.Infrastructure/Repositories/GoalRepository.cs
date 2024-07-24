@@ -24,4 +24,8 @@ internal class GoalRepository : IGoalRepository
     public async Task<Goal?> GetByNameAsync(string name) =>
         await _dbContext.Goals
             .FirstOrDefaultAsync(g => g.Name == name);
+    public async Task<Goal?> GetByIdAsync(int id) =>
+          await _dbContext.Goals
+              .FirstOrDefaultAsync(s => s.Id == id);
+   
 }

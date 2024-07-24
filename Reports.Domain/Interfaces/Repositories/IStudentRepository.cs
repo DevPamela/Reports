@@ -15,11 +15,18 @@ public interface IStudentRepository
     /// </summary>
     /// <returns>A List of students.</returns>
     Task<List<Student>> GetAllAsync();
-
+    void DeleteAsync(Student student);
+ 
     /// <summary>
     /// Retrieve one student from the data store by its name.
     /// </summary>
     /// <param name="name">The student's name.</param>
     /// <returns>A student, or null in case it wasn't found.</returns>
-    Task<Student?> GetByNameAsync(string name);
+     Task<Student?> GetByNameAsync(string name);
+
+    Task<Student?> GetByIdAsync(int id);
+
+    void Update(Student student);
+
+    // Task<Student> GetByIdAsync(int id);
 }

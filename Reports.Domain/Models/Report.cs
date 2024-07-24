@@ -7,6 +7,6 @@
         public string? FirtsParagraph { get; set; }
         public string? LastParagraph { get; set; }
         public int StudentId { get; set; }
-        public Student? Student { get; set; }
+        public Student Student { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NPOI.XWPF.UserModel;
-using Reports.Domain.Interfaces;
+using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
 
 namespace Reports.Service
@@ -8,44 +9,104 @@ namespace Reports.Service
     {
         private readonly IFormatterService _formatterService;
         private readonly IStudentService _studentService;
+        private readonly IClassroomService _classroomService;
+        private readonly ITeacherService _teacherService;
         private readonly IGoalService _goalService;
-        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService)
+        private readonly IReportRepository _reportRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAssessmentService _assessmentService;
+        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService, IReportRepository reportRepository, IUnitOfWork unitOfWork, IClassroomService classroomService, ITeacherService teacherService, IAssessmentService assessmentService)
         {
             _formatterService = formatterService;
             _studentService = studentService;
             _goalService = goalService;
+            _reportRepository = reportRepository;
+            _unitOfWork = unitOfWork;
+            _classroomService = classroomService;
+            _teacherService = teacherService;
+            _assessmentService = assessmentService;
+        }
+        /// <summary>
+        /// Saves studentId in the Report entity.
+        /// </summary>
+        /// <param name="report"></param>
+        /// <returns></returns>
+        private async Task SetStudentIdForReport(Report report)
+        {
+            try
+            {
+                var studentById = await _studentService.GetByIdAsync(report.StudentId);
+                if (studentById != null)
+                {
+                    report.Student = studentById;
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Create a new s]instance of report.
+        /// </summary>
+        /// <param name="report"></param>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        private List<Report> CreateReportForStudents(Report report, Student student)
+        {
+            var reports = new Report
+            {
+                FirtsParagraph = report.FirtsParagraph,
+                LastParagraph = report.LastParagraph,
+                Student = student,
+                StudentId = student.Id,
+                Name = report.Name
+            };
+            var list = new List<Report>
+            {
+              reports
+            };
+            return list;
+        }
+
+        /// <summary>
+        /// Saves report.
+        /// </summary>
+        /// <param name="reports"></param>
+        /// <returns></returns>
+        public async Task AddReport(List<Report> reports)
+        {
+            foreach (var report in reports)
+            {
+                _reportRepository.Add(report);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
         }
 
         /// <inheritdoc />
-        public async Task CreateReportAsync(Report report, string path)
+        public async Task CreateReportAsync(Report report)
         {
-            var students = await _studentService.GetStudentsListAsync();
-
-            var teacher = new Teacher
+            try
             {
-                Name = "Ana"
-            };
-            var classroom = new ClassRoom
-            {
-                Name = "Infantil 3"
-            };
-            //TODO: CHECK LATER
-            //var school = new School
-            //{
-            //    Name = " Colegio Aprendiz"
-            //};
-            //report.Students = students;
-            //foreach (var r in report.Students)
-            //{
-            //    await _goalService.GetDescriptionForParagrafAsync(r);
-            //    r.Teacher = teacher;
-            //    r.Class = classroom;
-            //    r.School = school;
-            //    r.Genre = "F";
-            //    //r.IsSatisfatory();
-            //}
+                var students = await _studentService.GetStudentsListAsync();
+                foreach (var student in students)
+                {
+                    var list = CreateReportForStudents(report, student);
+                    report.StudentId = student.Id;
+                    await SetStudentIdForReport(report);
+                   // await AddReport(list);
 
-            CreateDocument(report, path);
+                    await CreateReportFile(report);
+                }
+            }
+            catch (Exception e)
+            {
+                new Exception(e.Message);
+            }
+
         }
 
         /// <summary>
@@ -53,37 +114,59 @@ namespace Reports.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        private void CreateDocument(Report report, string path)
+        private async Task CreateReportFile(Report report)
         {
             try
             {
                 XWPFDocument doc = new XWPFDocument();
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                //TODO abrir o arquivo
+                string reportsFolder = Path.Combine(path, "Relatorios");
 
-                //TODO: CHECK LATER
-                //foreach (var r in report.Students)
-                //{
-                //    CreateHeader(r, doc);
-                //    CreateParagraph(report.FirtsParagraph, doc);
+                await CreateReportsFolder(reportsFolder);
+                await CreateHeader(report.Student, doc);
 
-                //    var IsAGirl = r.IsAGirl();
-                //    foreach (var g in r.Goals)
-                //    {
-                //        var studentName = r.Name.Substring(0, 1).ToUpper() + r.Name.Substring(1).ToLower();
-                //        string validation = IsAGirl ? "a" : "o";
-                //        var name = studentName.Split(' ');
-                //        string param = string.Format(g.Name, validation, name[0]);
-                //        CreateParagraph(param, doc);
-                //    }
+                if (report.Name != null)
+                {
+                    await CreateTitle(report, doc);
+                }
 
-                //    CreateParagraph(report.LastParagraph, doc);
-                //    XWPFParagraph pageBreak = doc.CreateParagraph();
-                //    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
-                //    SaveDocument(path, doc);
-                //}
+                if (report.FirtsParagraph != null)
+                {
+                    await CreateParagraph(report.FirtsParagraph, doc);
+                }
+
+                var IsAGirl = report.Student.IsAGirl();
+                var assessments = await _assessmentService.GetAllAssessmentsAsync();
+                var studentAssessments = assessments.Where(_ => _.StudentId == report.Student.Id);
+
+                foreach (var a in studentAssessments)
+                {
+                    var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
+                    string validation = IsAGirl ? "a" : "o";
+                    var name = studentName.Split(' ');
+                    var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
+                    var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+                  
+                  
+                    string param = string.Format(goalDescription, validation, name[0]);
+                    await CreateParagraph(param, doc);
+                }
+
+                if (report.FirtsParagraph != null)
+                {
+                    await CreateParagraph(report.LastParagraph, doc);
+                }
+                //TODO Resolver o bug de goals
+                //TODO resolver o bulk insert 
+                XWPFParagraph pageBreak = doc.CreateParagraph();
+                await SaveDocument(reportsFolder, doc, report.Student.Name);
+               
+                //Process.Start("explorer.exe", path);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: " + e.Message);
+                new Exception(e.Message);
             }
         }
 
@@ -94,12 +177,12 @@ namespace Reports.Service
         /// <param name="doc"></param>
         /// <param name="application"></param>
         /// <returns></returns>
-        private void CreateParagraph(string param, XWPFDocument doc)
+        private async Task CreateParagraph(string param, XWPFDocument doc)
         {
             XWPFParagraph paragraph = doc.CreateParagraph();
             XWPFRun run = paragraph.CreateRun();
             run.SetText(param);
-            _formatterService.SetDefaultFormatForReport(paragraph, run, doc);
+            await _formatterService.SetDefaultFormatForReport(paragraph, run, doc);
         }
 
         /// <summary>
@@ -107,26 +190,39 @@ namespace Reports.Service
         /// </summary>
         /// <param name="param"></param>
         /// <param name="doc"></param>
-        private void CreateParagraphForHeader(string param, XWPFDocument doc)
+        private async Task CreateParagraphForHeader(string param, XWPFDocument doc)
         {
             XWPFParagraph paragraph = doc.CreateParagraph();
             XWPFRun run = paragraph.CreateRun();
             run.SetText(param);
-            _formatterService.SetDefaultFormatForHeader(run, paragraph);
+            await _formatterService.SetDefaultFormatForHeader(run, paragraph);
         }
 
         /// <summary>
-        /// Saves al reports as a single PDF document.
+        /// Save the student report as a single Word document.
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="word"></param>
         /// <param name="path"></param>
-        static void SaveDocument(string path, XWPFDocument doc)
+        static async Task SaveDocument(string path, XWPFDocument doc, string studentName)
         {
-            using (FileStream fs = new FileStream($"{path}\\Relatorios.docx", FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
+                FileMode.Create, FileAccess.Write))
             {
                 doc.Write(fs);
             };
+        }
+
+        /// <summary>
+        /// Create the report title.
+        /// </summary>
+        /// <param name="report"></param>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        private async Task CreateTitle(Report report, XWPFDocument doc)
+        {
+            var reportTitle = report.Name.ToUpper();
+            await CreateParagraphForHeader(reportTitle, doc);
         }
 
         /// <summary>
@@ -135,20 +231,45 @@ namespace Reports.Service
         /// <param name="student"></param>
         /// <param name="doc"></param>
         /// <param name="application"></param>
-        private void CreateHeader(Student student, XWPFDocument doc)
+        private async Task CreateHeader(Student student, XWPFDocument doc)
         {
-            //TODO: CHECK LATER
-            //var firstLine = student.School.Name.ToUpper();
+            var classroom = await _classroomService.GetById(student.ClassRoomId ?? default);
+            var firstLine = classroom.Name;
+            var teacher = "pamela";//TODO pegar pelo student.Teacher
             var secondLine = student.Name.ToUpper();
-            var thirdLine = $"PROFESSORA: {student.Teacher.Name.ToUpper()}";
-            var fourthLine = $"DATA DE NASCIMENTO: {student.Birthday}";
-            var fifthLine = $"TURMA: {student.Class.Name.ToUpper()}";
-            string[] param = { /*firstLine,*/ secondLine, thirdLine, fourthLine, fifthLine };
+            var thirdLine = $"PROFESSORA: {teacher.ToUpper()}";
+
+            var fourthLine = $"DATA DE NASCIMENTO: {student.Birthday.ToString("dd/MM/yyyy")}";
+            var fifthLine = $"TURMA: {firstLine.ToUpper()}";
+            string[] param = { firstLine, secondLine, thirdLine, fourthLine, fifthLine };
 
             foreach (var p in param)
             {
-                CreateParagraphForHeader(p, doc);
+                await CreateParagraphForHeader(p, doc);
             }
+        }
+       /// <summary>
+       /// Generates the Report folder.
+       /// </summary>
+       /// <param name="reportsFolder"></param>
+       /// <returns></returns>
+        private async Task CreateReportsFolder(string reportsFolder)
+        {
+            try
+            {
+                if (!Directory.Exists(reportsFolder))
+                {
+                    Directory.CreateDirectory(reportsFolder);
+                }
+            }
+            catch
+            {
+            }
+        }
+        /// <inheritdoc />
+        Task IReportService.GetReportById(Report report)
+        {
+            throw new NotImplementedException();
         }
     }
 }

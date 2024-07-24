@@ -22,4 +22,5 @@ public interface IGoalRepository
     /// <param name="name">The goal's name.</param>
     /// <returns>A goal, or null in case it wasn't found.</returns>
     Task<Goal?> GetByNameAsync(string name);
+    Task<Goal?> GetByIdAsync(int id);
 }

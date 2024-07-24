@@ -1,12 +1,10 @@
 ﻿@using Reports.Domain.Models;
 @model List<Student>
-@{
-}
+<br/>
+<br/>
+<br/>
 <br />
-<br />
-<br />
-<br />
-@using (Html.BeginForm("Index", "Reports", FormMethod.Post))
+@using (Html.BeginForm("SaveIsAtendedInformation", "Goals", FormMethod.Post))
 {
     <table border="1">
         <tr>
@@ -14,22 +12,26 @@
             @{
                 var uniqueGoals = Model.SelectMany(e => e.Goals).Select(g => g.Name).Distinct();
             }
-
             @foreach (var goalName in uniqueGoals)
             {
                 <th class="vertical-text">@goalName</th>
             }
         </tr>
-        @foreach (var student in Model)
+        @for (int i = 0; i < Model.Count; i++)
         {
+            var student = Model[i];
             <tr>
                 <td>@student.Name</td>
-                @foreach (var objetivo in student.Goals)
+                @for (int j = 0; j < student.Assessments.Count; j++)
                 {
+                    var assessment = student.Assessments[j];
                     <td>
-                        <select name="avaliacao[@student.Name][@objetivo.Name]" value="" style="width: 2em;" maxlength="1">
-                            <option value="S">S -Satisfatório</option>
-                            <option value="PS">PS Parcialmente Satisfatório</option>
+                        <input type="hidden" name="Students[@i].Assessments[@j].StudentId" value="@assessment.StudentId" />
+                        <input type="hidden" name="Students[@i].Name" value="@student.Name" />
+                        <input type="hidden" name="Students[@i].Assessments[@j].GoalId" value="@assessment.GoalId" />
+                        <select name="Students[@i].Assessments[@j].IsSatisfactory" style="width: 2em;" maxlength="1">
+                            <option value="S">S - Satisfatório</option>
+                            <option value="PS">PS - Parcialmente Satisfatório</option>
                             <option value="I">I - Insatisfatório</option>
                         </select>
                     </td>
@@ -37,6 +39,7 @@
             </tr>
         }
     </table>
+
     <br />
     <button type="submit">Salvar</button>
 }

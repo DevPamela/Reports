@@ -35,7 +35,7 @@ namespace Reports.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Assessment");
+                    b.ToTable("Assessments");
                 });
 
             modelBuilder.Entity("Reports.Domain.Models.ClassRoom", b =>
@@ -43,6 +43,9 @@ namespace Reports.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -55,7 +58,7 @@ namespace Reports.Infrastructure.Migrations
 
                     b.HasIndex("TeacherId");
 
-                    b.ToTable("ClassRoom");
+                    b.ToTable("Classroom");
                 });
 
             modelBuilder.Entity("Reports.Domain.Models.Goal", b =>
@@ -68,13 +71,19 @@ namespace Reports.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ParciallyAtendedDescription")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("TeacherId")
                         .HasColumnType("int");
@@ -84,6 +93,9 @@ namespace Reports.Infrastructure.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("TeacherId");
 
@@ -113,7 +125,7 @@ namespace Reports.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Report");
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("Reports.Domain.Models.Student", b =>
@@ -122,11 +134,11 @@ namespace Reports.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Absences")
-                        .HasColumnType("longtext");
+                    b.Property<int>("Absences")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Birthday")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("ClassRoomId")
                         .HasColumnType("int");
@@ -134,9 +146,12 @@ namespace Reports.Infrastructure.Migrations
                     b.Property<string>("Genre")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int?>("TeacherId")
                         .HasColumnType("int");
@@ -144,6 +159,9 @@ namespace Reports.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClassRoomId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("TeacherId");
 

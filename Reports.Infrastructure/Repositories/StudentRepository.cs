@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Amazon.Util;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
@@ -21,9 +22,21 @@ namespace Reports.Infrastructure.Repositories
         public async Task<List<Student>> GetAllAsync() =>
             await _dbContext.Students.ToListAsync();
 
+        public void DeleteAsync(Student student) =>
+             _dbContext.Students.Remove(student);
+
+        public void Update(Student student) =>
+       _dbContext.Students.Update(student);
+
+
         /// <inheritdoc />
         public async Task<Student?> GetByNameAsync(string name) =>
             await _dbContext.Students
                 .FirstOrDefaultAsync(s => s.Name == name);
+
+        public async Task<Student?> GetByIdAsync(int id) =>
+            await _dbContext.Students
+                .FirstOrDefaultAsync(s => s.Id == id);
+
     }
 }

@@ -1,52 +1,62 @@
 ﻿@{
     ViewData["Title"] = "Adicionar aluno";
 }
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 <div class="row">
     <div class"col-sm-12">
         <div class="card">
             <div class="title">
-            <div class"card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
+                <div class"card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
             </div>
             <br />
             <div class"card-header">Clique no botão abaixo e escolha o arquivo excel que contém a sua lista de alunos.</div>
-            <br/>
+            <br />
             <div class="warning">
                 Atenção: Não se esqueça de se certificar de que em seu arquivo os campos nome, data de nascimento e faltas estão devidamente preenchidos, a ausência desses itens vai
                 impossibilitar a geração dos relatórios
             </div>
-            <br/>
-            <div class="text-center">
-            <div class="card-body">
+            <br />
+            @*   @if (TempData["SuccessMessage"] != null)
+            {
+            <div class="alert alert-success" role="alert">
+            <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
+            @TempData["SuccessMessage"]
+            </div>
+            }
 
-                <div class="row">
-                    <div class"col-sm-4">
-                        <input class="form-control-file" type="file" id="inputExcel" />
-                    </div>
-                    <br />
-                    <div class"col-sm-4">
+            @if (TempData["ErrorMessage"] != null)
+            {
+            <div class="alert alert-danger" role="alert">
+            <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
+            @TempData["ErrorMessage"]
+            </div>
+            } *@
+            <div class="form-container">
+            <div class="form-group">
+                    <h5 for="classroomName" class="custom-label">Escreva o nome da sua turma:</h5>
+                    <input type="text" id="classroomName" class="form-control small-input" placeholder="Ex: Infantil IV" />
+            </div>
+            </div>
+            <div class="text-center">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-sm-4  offset-sm-4 center-content ">
+                            <label for="inputExcel" class="custom-label2">Clique aqui e selecione a sua lista de alunos &#187;</label>
+                            <input id="inputExcel" type="file">
+                        </div>
                         <br />
-                        <button class="btn btn btn-secondary" onclick="showData()">Mostar dados</button>
-                        <button class="btn btn-secondary" onclick="enviarDados">Enviar dados</button>
-                    </div>
-                </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table id="tbData" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Data de nascimento</th>
-                                    <th>Faltas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <br />
+                            <br />
+                             <br />
+                            <br />
+                            <br />
+                            <br />
+                            <button class="btn btn btn-secondary color" onclick="RegisterStudentByList()">Enviar</button> 
+                    @*           <button class="btn btn-secondary" onclick="RegisterStudentByList">Enviar dados</button> *@
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,19 +66,38 @@
 
 @section Scripts{
     <script>
-        function showData() {
-            const input = document.getElementById("inputExcel")
+        function RegisterStudentByList() {
+            const input = document.getElementById("inputExcel");
+            const classroomName = document.getElementById("classroomName").value;
+            // Verifica se um arquivo foi selecionado
+            if (input.files.length > 0) {
+                const formData = new FormData();
+                formData.append("excelFile", input.files[0]);
+                formData.append("classroomName", classroomName);
 
-            const formData = new FormData()
-            formData.append("excelFile", input.files[0])
-
-            fetch("Student/ShowData", {
-                method: "POST",
-                body: formData
-            })
-                .then((response) => { return response.json() })
-                .then((dataJson) => { console.log(dataJson) })
+                fetch("/Student/RegisterStudentByList", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao enviar arquivo.');
+                        }
+                        return response.json();
+                    })
+                    .then(dataJson => {
+                        console.log(dataJson);
+                        window.location.href = dataJson.redirectUrl;
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        window.location.href = "/Student/Error";
+                    });
+            } else {
+                alert("Por favor, selecione um arquivo antes de enviar.");
+            }
         }
     </script>
+    }
 
-}
+
