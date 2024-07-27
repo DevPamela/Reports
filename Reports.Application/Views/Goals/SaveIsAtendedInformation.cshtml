@@ -1,0 +1,67 @@
+﻿@using Reports.Application.Models;
+@using Reports.Domain.Models;
+@model DataViewModel;
+@{
+    ViewData["Title"] = "Gerar relatórios";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<br />
+<br />
+<br />
+<h1>GERAR RELATÓRIOS DE ALUNOS AUTOMATICAMENTE</h1>
+<br />
+<h2>
+    Em instantes você terá seus relatórios concluidos. Antes, caso você queira adicionar um primeiro paragrafo ou mais introdutório,
+    adicione seu texto no campo "Digite ou cole aqui o seu primeiro paragrafo".
+</h2>
+<h2>
+    Você também pode finalizar os relatórios com um paragráfo conclusivo, para isso, basta colar seu parágrafo no campo:
+    "Digite ou cole aqui o seu ultimo paragrafo"
+</h2>
+<br />
+<h3>Lembre-se: Você pode colar mais do que dois parágrafos, para isso, inicie o novo parágrafo com {paragrafo} que ele será formatado corretamente.</h3>
+
+<h3>Também é possível adicionar o nome do aluno que está sendo gerado o relatório nesse paragrafo para você não precisar editar nada, indique {aluno} aonde você desejar que o nome seja escrito.</h3>
+<br />
+<br />
+<div class="body-buttons">
+    @using (Html.BeginForm("CreateReport", "Reports", FormMethod.Post, new { id = "report" }))
+    {
+        @Html.TextBoxFor(model => model.Report.Name, new {style = "width: 350px;", placeholder = "Digite o título do seu relatorio, ex: Relatório 1º bimestre"})
+        <br />
+        <br />
+        @Html.TextBoxFor(model => model.Report.FirtsParagraph, new {style = "width: 350px;", placeholder = "Digite ou cole aqui o seu primeiro paragrafo"})
+        <br />
+        <br />
+        @Html.TextBoxFor(model => model.Report.LastParagraph, new {style = "width: 350px;", placeholder = "Digite ou cole aqui o seu ultimo paragrafo" })
+        <br />
+
+        <br />
+        <input type="submit" id="enviar" value="Enviar" />
+    }
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div >
+   @*  <span id="loadingIcon" class="spinner-border" role="status" style="display: none;"> *@
+    <i id="loadingIcon" class="spinner-border loadingIcon" style="display: none;"></i>
+        <br/>
+    <div class="loadingMessage" id="loadingMessage">Aguarde, isso pode levar alguns segundos</div>
+    <span class="sr-only">Loading...</span>
+@* </span> *@
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#enviar').click(function () {
+            $('#loadingIcon').show(); // Mostra o ícone de loading quando o botão for clicado
+            $('#overlay').show();
+            $('#loadingMessage').show();
+            // Faça a chamada AJAX para o seu controller aqui
+
+        });
+    });
+</script>

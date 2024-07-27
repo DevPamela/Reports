@@ -1,0 +1,19 @@
+﻿h2 {
+    color: rebeccapurple;
+    ;
+    text-align: center;
+    font-weight: bold;
+}
+.select {
+    width: 10em;
+}
+h4 {
+    color: rebeccapurple;
+    text-align: justify-all;
+    font-weight: bold;
+}
+h6 {
+    color: black;
+    text-align: justify-all;
+    font-weight: bold;
+}

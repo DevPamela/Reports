@@ -12,7 +12,10 @@
     <None Remove="Views\Goals\SelectGoalsForReport.cshtml.css" />
     <None Remove="Views\Home\Index.cshtml.css" />
     <None Remove="Views\Reports\Index.cshtml.css" />
+    <None Remove="Views\Reports\Success.cshtml.css" />
     <None Remove="Views\Student\Index.cshtml.css" />
+    <None Remove="Views\Student\RemoveStudent.cshtml.css" />
+    <None Remove="Views\Student\Success.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +24,10 @@
     <Content Include="Views\Goals\SelectGoalsForReport.cshtml.css" />
     <Content Include="Views\Home\Index.cshtml.css" />
     <Content Include="Views\Reports\Index.cshtml.css" />
+    <Content Include="Views\Reports\Success.cshtml.css" />
     <Content Include="Views\Student\Index.cshtml.css" />
+    <Content Include="Views\Student\RemoveStudent.cshtml.css" />
+    <Content Include="Views\Student\Success.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>

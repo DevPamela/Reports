@@ -1,0 +1,33 @@
+﻿@model StudentViewModel
+
+<br />
+<br />
+<h1>Anote o número de faltas para cada aluno</h1>
+<h2>Atenção, se não for preenchido, o relatório terá o numero de faltas como "0"</h2>
+<br />
+
+<br />
+@using (Html.BeginForm("SetAbsencesNumber", "Student", FormMethod.Post))
+{
+    <table border="1">
+        <tr>
+            <th>Nome</th>
+            <th>Faltas</th> <!-- Nova coluna -->
+        </tr>
+        @for (int i = 0; i < Model.Students.Count; i++)
+        {
+            var student = Model.Students[i];
+            <tr>
+                <td>@student.Name</td>
+                <td>
+                    <input type="hidden" name="Students[@i].Id" value="@student.Id" />
+                    <input type="hidden" name="Students[@i].Name" value="@student.Name" />
+                    <input type="number" name="Students[@i].Absences" value="0" min="0" /> <!-- Campo para o número de faltas -->
+                </td>
+            </tr>
+        }
+    </table>
+
+    <br />
+    <button type="submit">Salvar</button>
+}

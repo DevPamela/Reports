@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Appwrite" Version="0.8.1" />
     <PackageReference Include="DocumentFormat.OpenXmlSDK" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
@@ -19,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ExcelFileHeader\" />
     <Folder Include="Report\" />
     <Folder Include="Students\Goal\" />
   </ItemGroup>

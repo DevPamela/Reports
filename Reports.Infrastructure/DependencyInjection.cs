@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Reports.Application.Settings;
 using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Interfaces.Service;
+using Reports.Infrastructure.DbContexts;
 using Reports.Infrastructure.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Reports.Infrastructure;
 
@@ -15,16 +18,34 @@ public static class DependencyInjection
     /// <param name="configuration">The application configuration properties.</param>
     /// <returns>A referente to the <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services, IConfiguration configuration)
+   this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<ReportsDatabaseSettings>(
-            configuration.GetSection("ReportsDatabase"));
+        try
+        {
+            var connectionString = configuration.GetConnectionString("ReportsConnection");
 
-        services.AddSingleton<MongoDbContext>();
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            });
 
-        services.AddScoped<IStudentRepository, StudentRepository>();
-        services.AddScoped<IGoalRepository, GoalRepository>();
+            services.AddScoped<IUnitOfWork>(sp =>
+                sp.GetRequiredService<AppDbContext>());
 
-        return services;
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IGoalRepository, GoalRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<IAssessmentRepository, AssessmentRepository>();
+            services.AddScoped<IClassroomRepository, ClassroomRepository>();
+            services.AddScoped<ITeacherRepository, TeacherRepository>();
+            services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
+
+
+            return services;
+        }
+        catch (global::System.Exception)
+        {
+            throw;
+        }
     }
 }

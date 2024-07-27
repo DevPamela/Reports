@@ -1,36 +1,30 @@
-﻿using Microsoft.Extensions.Options;
-using NSubstitute;
-using Reports.Application.Settings;
-using Testcontainers.MongoDb;
+﻿using Microsoft.EntityFrameworkCore;
+using Reports.Infrastructure.DbContexts;
+using Testcontainers.MySql;
 
 namespace Reports.Infrastructure.Tests;
 
 public class DatabaseFixture : IAsyncLifetime
 {
-    private readonly MongoDbContainer _mongoDbContainer =
-        new MongoDbBuilder().Build();
+    private readonly MySqlContainer _mySqlContainer =
+        new MySqlBuilder().Build();
 
-    internal MongoDbContext DbContext { get; private set; } = null!;
+    private DbContextOptions<AppDbContext> _dbContextOptions = null!;
+
+    internal AppDbContext DbContext => new(_dbContextOptions);
 
     public async Task InitializeAsync()
     {
-        await _mongoDbContainer.StartAsync();
+        await _mySqlContainer.StartAsync();
 
-        var connectionString = _mongoDbContainer.GetConnectionString();
+        var connectionString = _mySqlContainer.GetConnectionString();
 
-        var options = Substitute.For<IOptions<ReportsDatabaseSettings>>();
-        options.Value.Returns(new ReportsDatabaseSettings()
-        {
-            ConnectionString = connectionString,
-            DatabaseName = "TestReportsDB",
-            StudentsCollectionName = "Students",
-            GoalsCollectionName = "Goals",
-            IsSSL = false,
-        });
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
+            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
-        DbContext = new MongoDbContext(options);
+        _dbContextOptions = optionsBuilder.Options;
     }
 
     public async Task DisposeAsync() =>
-        await _mongoDbContainer.DisposeAsync();
+        await _mySqlContainer.DisposeAsync();
 }

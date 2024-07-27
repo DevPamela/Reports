@@ -1,9 +1,11 @@
-﻿namespace Reports.Application.Models
+﻿using Reports.Domain.Models;
+
+namespace Reports.Application.Models
 {
     public class StudentViewModel
     {
-        public string Name { get; set; }
-        public string Birthday { get; set; }
-        public string Absences { get; set; }
+        public List<Student>? Students { get; set; }
+        public Student Student { get; set; }
+
     }
 }

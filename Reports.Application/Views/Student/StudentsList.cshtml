@@ -1,0 +1,56 @@
+﻿@model StudentViewModel
+@{
+    ViewData["Title"] = "StudentsList";
+}
+
+<br/>
+<br />
+
+<body>
+    <div class="container">
+        @Html.HiddenFor(model => model.Student.Id)
+        <a asp-controller="Student" asp-action="AddNewStudent" class="btn btn-primary">Adicionar novo aluno</a>
+    </div>
+
+    <!-- Adicionando Font Awesome para o ícone -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>NOME</th>
+            <th>DATA DE NASCIMENTO</th>
+            <th>GÊNERO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @for (var i = 0; i < Model.Students.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.Students[i].Name
+                    </td>
+                    <td>
+                        @Model.Students[i].Birthday.ToString("dd/MM/yyyy")
+                    </td>
+                    <td>
+                        @Model.Students[i].Genre
+                    </td>
+                    <td>
+                        @Html.HiddenFor(model => model.Student.Id)
+                        <a asp-route-id="@Model.Students[i].Id" asp-controller="Student" asp-action="EditStudent" class="btn btn-secondary">Editar</a>
+                    </td>
+                    <td>
+                        @Html.HiddenFor(model => model.Student.Id)
+                        <a asp-route-id="@Model.Students[i].Id" asp-controller="Student" asp-action="RemoveStudent" class="btn btn-danger">Deletar</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+

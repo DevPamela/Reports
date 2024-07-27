@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces;
+using Reports.Domain.Interfaces.Service;
 
 namespace Reports.Application.Controllers
 {
@@ -14,20 +16,34 @@ namespace Reports.Application.Controllers
         }
         public IActionResult Index()
         {
-            ViewBag.ValorDoBotao = "Enviar";
+            return View();
+        }
+        public ActionResult Error()
+        {
+            return View();
+        }
+
+        public ActionResult Success()
+        {
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateReport(DataViewModel data)
+        public async Task<ActionResult>CreateReport(DataViewModel data)
         {
-            var path = data.Path;
-            var report = data.Report;
-            
-            await _service.CreateReportAsync(report, path);
+            try
+            {
+                var report = data.Report;
 
-            //TODO retornar os relatórios
-            return View();
+                await _service.CreateReportAsync(report);
+
+                return View("Success");
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex);
+            }
+            
         }
 
     }

@@ -1,5 +1,4 @@
-﻿
-@model List<GoalsViewModel>;
+﻿@model List<GoalsViewModel>;
 @{
     ViewData["Title"] = "AddGoal";
 }
@@ -9,10 +8,27 @@
 <br />
 <br />
 <h1>ADICIONAR OBJETIVOS</h1>
-<br/>
+<br />
 <h2>Não encontrou um objetivo que faz sentido para a sua turma?</h2>
 <h2>Sem problemas! Você pode criar os parágrafos do seu relatório de maneira personalizada!</h2>
-<br/>
+<br />
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="body-buttons">
 
     @using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post))
@@ -41,10 +57,6 @@
         }
         <input type="submit" value="Enviar" />
     }
-
-
-
-
-    </div>
+</div>
 
 

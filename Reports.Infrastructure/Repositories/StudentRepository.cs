@@ -1,38 +1,42 @@
-﻿using MongoDB.Driver;
+﻿using Amazon.Util;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
+using Reports.Infrastructure.DbContexts;
 
 namespace Reports.Infrastructure.Repositories
 {
     internal class StudentRepository : IStudentRepository
     {
-        private readonly MongoDbContext _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public StudentRepository(MongoDbContext dbContext) =>
+        public StudentRepository(AppDbContext dbContext) =>
             _dbContext = dbContext;
 
         /// <inheritdoc />
-        public async Task AddOneAsync(Student student) =>
-            await _dbContext.StudentsCollection
-                .InsertOneAsync(student);
+        public void Add(Student student) =>
+            _dbContext.Students.Add(student);
 
         /// <inheritdoc />
         public async Task<List<Student>> GetAllAsync() =>
-            await _dbContext.StudentsCollection
-                .Find(_ => true)
-                .ToListAsync();
+            await _dbContext.Students.ToListAsync();
+
+        public void DeleteAsync(Student student) =>
+             _dbContext.Students.Remove(student);
+
+        public void Update(Student student) =>
+       _dbContext.Students.Update(student);
+
 
         /// <inheritdoc />
         public async Task<Student?> GetByNameAsync(string name) =>
-            await _dbContext.StudentsCollection
-                .Find(s => s.Name == name)
-                .FirstOrDefaultAsync();
+            await _dbContext.Students
+                .FirstOrDefaultAsync(s => s.Name == name);
 
-        /// <inheritdoc />
-        public async Task UpdateOneStudentGoalsAsync(string studentName, IEnumerable<Goal> goals)
-        {
-            var update = Builders<Student>.Update.Set(s => s.Goals, goals);
-            await _dbContext.StudentsCollection.UpdateOneAsync(s => s.Name == studentName, update);
-        }
+        public async Task<Student?> GetByIdAsync(int id) =>
+            await _dbContext.Students
+                .FirstOrDefaultAsync(s => s.Id == id);
+
     }
 }

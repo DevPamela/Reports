@@ -1,13 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Reports.Domain.Models
+﻿namespace Reports.Domain.Models
 {
     public class Report
     {
-        [Key]
-        public string Name  { get; set; }
-        public List<Student> Students { get; set; } = new();
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
         public string? FirtsParagraph { get; set; }
         public string? LastParagraph { get; set; }
+        public int StudentId { get; set; }
+        public Student Student { get; set; }
     }
 }

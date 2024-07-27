@@ -1,0 +1,25 @@
+﻿
+@model StudentViewModel
+
+<body>
+    <div class="container">
+        <br/>
+        <br />
+        <br/>
+        <form asp-controller="Student" asp-action="DeleteStudent" method="post">
+            <h2>Você realmente deseja deletar o aluno da lista? Após a confirmação, não será possível desfazer essa ação.</h2>
+            <!-- Campo oculto para o ID do aluno -->
+            <input type="hidden" asp-for="Student.Id" />
+
+            <div class="form-group col-md-5">
+                <br><br><br>
+                <label for="Nome" class="form-label">ALUNO:</label>
+                <input type="text" asp-for="Student.Name" class="form-control" placeholder="@Model.Student.Name.ToUpper()" readonly>
+            </div>
+
+            <br>
+
+            <button type="submit" class="btn btn-red">DELETAR</button>
+        </form>
+    </div>
+</body>

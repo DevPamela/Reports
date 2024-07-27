@@ -1,127 +1,166 @@
-﻿using Reports.Domain.Interfaces;
+﻿using MathNet.Numerics.Distributions;
 using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
+using System.Text;
+
 
 namespace Reports.Service
 {
     public class GoalService : IGoalService
     {
         private readonly IStudentService _studentService;
-        private readonly IStudentRepository _studentRepository;
         private readonly IGoalRepository _goalRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAssessmentService _assessmentService;
+        private readonly IBulkInsertHelper _bulkInsertHelper;
 
         public GoalService(
-            IStudentService studentService, 
-            IStudentRepository studentRepository, 
-            IGoalRepository goalRepository)
+            IStudentService studentService,
+            IGoalRepository goalRepository,
+            IUnitOfWork unitOfWork, IAssessmentService assessmentService, IBulkInsertHelper bulkInsertHelper)
         {
             _studentService = studentService;
-            _studentRepository = studentRepository;
             _goalRepository = goalRepository;
+            _unitOfWork = unitOfWork;
+            _assessmentService = assessmentService;
+            _bulkInsertHelper = bulkInsertHelper;
         }
+
         public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
         {
-            var students = await _studentRepository.GetAllAsync();
+            await SetAllPropertiesToFalse();
 
-            foreach (var s in students)
+            foreach (var g in goals)
             {
-                var goalList = new List<Goal>();
+                var goal = await _goalRepository.GetByNameAsync(g);
 
-                foreach (var g in goals)
-                {
-                    var goal = new Goal
-                    {
-                        Name = g
-                    };
-                    goalList.Add(goal);
-                }
-                s.Goals.AddRange(goalList);
-
-                await _studentRepository.UpdateOneStudentGoalsAsync(s.Name, s.Goals);
+                SetIsSelectedAsTrue(goal);
             }
+            await _unitOfWork.SaveChangesAsync();
+            var goalsList = _goalRepository.GetAllAsync().Result.Where(_ => _.IsSelected == true).ToList();
+            var students = await SetGoalsForStudentList(goalsList);
+
             return students;
+        }
+
+        public async Task<List<Student>> SetGoalsForStudentList(List<Goal> goals)
+        {
+            var students = await _studentService.GetStudentsListAsync();
+            var selectedStudents = students.Where(_ => _.IsSelected == true);
+            foreach (var student in selectedStudents)
+            {
+                foreach (var goal in goals)
+                {
+                    await _assessmentService.AddAssessmentForByGoalId(goal, student);
+                }
+
+                student.Goals = goals;
+            }
+            return selectedStudents.ToList();
+        }
+        public void SetIsSelectedAsTrue(Goal goal)
+        {
+            SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
+            selectableSomeEntity.SetSelectionAsTrue(goal);
+        }
+        public void SetStudentId(Student student, Goal goal)
+        {
+            if (!CheckIfHasStudentId(student))
+            {
+                goal.StudentId = student.Id;
+            }
+        }
+        public bool CheckIfHasStudentId(Student student)
+        {
+            var goals = _goalRepository.GetAllAsync().Result;
+
+            foreach (var goal in goals)
+            {
+                ;
+                if (student.Id == goal.StudentId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async Task SetAllPropertiesToFalse()
+        {
+            SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
+            var goals = await _goalRepository.GetAllAsync();
+            foreach (var goal in goals)
+            {
+                selectableSomeEntity.ClearSelection(goal);
+            }
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
         {
-            var name = await _goalRepository.GetByNameAsync(goalName);
-
-            if (name == null)
+            var goal = await _goalRepository.GetByNameAsync(goalName);
+            var newDescription = await SetPronounForGenre(description);
+            if (goal == null)
             {
-                var goals = new Goal { Name = goalName };
-                await _goalRepository.AddOneAsync(goals);
-                name = goals;
+                goal = new Goal { Name = goalName };
+                _goalRepository.Add(goal);
             }
 
             switch (collectionName)
             {
                 case "Satisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.AtendedDescription), description);
+                    goal.AtendedDescription = newDescription;
                     break;
                 case "Parcialmente satisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.ParciallyAtendedDescription), description);
+                    goal.ParciallyAtendedDescription = newDescription;
                     break;
                 case "Insatisfatório":
-                    await _goalRepository.UpdateOneGoalDescriptionAsync(
-                        goalName, nameof(name.UnatendedDescription), description);
+                    goal.UnatendedDescription = newDescription;
                     break;
             }
+
+            await _unitOfWork.SaveChangesAsync();
         }
-
-
-        public async Task<Student> GetDescriptionForParagrafAsync(Student student)
+        
+        public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment)
         {
-            foreach (var g in student.Goals)
+            var assessmentName = assessment.Goal.Name;
+            var name = await _goalRepository.GetByNameAsync(assessment.Goal.Name);
+            if (name != null)
             {
-                var name = await _goalRepository.GetByNameAsync(g.Name);
-
-                if (name != null)
+                return assessmentName = assessment.IsSatisfactory switch
                 {
-                    switch (g.IsSatisfactory)
-                    {
-                        case "S":
-                            g.Name = name.AtendedDescription;
-                            break;
-                        case "PS":
-                            g.Name = name.ParciallyAtendedDescription;
-                            break;
-                        default:
-                            g.Name = name.UnatendedDescription;
-                            break;
-                    }
-                }
+                    "S" => name.AtendedDescription,
+                    "PS" => name.ParciallyAtendedDescription,
+                    "I" => name.UnatendedDescription
+                };
             }
-            return student;
+
+            else
+            {
+                return assessmentName;
+            }
         }
 
         public async Task<List<Goal>> GetGoalsListAsync() =>
             await _goalRepository.GetAllAsync();
 
-        public async Task SaveSelectedGoalsAsync(Dictionary<string, Dictionary<string, string>> avaliacoes)
+        public async Task<Goal> GetGoalByIdAsync(int id) =>
+           await _goalRepository.GetByIdAsync(id);
+
+
+        public async Task<string> SetPronounForGenre(string description)
         {
-            foreach (var aluno in avaliacoes)
-            {
-                var alunoSalvo = await _studentService.GetStudentByNameAsync(aluno.Key);
-          
-                if (alunoSalvo != null)
-                {
-                    var goals = new List<Goal>();
+            var adjustedDescription = new StringBuilder(description);
 
-                    foreach (var meta in aluno.Value)
-                    {
-                        var goal = new Goal
-                        {
-                            Name = meta.Key,
-                            IsSatisfactory = meta.Value
-                        };
-                        goals.Add(goal);
-                    }
+            adjustedDescription.Replace("O Aluno", "{0} alun{0}");
 
-                    await _studentRepository.UpdateOneStudentGoalsAsync(alunoSalvo.Name, goals);
-                }
-            }
+            adjustedDescription.Replace("Nome do aluno", "{1}");
+
+            adjustedDescription.Replace("(o)", "{0}");
+
+            return adjustedDescription.ToString();
         }
     }
 }

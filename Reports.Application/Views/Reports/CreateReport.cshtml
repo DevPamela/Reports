@@ -1,41 +1,9 @@
-﻿@using Reports.Application.Models;
-@using Reports.Domain.Models;
-@model DataViewModel;
-@{
-    ViewData["Title"] = "Gerar relatórios";
-}
-<br/>
-<br/>
-<br/>
-<h1>GERAR RELATÓRIOS DE ALUNOS AUTOMATICAMENTE</h1>
-<br/>
-<h2>
-    Em instantes você terá seus relatórios concluidos. Antes, caso você queira adicionar um primeiro paragrafo ou mais introdutório,
-    adicione seu texto no campo "Digite ou cole aqui o seu primeiro paragrafo".
-</h2>
-<h2>
-    Você também pode finalizar os relatórios com um paragráfo conclusivo, para isso, basta colar seu parágrafo no campo:
-    "Digite ou cole aqui o seu ultimo paragrafo"
-</h2>
-<br/>
-<h3>Lembre-se: Você pode colar mais do que dois parágrafos, para isso, inicie o novo parágrafo com {paragrafo} que ele será formatado corretamente.</h3>
+﻿@model HomeModel;
+<br />
+<br />
+<br />
+<br />
+<h1>O QUE VOCÊ GOSTARIA DE FAZER HOJE,</h1>
+<br />
+<br />
 
-<h3>Também é possível adicionar o nome do aluno que está sendo gerado o relatório nesse paragrafo para você não precisar editar nada, indique {aluno} aonde você desejar que o nome seja escrito.</h3>
-<br/>
-<h2>Atenção: É necessário indicar o caminho COMPLETO para a pasta que você deseja salvar seus relatórios. Exemplo: "C:\Users\julio\OneDrive\Documents\Relatórios"</h2>
-<br/>
-<div class="body-buttons">
-    @using (Html.BeginForm("CreateReport", "Reports", FormMethod.Post))
-    {
-        @Html.TextBoxFor(model => model.Report.FirtsParagraph, new {style = "width: 350px;", placeholder = "Digite ou cole aqui o seu primeiro paragrafo"})
-        <br />
-        <br />
-        @Html.TextBoxFor(model => model.Report.LastParagraph, new {style = "width: 350px;", placeholder = "Digite ou cole aqui o seu ultimo paragrafo" })
-        <br />
-        <br />
-        @Html.TextBox("path", null, new {style = "width: 400px;", placeholder = "Caminho da pasta que os relatórios ficarão salvos" })
-        <br />
-        <br />
-        <input type="submit" value="Enviar" />
-    }
-</div>
