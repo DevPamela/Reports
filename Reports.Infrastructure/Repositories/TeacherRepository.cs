@@ -1,10 +1,7 @@
-﻿using MathNet.Numerics.Distributions;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
-using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Reports.Infrastructure.Repositories;
 internal class TeacherRepository : ITeacherRepository
@@ -15,7 +12,7 @@ internal class TeacherRepository : ITeacherRepository
         _dbContext = dbContext;
 
     /// <inheritdoc />
-    public void Add(Teacher teacher ) =>
+    public void Add(Teacher teacher) =>
         _dbContext.Teacher.Add(teacher);
 
     public void Update(Teacher teacher) =>

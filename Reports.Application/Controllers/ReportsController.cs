@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
-using Reports.Domain.Interfaces;
 using Reports.Domain.Interfaces.Service;
 
 namespace Reports.Application.Controllers
@@ -29,7 +27,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult>CreateReport(DataViewModel data)
+        public async Task<ActionResult> CreateReport(DataViewModel data)
         {
             try
             {
@@ -43,7 +41,7 @@ namespace Reports.Application.Controllers
             {
                 return View("Error", ex);
             }
-            
+
         }
 
     }

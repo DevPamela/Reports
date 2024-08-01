@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using System.Runtime.CompilerServices;
 
 namespace Reports.Application.Controllers
 {
@@ -13,13 +12,13 @@ namespace Reports.Application.Controllers
         {
             _classroomService = classroomService;
         }
-     
+
         public IActionResult Index()
         {
             return View();
         }
 
-        [HttpGet] 
+        [HttpGet]
         public async Task<ActionResult> SelectClassroomForReport()
         {
             var classroom = await _classroomService.GetAllAsync();
@@ -33,7 +32,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SetIsSelectedPropertyAstrue(List<int>SelectedClasses)
+        public async Task<ActionResult> SetIsSelectedPropertyAstrue(List<int> SelectedClasses)
         {
             foreach (var classroom in SelectedClasses)
             {

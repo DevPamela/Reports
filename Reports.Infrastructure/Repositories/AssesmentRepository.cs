@@ -1,10 +1,7 @@
-﻿using MathNet.Numerics.Distributions;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
+﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
-using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Reports.Infrastructure.Repositories;
 internal class AssessmentRepository : IAssessmentRepository
@@ -15,7 +12,7 @@ internal class AssessmentRepository : IAssessmentRepository
         _dbContext = dbContext;
 
     /// <inheritdoc />
-    public void Add(Assessment assesment ) =>
+    public void Add(Assessment assesment) =>
         _dbContext.Assessments.Add(assesment);
 
     /// <inheritdoc />
@@ -35,7 +32,7 @@ internal class AssessmentRepository : IAssessmentRepository
     public async Task<Assessment?> GetByStudentIdAsync(int id) =>
           await _dbContext.Assessments
               .FirstOrDefaultAsync(a => a.StudentId == id);
-    public async Task<Assessment?> GetByStudentIdAndGoalId (int studentId, int goalId) => _dbContext.Assessments
+    public async Task<Assessment?> GetByStudentIdAndGoalId(int studentId, int goalId) => _dbContext.Assessments
     .FirstOrDefault(a => a.StudentId == studentId && a.GoalId == goalId);
 
 }

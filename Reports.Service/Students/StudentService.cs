@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using NPOI.SS.UserModel;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
@@ -145,7 +144,7 @@ namespace Reports.Service.Students
                 //Estourar uma exception se student.Birthday < DateTime.Now
                 if (student.Birthday != DateTime.MinValue && student.Birthday < DateTime.Now)
                     repo.Birthday = student.Birthday;
-                
+
                 _studentRepository.Update(repo);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -207,10 +206,10 @@ namespace Reports.Service.Students
             SelectableEntity<Student> selectableSomeEntity = new SelectableEntity<Student>();
             foreach (var student in students)
             {
-                
+
                 selectableSomeEntity.SetSelectionAsTrue(student);
             }
-           
+
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -248,8 +247,8 @@ namespace Reports.Service.Students
 
         public async Task AddStudentAsync(Student student)
         {
-             _studentRepository.Add(student);
-             await _unitOfWork.SaveChangesAsync();
+            _studentRepository.Add(student);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

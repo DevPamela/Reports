@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
-using Newtonsoft.Json;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service;
-using System.Linq;
 
 namespace Reports.Application.Controllers
 {
@@ -98,7 +94,7 @@ namespace Reports.Application.Controllers
             var students = await _studentService.GetStudentsListAsync();
             var selectedStudents = students.Where(_ => studentsId.Contains(_.Id)).ToList();
             await _studentService.SetStudentAsTrue(selectedStudents);
-          
+
 
             return RedirectToAction("GetAbsencesNumber", "Student");
         }
@@ -122,7 +118,7 @@ namespace Reports.Application.Controllers
 
             return RedirectToAction("SelectGoalsForReport", "Goals");
         }
-       
+
         [HttpGet]
         public async Task<ActionResult> StudentsList()
         {
