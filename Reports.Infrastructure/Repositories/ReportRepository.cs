@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
@@ -34,9 +33,9 @@ namespace Reports.Infrastructure.Repositories
         public async Task<Report> ObterRelatorioPorId(int idDoRelatorio) =>
               _dbContext.Reports
                 .Include(r => r.Student)
-                .FirstOrDefault(r => r.Id == idDoRelatorio); 
+                .FirstOrDefault(r => r.Id == idDoRelatorio);
 
-         //   return await relatorio;
+        //   return await relatorio;
     }
 }
 

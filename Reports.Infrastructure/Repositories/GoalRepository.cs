@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
@@ -27,5 +26,5 @@ internal class GoalRepository : IGoalRepository
     public async Task<Goal?> GetByIdAsync(int id) =>
           await _dbContext.Goals
               .FirstOrDefaultAsync(s => s.Id == id);
-   
+
 }

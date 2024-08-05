@@ -1,5 +1,4 @@
-﻿using MongoDB.Driver;
-using MySqlConnector;
+﻿using MySqlConnector;
 using Reports.Domain.Interfaces.Service;
 using System.Data;
 using System.Reflection;
