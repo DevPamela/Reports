@@ -1,6 +1,7 @@
 ﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
+using Reports.Service.Interfaces.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;

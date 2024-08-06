@@ -1,195 +1,219 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
+using Reports.Application.Validators;
+using Reports.Application.ViewModels.Student;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
+using Reports.Service.Interfaces.Service;
 
-namespace Reports.Application.Controllers
+namespace Reports.Application.Controllers;
+
+public class StudentController : Controller
 {
-    public class StudentController : Controller
+    private readonly IStudentService _studentService;
+    private readonly IClassroomService _classroomService;
+    private readonly IValidator<RegisterStudentByListViewModel> _validator;
+
+    public StudentController(
+        IStudentService studentService,
+        IClassroomService classroomService,
+        IValidator<RegisterStudentByListViewModel> validator)
     {
-        private readonly IStudentService _studentService;
-        private readonly IClassroomService _classroomService;
+        _studentService = studentService;
+        _classroomService = classroomService;
+        _validator = validator;
+    }
+    public IActionResult Index()
+    {
 
-        public StudentController(IStudentService studentService, IClassroomService classroomService)
-        {
-            _studentService = studentService;
-            _classroomService = classroomService;
-        }
-        public IActionResult Index()
-        {
+        return View();
+    }
+    public ActionResult Error(string error)
+    {
+        return View(model: error);
+    }
 
-            return View();
-        }
-        public ActionResult Error()
+    public ActionResult Success(int id)
+    {
+        var students = _studentService.GetStudentsListAsync().Result;
+        var selectedStudents = students.Where(_ => _.ClassRoomId == id).ToList();
+        var viewModel = new StudentViewModel()
         {
-            return View();
-        }
+            Students = selectedStudents
+        };
+        return View(viewModel);
+    }
 
-        public ActionResult Success(int id)
+    [HttpPost]
+    public async Task<ActionResult> RegisterStudentByList(RegisterStudentByListViewModel viewModel)
+    {
+        try
         {
-            var students = _studentService.GetStudentsListAsync().Result;
-            var selectedStudents = students.Where(_ => _.ClassRoomId == id).ToList();
-            var viewModel = new StudentViewModel()
+            //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
+            //TODO bloquear mais de um aluno com mesmo nome
+            ValidationResult validationResult = await _validator.ValidateAsync(viewModel);
+
+            if (!validationResult.IsValid)
             {
-                Students = selectedStudents
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> RegisterStudentByList([FromForm] IFormFile excelFile, [FromForm] string classroomName)
-        {
-            try
-            {
-                //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
-                //TODO bloquear mais de um aluno com mesmo nome
-                string[] param = { "nome", "data de nascimento" };
-
-                var students = await _studentService.AddStudentByListAsync(excelFile, param);
-                await _classroomService.SetClassRommInformation(classroomName, students, 1);
-                int classroomId = students.FirstOrDefault()?.Class.Id ?? 0;
-                //return RedirectToAction("Success", new { id = classroomId });
-                return Json(new { redirectUrl = Url.Action("Success", new { id = classroomId }) });
+                validationResult.AddToModelState(ModelState);
+                return View(nameof(Index), viewModel);
             }
-            catch (Exception e)
+
+            using var stream = viewModel.ExcelFile.OpenReadStream();
+            var addStudentResult = _studentService.AddStudentByListAsync(stream);
+
+            if (addStudentResult.IsFailed)
             {
-                //TODO incluir mensagem de erro na view
-                return Json(new { redirectUrl = Url.Action("Error") });
+                addStudentResult.AddToModelState(ModelState);
+                return View(nameof(Index), viewModel);
             }
+
+            var students = addStudentResult.Value;
+
+            await _classroomService.SetClassRommInformation(viewModel.ClassroomName, students, 1);
+            int classroomId = students.FirstOrDefault()?.Class.Id ?? 0;
+            return RedirectToAction(nameof(Success), new { id = classroomId });
         }
-        [HttpPost]
-        public async Task<ActionResult> SaveStudentGender(StudentViewModel model)
+        catch (Exception e)
         {
-            await _studentService.UpdateStudentList(model.Students);
-
-            return RedirectToAction("Index", "Home");
+            //TODO incluir mensagem de erro na view
+            return RedirectToAction(nameof(Error), new { error = e.Message });
         }
+    }
+    [HttpPost]
+    public async Task<ActionResult> SaveStudentGender(StudentViewModel model)
+    {
+        await _studentService.UpdateStudentList(model.Students);
 
-        [HttpGet]
-        public async Task<ActionResult> GetStudentByName(string name)
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetStudentByName(string name)
+    {
+        var student = await _studentService.GetStudentByNameAsync(name);
+        return Ok(student);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> SelectStudentsForReport()
+    {
+        var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
+        var students = await _studentService.GetStudentsListAsync();
+
+        var filteredStudents = students.Where(student => selectedClasses.Contains(student.ClassRoomId ?? default)).ToList();
+        await _studentService.ClearSelection(students);
+        var model = new StudentViewModel()
         {
-            var student = await _studentService.GetStudentByNameAsync(name);
-            return Ok(student);
-        }
+            Students = filteredStudents
+        };
 
-        [HttpGet]
-        public async Task<ActionResult> SelectStudentsForReport()
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> SetIsSelectedPropertyStudentAstrue(List<int> studentsId)
+    {
+        var students = await _studentService.GetStudentsListAsync();
+        var selectedStudents = students.Where(_ => studentsId.Contains(_.Id)).ToList();
+        await _studentService.SetStudentAsTrue(selectedStudents);
+
+
+        return RedirectToAction("GetAbsencesNumber", "Student");
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetAbsencesNumber()
+    {
+        var students = await _studentService.GetStudentsListAsync();
+        var studentList = students.Where(_ => _.IsSelected == true).ToList();
+        var model = new StudentViewModel
         {
-            var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
-            var students = await _studentService.GetStudentsListAsync();
+            Students = studentList
+        };
+        return View(model);
+    }
 
-            var filteredStudents = students.Where(student => selectedClasses.Contains(student.ClassRoomId ?? default)).ToList();
-            await _studentService.ClearSelection(students);
-            var model = new StudentViewModel()
-            {
-                Students = filteredStudents
-            };
+    [HttpPost]
+    public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
+    {
+        await _studentService.SetAbsencesNumber(students);
 
-            return View(model);
-        }
+        return RedirectToAction("SelectGoalsForReport", "Goals");
+    }
 
-        [HttpPost]
-        public async Task<ActionResult> SetIsSelectedPropertyStudentAstrue(List<int> studentsId)
+    [HttpGet]
+    public async Task<ActionResult> StudentsList()
+    {
+        var students = await _studentService.GetStudentsListAsync();
+        var model = new StudentViewModel
         {
-            var students = await _studentService.GetStudentsListAsync();
-            var selectedStudents = students.Where(_ => studentsId.Contains(_.Id)).ToList();
-            await _studentService.SetStudentAsTrue(selectedStudents);
+            Students = students
+        };
 
+        return View(model);
+    }
 
-            return RedirectToAction("GetAbsencesNumber", "Student");
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> GetAbsencesNumber()
+    [HttpGet]
+    public async Task<ActionResult> EditStudent(int id)
+    {
+        var student = await _studentService.GetByIdAsync(id);
+        var classroom = await _classroomService.GetAllAsync();
+        var model = new ClassroomAndStudentViewModel
         {
-            var students = await _studentService.GetStudentsListAsync();
-            var studentList = students.Where(_ => _.IsSelected == true).ToList();
-            var model = new StudentViewModel
-            {
-                Students = studentList
-            };
-            return View(model);
-        }
+            Student = student,
+            Classes = classroom
+        };
 
-        [HttpPost]
-        public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> UpdateStudent(Student student)
+    {
+        await _studentService.UpdateStudent(student);
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> RemoveStudent(int id)
+    {
+        var student = await _studentService.GetByIdAsync(id);
+        var model = new StudentViewModel
         {
-            await _studentService.SetAbsencesNumber(students);
+            Student = student
+        };
+        return View(model);
+    }
 
-            return RedirectToAction("SelectGoalsForReport", "Goals");
-        }
+    [HttpPost]
+    public async Task<ActionResult> DeleteStudent(Student student)
+    {
+        await _studentService.DeleteStudent(student);
 
-        [HttpGet]
-        public async Task<ActionResult> StudentsList()
+        return RedirectToAction("Index", "Home");
+    }
+
+    public async Task<ActionResult> AddNewStudent()
+    {
+        var classes = await _classroomService.GetAllAsync();
+
+        var model = new ClassroomAndStudentViewModel()
         {
-            var students = await _studentService.GetStudentsListAsync();
-            var model = new StudentViewModel
-            {
-                Students = students
-            };
+            Classes = classes
+        };
 
-            return View(model);
-        }
+        return View(model);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult> EditStudent(int id)
-        {
-            var student = await _studentService.GetByIdAsync(id);
-            var classroom = await _classroomService.GetAllAsync();
-            var model = new ClassroomAndStudentViewModel
-            {
-                Student = student,
-                Classes = classroom
-            };
+    [HttpPost]
+    public async Task<ActionResult> AddStudent(Student student)
+    {
+        await _studentService.AddStudentAsync(student);
 
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> UpdateStudent(Student student)
-        {
-            await _studentService.UpdateStudent(student);
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> RemoveStudent(int id)
-        {
-            var student = await _studentService.GetByIdAsync(id);
-            var model = new StudentViewModel
-            {
-                Student = student
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> DeleteStudent(Student student)
-        {
-            await _studentService.DeleteStudent(student);
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        public async Task<ActionResult> AddNewStudent()
-        {
-            var classes = await _classroomService.GetAllAsync();
-
-            var model = new ClassroomAndStudentViewModel()
-            {
-                Classes = classes
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddStudent(Student student)
-        {
-            await _studentService.AddStudentAsync(student);
-
-            return RedirectToAction("Index", "Home");
-        }
+        return RedirectToAction("Index", "Home");
     }
 }

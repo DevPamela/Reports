@@ -1,6 +1,7 @@
 ﻿using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.XWPF.UserModel;
 using Reports.Domain.Interfaces.Service;
+using Reports.Service.Interfaces.Service;
 
 namespace Reports.Service
 {
