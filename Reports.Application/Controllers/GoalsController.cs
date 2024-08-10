@@ -22,7 +22,8 @@ namespace Reports.Application.Controllers
             return View(viewModel);
             //TODO criar botão de voltar
         }
-        
+        [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SelectGoalsForReport()
         {
             var goals = await _goalService.GetGoalsListAsync();
@@ -34,6 +35,7 @@ namespace Reports.Application.Controllers
         
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveStudentGoalsResults(List<string> goals)
         {
             var students = await _goalService.SaveStudentsGoalsAsync(goals);
@@ -43,6 +45,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddGoal(List<GoalsViewModel> goalsViewModels)
         {
             try
@@ -70,6 +73,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveIsAtendedInformation(List<Student> students)
         {
             await _assessmentService.AddIsAtendedInformation(students);

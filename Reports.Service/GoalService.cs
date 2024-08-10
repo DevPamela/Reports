@@ -38,7 +38,8 @@ namespace Reports.Service
                 SetIsSelectedAsTrue(goal);
             }
             await _unitOfWork.SaveChangesAsync();
-            var goalsList = _goalRepository.GetAllAsync().Result.Where(_ => _.IsSelected == true).ToList();
+            var savedGoals = await _goalRepository.GetAllAsync();
+            var goalsList = savedGoals.Where(_ => _.IsSelected == true).ToList();
             var students = await SetGoalsForStudentList(goalsList);
 
             return students;
@@ -64,16 +65,18 @@ namespace Reports.Service
             SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
             selectableSomeEntity.SetSelectionAsTrue(goal);
         }
-        public void SetStudentId(Student student, Goal goal)
+        public async void SetStudentId(Student student, Goal goal)
         {
-            if (!CheckIfHasStudentId(student))
+            var hasStudentId = await CheckIfHasStudentId(student);
+
+            if (!hasStudentId)
             {
                 goal.StudentId = student.Id;
             }
         }
-        public bool CheckIfHasStudentId(Student student)
+        public async Task<bool> CheckIfHasStudentId(Student student)
         {
-            var goals = _goalRepository.GetAllAsync().Result;
+            var goals = await _goalRepository.GetAllAsync();
 
             foreach (var goal in goals)
             {

@@ -6,8 +6,8 @@ namespace Reports.Domain.Interfaces.Service
 {
     public interface IStudentService
     {
-        List<Student> ReadStudentsFromSheet(ISheet sheet, int columnIndexName, int columnIndexBirthday);
-        Task<List<Student>> AddStudentByListAsync(IFormFile excelFile, string[] param);
+       // List<Student> ReadStudentsFromSheet(ISheet sheet, int columnIndexName, int columnIndexBirthday);
+        Task<List<Student>> AddStudentByListAsync(IFormFile excelFile);
         Task AddStudentAsync(Student student);
         Task<List<Student>> GetStudentsListAsync();
         Task<Student?> GetStudentByNameAsync(string name);

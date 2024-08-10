@@ -54,9 +54,9 @@ public class BulkInsertHelper : IBulkInsertHelper
             }
         }
 
-        catch (Exception e)
+        catch 
         {
-            new Exception(e.Message);
+            new ArgumentException("Erro ao cadastrar no banco de dados");
         }
     }
     private string ConvertToSqlValue(object value)

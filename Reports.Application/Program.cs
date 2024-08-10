@@ -3,6 +3,7 @@ using Reports.Infrastructure;
 using Reports.Service;
 using Reports.Service.Assessments;
 using Reports.Service.Classroom;
+using Reports.Service.ExcelFileHeader;
 using Reports.Service.Students;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IAssessmentService, AssessmentService>();
 builder.Services.AddScoped<IClassroomService, ClassroomService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IExcelFileHeaderService, ExcelFileHeaderService>();
 
 var app = builder.Build();
 

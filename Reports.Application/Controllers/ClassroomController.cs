@@ -19,6 +19,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SelectClassroomForReport()
         {
             var classroom = await _classroomService.GetAllAsync();
@@ -32,6 +33,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetIsSelectedPropertyAstrue(List<int> SelectedClasses)
         {
             foreach (var classroom in SelectedClasses)

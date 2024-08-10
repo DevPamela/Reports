@@ -24,6 +24,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> RegisterNewTeacher(TeacherViewModel teacherViewModel)
         {
             var teacher = new Teacher

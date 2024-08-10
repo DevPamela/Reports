@@ -41,10 +41,10 @@ namespace Reports.Service
                     report.Student = studentById;
                 }
             }
-            catch (Exception e)
+            catch 
             {
 
-                throw new Exception(e.Message);
+                throw new ArgumentException("Ocorreu um erro durante a geração do relatório");
             }
         }
 
@@ -102,9 +102,9 @@ namespace Reports.Service
                     await CreateReportFile(report);
                 }
             }
-            catch (Exception e)
+            catch 
             {
-                new Exception(e.Message);
+                new ArgumentException("Ocorreu um erro ao cadastrar os relatórios");
             }
 
         }
@@ -164,9 +164,9 @@ namespace Reports.Service
                
                 //Process.Start("explorer.exe", path);
             }
-            catch (Exception e)
+            catch 
             {
-                new Exception(e.Message);
+                new ArgumentException("Ocorreu um erro ao cadastrar os relatórios");
             }
         }
 

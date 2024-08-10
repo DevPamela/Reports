@@ -27,6 +27,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateReport(DataViewModel data)
         {
             try
@@ -37,9 +38,9 @@ namespace Reports.Application.Controllers
 
                 return View("Success");
             }
-            catch (Exception ex)
+            catch 
             {
-                return View("Error", ex);
+                return View("Error");
             }
 
         }

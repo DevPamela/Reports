@@ -25,9 +25,9 @@ namespace Reports.Application.Controllers
             return View();
         }
 
-        public ActionResult Success(int id)
+        public async Task<ActionResult> Success(int id)
         {
-            var students = _studentService.GetStudentsListAsync().Result;
+            var students = await _studentService.GetStudentsListAsync();
             var selectedStudents = students.Where(_ => _.ClassRoomId == id).ToList();
             var viewModel = new StudentViewModel()
             {
@@ -37,27 +37,28 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+       // [ValidateAntiForgeryToken]
         public async Task<ActionResult> RegisterStudentByList([FromForm] IFormFile excelFile, [FromForm] string classroomName)
         {
             try
             {
                 //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
                 //TODO bloquear mais de um aluno com mesmo nome
-                string[] param = { "nome", "data de nascimento" };
 
-                var students = await _studentService.AddStudentByListAsync(excelFile, param);
+                var students = await _studentService.AddStudentByListAsync(excelFile);
                 await _classroomService.SetClassRommInformation(classroomName, students, 1);
                 int classroomId = students.FirstOrDefault()?.Class.Id ?? 0;
                 //return RedirectToAction("Success", new { id = classroomId });
                 return Json(new { redirectUrl = Url.Action("Success", new { id = classroomId }) });
             }
-            catch (Exception e)
+            catch 
             {
                 //TODO incluir mensagem de erro na view
                 return Json(new { redirectUrl = Url.Action("Error") });
             }
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveStudentGender(StudentViewModel model)
         {
             await _studentService.UpdateStudentList(model.Students);
@@ -66,6 +67,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetStudentByName(string name)
         {
             var student = await _studentService.GetStudentByNameAsync(name);
@@ -73,6 +75,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SelectStudentsForReport()
         {
             var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
@@ -89,6 +92,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetIsSelectedPropertyStudentAstrue(List<int> studentsId)
         {
             var students = await _studentService.GetStudentsListAsync();
@@ -100,6 +104,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetAbsencesNumber()
         {
             var students = await _studentService.GetStudentsListAsync();
@@ -112,6 +117,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
         {
             await _studentService.SetAbsencesNumber(students);
@@ -120,6 +126,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> StudentsList()
         {
             var students = await _studentService.GetStudentsListAsync();
@@ -132,6 +139,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditStudent(int id)
         {
             var student = await _studentService.GetByIdAsync(id);
@@ -146,6 +154,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdateStudent(Student student)
         {
             await _studentService.UpdateStudent(student);
@@ -154,6 +163,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpGet]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveStudent(int id)
         {
             var student = await _studentService.GetByIdAsync(id);
@@ -165,6 +175,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteStudent(Student student)
         {
             await _studentService.DeleteStudent(student);
@@ -172,6 +183,8 @@ namespace Reports.Application.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddNewStudent()
         {
             var classes = await _classroomService.GetAllAsync();
@@ -185,6 +198,7 @@ namespace Reports.Application.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddStudent(Student student)
         {
             await _studentService.AddStudentAsync(student);

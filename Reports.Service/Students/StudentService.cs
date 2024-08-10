@@ -12,14 +12,16 @@ namespace Reports.Service.Students
         private readonly IStudentRepository _studentRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBulkInsertHelper _bulkInsertHelper;
+        private readonly IExcelFileHeaderService _excelHeader;
         public StudentService(
             IStudentRepository studentRepository,
             IUnitOfWork unitOfWork,
-            IBulkInsertHelper bulkInsertHelper)
+            IBulkInsertHelper bulkInsertHelper, IExcelFileHeaderService excelHeader)
         {
             _studentRepository = studentRepository;
             _unitOfWork = unitOfWork;
             _bulkInsertHelper = bulkInsertHelper;
+            _excelHeader = excelHeader;
         }
         /// <summary>
         /// Add a list of students.
@@ -28,12 +30,11 @@ namespace Reports.Service.Students
         /// <param name="param"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<Student>> AddStudentByListAsync(IFormFile excelFile, string[] param)
+        public async Task<List<Student>> AddStudentByListAsync(IFormFile excelFile)
         {
             try
             {
-                var sheet1 = new ExcelFileHeaderService(this);
-                var students = sheet1.HeadSheet(excelFile, param);
+                var students = await _excelHeader.HeadSheet(excelFile);
 
                 //string[] columnNames = new[] { "Id", "Name", "Birthday", "Genre", "Absences", "TeacherId", "ClassroomID", "IsSelected" }; 
 
@@ -41,78 +42,9 @@ namespace Reports.Service.Students
                 //await _unitOfWork.SaveChangesAsync();
                 return students.ToList();
             }
-            catch (Exception e)
+            catch 
             {
-                throw new Exception(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Reads an excel file with student data.
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="columnIndexName"></param>
-        /// <param name="columnIndexBirthday"></param>
-        /// <returns></returns>
-        public List<Student> ReadStudentsFromSheet(ISheet sheet, int columnIndexName, int columnIndexBirthday)
-        {
-            var name = "";
-            DateTime birthday = default;
-            var students = new List<Student>();
-
-            for (int i = 1; i <= sheet.LastRowNum; i++)
-            {
-                IRow row = sheet.GetRow(i);
-                if (row != null)
-                {
-                    name = GetCellValue<string>(row.GetCell(columnIndexName));
-                    birthday = GetCellValue<DateTime>(row.GetCell(columnIndexBirthday));
-
-                    Student student = new Student { Name = name, Birthday = birthday };
-
-                    if (name != null)
-                    {
-                        students.Add(student);
-                    }
-                }
-            }
-            return students;
-        }
-
-        /// <summary>
-        /// Reads cell values.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="cell"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        private T GetCellValue<T>(ICell cell)
-        {
-            if (cell == null || cell.CellType == CellType.Blank)
-            {
-                return default;
-            }
-
-            else if (typeof(T) == typeof(string))
-            {
-                return (T)(object)cell.ToString();
-            }
-            else if (typeof(T) == typeof(DateTime))
-            {
-                if (cell.CellType == CellType.Numeric)
-                {
-                    DateTime dateTimeValue = DateTime.FromOADate(cell.NumericCellValue);
-
-                    return (T)(object)dateTimeValue;
-                }
-                else
-                {
-                    return default;
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Unsupported data type.");
+                throw new ArgumentException("Erro ao cadastrar turma");
             }
         }
 
@@ -149,9 +81,9 @@ namespace Reports.Service.Students
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception(ex.Message);
+                throw new ArgumentException("Erro ao atualizar dados do aluno");
             }
         }
 
@@ -231,9 +163,9 @@ namespace Reports.Service.Students
 
                 await _unitOfWork.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch 
             {
-                throw new Exception(e.Message);
+                throw new ArgumentException("Erro ao inserir as faltas do aluno");
             }
         }
 
