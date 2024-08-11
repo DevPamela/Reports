@@ -1,9 +1,6 @@
-﻿using FluentResults;
-using Reports.Domain.Interfaces.Repositories;
+﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service.ExcelFile;
-using Reports.Service.Interfaces.Service;
 
 namespace Reports.Service.Students;
 
@@ -12,29 +9,15 @@ public class StudentService : IStudentService
     private readonly IStudentRepository _studentRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBulkInsertHelper _bulkInsertHelper;
-    private readonly ExcelFileService _excelFileHeaderService;
 
     public StudentService(
         IStudentRepository studentRepository,
         IUnitOfWork unitOfWork,
-        IBulkInsertHelper bulkInsertHelper,
-        ExcelFileService excelFileHeaderService)
+        IBulkInsertHelper bulkInsertHelper)
     {
         _studentRepository = studentRepository;
         _unitOfWork = unitOfWork;
         _bulkInsertHelper = bulkInsertHelper;
-        _excelFileHeaderService = excelFileHeaderService;
-    }
-    /// <summary>
-    /// Add a list of students.
-    /// </summary>
-    /// <param name="excelFile"></param>
-    /// <param name="param"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public Result<List<Student>> AddStudentByListAsync(Stream stream)
-    {
-        return _excelFileHeaderService.ReadStudentsFromFile(stream);
     }
 
     /// <summary>

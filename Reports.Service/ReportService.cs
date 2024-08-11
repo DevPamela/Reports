@@ -2,7 +2,6 @@
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service.Interfaces.Service;
 
 namespace Reports.Service
 {
@@ -98,7 +97,7 @@ namespace Reports.Service
                     var list = CreateReportForStudents(report, student);
                     report.StudentId = student.Id;
                     await SetStudentIdForReport(report);
-                   // await AddReport(list);
+                    // await AddReport(list);
 
                     await CreateReportFile(report);
                 }
@@ -148,8 +147,8 @@ namespace Reports.Service
                     var name = studentName.Split(' ');
                     var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
                     var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
-                  
-                  
+
+
                     string param = string.Format(goalDescription, validation, name[0]);
                     await CreateParagraph(param, doc);
                 }
@@ -162,7 +161,7 @@ namespace Reports.Service
                 //TODO resolver o bulk insert 
                 XWPFParagraph pageBreak = doc.CreateParagraph();
                 await SaveDocument(reportsFolder, doc, report.Student.Name);
-               
+
                 //Process.Start("explorer.exe", path);
             }
             catch (Exception e)
@@ -249,11 +248,11 @@ namespace Reports.Service
                 await CreateParagraphForHeader(p, doc);
             }
         }
-       /// <summary>
-       /// Generates the Report folder.
-       /// </summary>
-       /// <param name="reportsFolder"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Generates the Report folder.
+        /// </summary>
+        /// <param name="reportsFolder"></param>
+        /// <returns></returns>
         private async Task CreateReportsFolder(string reportsFolder)
         {
             try

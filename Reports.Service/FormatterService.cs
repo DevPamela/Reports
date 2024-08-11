@@ -1,7 +1,6 @@
 ﻿using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.XWPF.UserModel;
 using Reports.Domain.Interfaces.Service;
-using Reports.Service.Interfaces.Service;
 
 namespace Reports.Service
 {
@@ -41,7 +40,7 @@ namespace Reports.Service
         /// <param name="paragraph"></param>
         private async Task SetJustifyAlighment(XWPFParagraph paragraph)
         {
-             paragraph.Alignment =  ParagraphAlignment.BOTH;
+            paragraph.Alignment = ParagraphAlignment.BOTH;
         }
 
         private async Task SetCentralizedAlighment(XWPFParagraph paragraph)
@@ -95,7 +94,7 @@ namespace Reports.Service
         /// <param name="paragraph"></param>
         private async Task SetFirstLineIndent(XWPFParagraph paragraph)
         {
-            CT_PPr paraProperties =  paragraph.GetCTP().AddNewPPr();
+            CT_PPr paraProperties = paragraph.GetCTP().AddNewPPr();
             CT_Ind ind = paraProperties.AddNewInd();
             ind.firstLine = 1440;
         }

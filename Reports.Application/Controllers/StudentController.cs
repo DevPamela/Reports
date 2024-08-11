@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Reports.Application.Extensions;
 using Reports.Application.Models;
-using Reports.Application.Validators;
 using Reports.Application.ViewModels.Student;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service.Interfaces.Service;
+using Reports.Service.UseCases.RegisterStudentsFromFile;
 
 namespace Reports.Application.Controllers;
 
@@ -14,25 +13,22 @@ public class StudentController : Controller
 {
     private readonly IStudentService _studentService;
     private readonly IClassroomService _classroomService;
-    private readonly IValidator<RegisterStudentByListViewModel> _validator;
 
     public StudentController(
         IStudentService studentService,
-        IClassroomService classroomService,
-        IValidator<RegisterStudentByListViewModel> validator)
+        IClassroomService classroomService)
     {
         _studentService = studentService;
         _classroomService = classroomService;
-        _validator = validator;
     }
     public IActionResult Index()
     {
 
         return View();
     }
-    public ActionResult Error(string error)
+    public ActionResult Error()
     {
-        return View(model: error);
+        return View();
     }
 
     public ActionResult Success(int id)
@@ -47,41 +43,35 @@ public class StudentController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult> RegisterStudentByList(RegisterStudentByListViewModel viewModel)
+    public async Task<ActionResult> RegisterStudentsFromFile(
+        [FromServices] RegisterStudentsFromFileUseCase useCase,
+        [FromServices] IValidator<RegisterStudentsFromFileViewModel> validator,
+        RegisterStudentsFromFileViewModel viewModel)
     {
-        try
+        //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
+        //TODO bloquear mais de um aluno com mesmo nome
+
+        var validationResult = await validator.ValidateAsync(viewModel);
+
+        if (!validationResult.IsValid)
         {
-            //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
-            //TODO bloquear mais de um aluno com mesmo nome
-            ValidationResult validationResult = await _validator.ValidateAsync(viewModel);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState);
-                return View(nameof(Index), viewModel);
-            }
-
-            using var stream = viewModel.ExcelFile.OpenReadStream();
-            var addStudentResult = _studentService.AddStudentByListAsync(stream);
-
-            if (addStudentResult.IsFailed)
-            {
-                addStudentResult.AddToModelState(ModelState);
-                return View(nameof(Index), viewModel);
-            }
-
-            var students = addStudentResult.Value;
-
-            await _classroomService.SetClassRommInformation(viewModel.ClassroomName, students, 1);
-            int classroomId = students.FirstOrDefault()?.Class.Id ?? 0;
-            return RedirectToAction(nameof(Success), new { id = classroomId });
+            validationResult.AddToModelState(ModelState);
+            return View(nameof(Index), viewModel);
         }
-        catch (Exception e)
+
+        var stream = viewModel.ExcelFile.OpenReadStream();
+        var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, 1);
+        var response = await useCase.ExecuteAsync(request);
+
+        if (response.IsFailed)
         {
-            //TODO incluir mensagem de erro na view
-            return RedirectToAction(nameof(Error), new { error = e.Message });
+            response.AddToModelState(ModelState);
+            return View(nameof(Index), viewModel);
         }
+
+        return RedirectToAction(nameof(Success), new { id = response.Value.ClassroomId });
     }
+
     [HttpPost]
     public async Task<ActionResult> SaveStudentGender(StudentViewModel model)
     {

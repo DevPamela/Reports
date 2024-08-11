@@ -1,5 +1,5 @@
 ﻿@using Reports.Application.ViewModels.Student
-@model RegisterStudentByListViewModel
+@model RegisterStudentsFromFileViewModel
 @{
     ViewData["Title"] = "Adicionar aluno";
 }
@@ -7,33 +7,33 @@
 <br />
 <br />
 <div class="row">
-    <div class"col-sm-12">
+    <div class="col-sm-12">
         <div class="card">
             <div class="title">
-                <div class"card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
+                <div class="card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
             </div>
             <br />
-            <div class"card-header">Clique no botão abaixo e escolha o arquivo excel que contém a sua lista de alunos.</div>
+            <div class="card-header">Clique no botão abaixo e escolha o arquivo excel que contém a sua lista de alunos.</div>
             <br />
             <div class="warning">
                 Atenção: Não se esqueça de se certificar de que em seu arquivo os campos nome, data de nascimento e faltas estão devidamente preenchidos, a ausência desses itens vai
                 impossibilitar a geração dos relatórios
             </div>
             <br />
-            <div asp-validation-summary="All" class="d-flex justify-content-center text-danger"></div>
-            <form asp-action="RegisterStudentByList" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="All" id="validation-errors" class="d-flex justify-content-center text-danger"></div>
+            <form asp-action="RegisterStudentsFromFile" id="register-students-form" enctype="multipart/form-data" method="post">
                 <div class="form-container">
                     <div class="form-group">
-                        <h5 for="classroomName" class="custom-label">Escreva o nome da sua turma:</h5>
-                        <input asp-for="ClassroomName" type="text" id="classroomName" class="form-control small-input" placeholder="Ex: Infantil IV" />
+                        <h5 for="classroom-name-input" class="custom-label">Escreva o nome da sua turma:</h5>
+                        <input asp-for="ClassroomName" type="text" id="classroom-name-input" class="form-control small-input" placeholder="Ex: Infantil IV" />
                     </div>
                 </div>
                 <div class="text-center">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-4  offset-sm-4 center-content ">
-                                <label for="inputExcel" class="custom-label2">Clique aqui e selecione a sua lista de alunos &#187;</label>
-                                <input asp-for="ExcelFile" id="inputExcel" type="file" hidden accept=".xls, .xlsx">
+                                <label for="excel-input" class="custom-label2">Clique aqui e selecione a sua lista de alunos &#187;</label>
+                                <input asp-for="ExcelFile" id="excel-input" type="file" accept=".xls, .xlsx" hidden>
                             </div>
                             <br />
                             <br />
@@ -42,7 +42,7 @@
                             <br />
                             <br />
                             <br />
-                            <input type="submit" class="btn btn btn-secondary color" value="Enviar" />
+                            <input id="submit-button" type="submit" class="btn btn btn-secondary color" value="Enviar" />
                         </div>
                     </div>
                 </div>

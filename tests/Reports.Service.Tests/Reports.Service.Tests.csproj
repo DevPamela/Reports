@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Reports.Service\Reports.Service.csproj" />
+    <ProjectReference Include="..\Reports.Tests.TestHelpers\Reports.Tests.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,64 +36,64 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ExcelFile\Files\BirthdayColumnValidator\cell-is-not-date.xlsx">
+    <None Update="ExcelParser\Files\BirthdayColumnValidator\cell-is-not-date.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\BirthdayColumnValidator\cell-is-not-numeric.xlsx">
+    <None Update="ExcelParser\Files\BirthdayColumnValidator\cell-is-not-numeric.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\BirthdayColumnValidator\date-is-valid.xlsx">
+    <None Update="ExcelParser\Files\BirthdayColumnValidator\date-is-valid.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\empty-cell.xlsx">
+    <None Update="ExcelParser\Files\empty-cell.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\empty-row.xlsx">
+    <None Update="ExcelParser\Files\empty-row.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\error-threshold.xlsx">
+    <None Update="ExcelParser\Files\error-threshold.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\Factories\date-with-time.xlsx">
+    <None Update="ExcelParser\Files\Factories\date-with-time.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\Factories\name-with-whitespace.xlsx">
+    <None Update="ExcelParser\Files\Factories\name-with-whitespace.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\Factories\valid-student.xlsx">
+    <None Update="ExcelParser\Files\Factories\valid-student.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\header-is-not-string.xlsx">
+    <None Update="ExcelParser\Files\header-is-not-string.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\NameColumnValidator\cell-exceeds-max-length.xlsx">
+    <None Update="ExcelParser\Files\NameColumnValidator\cell-exceeds-max-length.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\NameColumnValidator\cell-is-not-string.xlsx">
+    <None Update="ExcelParser\Files\NameColumnValidator\cell-is-not-string.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\NameColumnValidator\cell-is-whitespace.xlsx">
+    <None Update="ExcelParser\Files\NameColumnValidator\cell-is-whitespace.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\empty-sheet.xlsx">
+    <None Update="ExcelParser\Files\empty-sheet.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\NameColumnValidator\name-is-max-length.xlsx">
+    <None Update="ExcelParser\Files\NameColumnValidator\name-is-max-length.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\NameColumnValidator\valid-name.xlsx">
+    <None Update="ExcelParser\Files\NameColumnValidator\valid-name.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\no-students.xlsx">
+    <None Update="ExcelParser\Files\no-students.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\null-header.xlsx">
+    <None Update="ExcelParser\Files\null-header.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\valid-data.xlsx">
+    <None Update="ExcelParser\Files\valid-data.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelFile\Files\wrong-header-name.xlsx">
+    <None Update="ExcelParser\Files\wrong-header-name.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

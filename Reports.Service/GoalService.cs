@@ -1,8 +1,6 @@
-﻿using MathNet.Numerics.Distributions;
-using Reports.Domain.Interfaces.Repositories;
+﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service.Interfaces.Service;
 using System.Text;
 
 
@@ -123,7 +121,7 @@ namespace Reports.Service
 
             await _unitOfWork.SaveChangesAsync();
         }
-        
+
         public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment)
         {
             var assessmentName = assessment.Goal.Name;
