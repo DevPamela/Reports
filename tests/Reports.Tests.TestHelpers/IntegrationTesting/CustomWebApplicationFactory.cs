@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Reports.Infrastructure.DbContexts;
 using Xunit;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.IntegrationTesting;
 
 /// <summary>
 /// Represents a custom web application factory for testing purposes.

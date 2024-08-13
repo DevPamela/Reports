@@ -1,4 +1,4 @@
-﻿using Reports.Tests.TestHelpers;
+﻿using Reports.Tests.TestHelpers.IntegrationTesting;
 
 namespace Reports.Application.Tests.Fixtures;
 

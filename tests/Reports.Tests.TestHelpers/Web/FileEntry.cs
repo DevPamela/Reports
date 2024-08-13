@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Io.Dom;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.Web;
 
 /// <summary>
 /// Represents a file entry.

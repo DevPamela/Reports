@@ -7,7 +7,7 @@ using NSubstitute;
 using Reports.Domain.Models;
 using Reports.Service.ExcelParser;
 using Reports.Service.ExcelParser.Interfaces;
-using Reports.Tests.TestHelpers;
+using Reports.Tests.TestHelpers.Files;
 
 namespace Reports.Service.Tests.ExcelParser;
 

@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.Web;
 
 /// <summary>
 /// Provides extension methods for HttpClient related operations.
@@ -26,7 +26,7 @@ public static class HttpClientExtensions
             var formaction = submitButton.GetAttribute("formaction")!;
             target = new Uri(formaction, UriKind.Relative);
         }
-        
+
         using var requestMessage = new HttpRequestMessage(new HttpMethod(submission.Method.ToString()), target);
         requestMessage.Content = new StreamContent(submission.Body);
 

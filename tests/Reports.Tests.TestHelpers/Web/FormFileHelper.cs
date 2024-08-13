@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.Web;
 
 /// <summary>
 /// Helper class for working with <see cref="IFormFile"/> objects.

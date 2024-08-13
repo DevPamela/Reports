@@ -3,7 +3,7 @@ using AngleSharp.Html.Dom;
 using AngleSharp.Io;
 using System.Net.Http.Headers;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.Web;
 
 /// <summary>
 /// Provides helper methods for working with HTML documents.

@@ -6,13 +6,15 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Reports.Application.Tests.Fixtures;
 using Reports.Infrastructure.DbContexts;
-using Reports.Tests.TestHelpers;
+using Reports.Tests.TestHelpers.Files;
+using Reports.Tests.TestHelpers.IntegrationTesting;
+using Reports.Tests.TestHelpers.Web;
 using System.Net;
 
-namespace Reports.Application.Tests;
+namespace Reports.Application.Tests.IntegrationTests;
 
 [Collection(nameof(IntegrationCollection))]
-public class StudentControllerTests
+public class RegisterStudentsFromFileTests
         : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
 {
     private const string StudentControllerRoute = "/Student";
@@ -26,13 +28,13 @@ public class StudentControllerTests
     private readonly Faker _faker = new();
     private readonly HttpClient _client;
     private readonly SharedFixture _sharedFixture;
-    private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _sharedDbContext;
 
-    public StudentControllerTests(CustomWebApplicationFactory factory)
+    public RegisterStudentsFromFileTests(CustomWebApplicationFactory factory)
     {
         _client = factory.HttpClient;
         _sharedFixture = factory.SharedFixture;
-        _dbContext = _sharedFixture.DbContext!;
+        _sharedDbContext = _sharedFixture.SharedDbContext;
     }
 
     public async Task InitializeAsync()
@@ -119,7 +121,7 @@ public class StudentControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
 
-        var classroom = await _dbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
+        var classroom = await _sharedDbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
         response.Headers.Location!.OriginalString.Should().Be($"{StudentControllerRoute}/Success/{classroom.Id}");
     }
 
@@ -146,16 +148,16 @@ public class StudentControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
 
-        var classroom = await _dbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
+        var classroom = await _sharedDbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
         classroom.Name.Should().Be(classroomName);
 
-        var students = await _dbContext.Students.Where(s => s.ClassRoomId == classroom.Id).ToListAsync();
+        var students = await _sharedDbContext.Students.Where(s => s.ClassRoomId == classroom.Id).ToListAsync();
         students.Should().HaveCount(1);
         students[0].Name.Should().Be("John Doe");
         students[0].Birthday.Should().Be(new DateTime(2012, 12, 21, 0, 0, 0, DateTimeKind.Local));
     }
 
-    private void FillRegisterStudentsForm(IHtmlFormElement form, string classroomName, IFile file)
+    private static void FillRegisterStudentsForm(IHtmlFormElement form, string classroomName, IFile file)
     {
         var classroomNameInput = form.QuerySelector<IHtmlInputElement>(ClassroomNameInputId)!;
         classroomNameInput.Value = classroomName;

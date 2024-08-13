@@ -2,7 +2,7 @@
 using FluentResults.Extensions.FluentAssertions;
 using NPOI.SS.UserModel;
 using Reports.Service.ExcelParser.Validators.StudentNameColumn;
-using Reports.Tests.TestHelpers;
+using Reports.Tests.TestHelpers.Files;
 
 namespace Reports.Service.Tests.ExcelParser.Validators.StudentNameColumn;
 

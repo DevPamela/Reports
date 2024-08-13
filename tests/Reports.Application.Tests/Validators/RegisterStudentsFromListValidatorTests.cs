@@ -2,7 +2,8 @@
 using FluentValidation.TestHelper;
 using Reports.Application.Validators;
 using Reports.Application.ViewModels.Student;
-using Reports.Tests.TestHelpers;
+using Reports.Tests.TestHelpers.Files;
+using Reports.Tests.TestHelpers.Web;
 
 namespace Reports.Application.Tests.Validators;
 

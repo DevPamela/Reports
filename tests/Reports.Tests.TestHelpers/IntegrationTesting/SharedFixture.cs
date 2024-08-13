@@ -7,7 +7,7 @@ using System.Data.Common;
 using Testcontainers.MySql;
 using Xunit;
 
-namespace Reports.Tests.TestHelpers;
+namespace Reports.Tests.TestHelpers.IntegrationTesting;
 
 /// <summary>
 /// Represents a shared fixture for integration tests.
@@ -27,7 +27,7 @@ public class SharedFixture : IAsyncLifetime
     /// <summary>
     /// Gets the instance of the application database context.
     /// </summary>
-    public AppDbContext DbContext { get; private set; } = default!;
+    public AppDbContext SharedDbContext { get; private set; } = default!;
 
     /// <summary>
     /// Gets the teacher instance.
@@ -44,8 +44,8 @@ public class SharedFixture : IAsyncLifetime
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task SeedAsync()
     {
-        DbContext.Teacher.Add(Teacher);
-        await DbContext.SaveChangesAsync();
+        SharedDbContext.Teacher.Add(Teacher);
+        await SharedDbContext.SaveChangesAsync();
     }
 
     /// <summary>
@@ -63,10 +63,11 @@ public class SharedFixture : IAsyncLifetime
         await _mySqlContainer.StartAsync();
 
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
-            .UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
+            .UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
-        DbContext = new AppDbContext(optionsBuilder.Options);
-        await DbContext.Database.MigrateAsync();
+        SharedDbContext = new AppDbContext(optionsBuilder.Options);
+        await SharedDbContext.Database.MigrateAsync();
 
         _dbConnection = new MySqlConnection(ConnectionString);
         await _dbConnection.OpenAsync();
@@ -81,7 +82,7 @@ public class SharedFixture : IAsyncLifetime
     /// <inheritdoc />
     public async Task DisposeAsync()
     {
-        await DbContext.DisposeAsync();
+        await SharedDbContext.DisposeAsync();
         await _dbConnection.DisposeAsync();
         await _mySqlContainer.DisposeAsync();
     }
