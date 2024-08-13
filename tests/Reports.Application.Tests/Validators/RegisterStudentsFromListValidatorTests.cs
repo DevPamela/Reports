@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FluentValidation.TestHelper;
+using Reports.Application.Models;
 using Reports.Application.Validators;
-using Reports.Application.ViewModels.Student;
 using Reports.Tests.TestHelpers.Files;
 using Reports.Tests.TestHelpers.Web;
 

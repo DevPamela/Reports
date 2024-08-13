@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
-using Reports.Application.ViewModels.Student;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
 using Reports.Service.UseCases.RegisterStudentsFromFile;

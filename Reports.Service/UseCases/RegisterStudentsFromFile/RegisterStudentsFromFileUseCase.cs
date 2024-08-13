@@ -33,11 +33,11 @@ public class RegisterStudentsFromFileUseCase
     /// <summary>
     /// Executes the use case asynchronously.
     /// </summary>
-    /// <param name="input">The input data.</param>
+    /// <param name="request">The request data.</param>
     /// <returns>The result of the use case execution.</returns>
-    public async Task<Result<RegisterStudentsFromFileResponse>> ExecuteAsync(RegisterStudentsFromFileRequest input)
+    public async Task<Result<RegisterStudentsFromFileResponse>> ExecuteAsync(RegisterStudentsFromFileRequest request)
     {
-        var readStudentsResult = _excelFileHeaderService.ReadStudentsFromFile(input.Stream);
+        var readStudentsResult = _excelFileHeaderService.ReadStudentsFromFile(request.Stream);
 
         if (readStudentsResult.IsFailed)
         {
@@ -46,9 +46,9 @@ public class RegisterStudentsFromFileUseCase
 
         var classroom = new ClassRoom
         {
-            Name = input.ClassroomName,
+            Name = request.ClassroomName,
             Students = readStudentsResult.Value,
-            TeacherId = input.TeacherId
+            TeacherId = request.TeacherId
         };
 
         _classroomRepository.Add(classroom);

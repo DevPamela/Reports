@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Reports.Application.ViewModels.Student;
+using Reports.Application.Models;
 
 namespace Reports.Application.Validators;
 

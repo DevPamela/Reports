@@ -1,4 +1,4 @@
-﻿namespace Reports.Application.ViewModels.Student;
+﻿namespace Reports.Application.Models;
 
 /// <summary>
 /// Represents a view model for registering students from a file.
