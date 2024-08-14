@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+	<RunConfiguration>
+		<EnvironmentVariables>
+			<USE_CONTAINERS>false</USE_CONTAINERS>
+			<CONNECTION_STRING>Server=localhost;Port=3306;Database=reportsdbtest;Uid=root;Pwd=EvloSEd3d5&amp;*;</CONNECTION_STRING>
+		</EnvironmentVariables>
+	</RunConfiguration>
+</RunSettings>
