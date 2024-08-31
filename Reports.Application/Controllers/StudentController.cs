@@ -30,17 +30,6 @@ public class StudentController : Controller
         return View();
     }
 
-    public ActionResult Success(int id)
-    {
-        var students = _studentService.GetStudentsListAsync().Result;
-        var selectedStudents = students.Where(_ => _.ClassRoomId == id).ToList();
-        var viewModel = new StudentViewModel()
-        {
-            Students = selectedStudents
-        };
-        return View(viewModel);
-    }
-
     [HttpPost]
     public async Task<ActionResult> RegisterStudentsFromFile(
         [FromServices] RegisterStudentsFromFileUseCase useCase,
@@ -67,14 +56,6 @@ public class StudentController : Controller
             response.AddToModelState(ModelState);
             return View(nameof(Index), viewModel);
         }
-
-        return RedirectToAction(nameof(Success), new { id = response.Value.ClassroomId });
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> SaveStudentGender(StudentViewModel model)
-    {
-        await _studentService.UpdateStudentList(model.Students);
 
         return RedirectToAction("Index", "Home");
     }

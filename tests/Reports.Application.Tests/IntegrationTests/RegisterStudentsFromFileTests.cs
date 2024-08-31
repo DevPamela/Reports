@@ -120,9 +120,7 @@ public class RegisterStudentsFromFileTests
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-
-        var classroom = await _sharedDbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
-        response.Headers.Location!.OriginalString.Should().Be($"{StudentControllerRoute}/Success/{classroom.Id}");
+        response.Headers.Location!.OriginalString.Should().Be("/");
     }
 
     [Fact]
@@ -155,6 +153,7 @@ public class RegisterStudentsFromFileTests
         students.Should().HaveCount(1);
         students[0].Name.Should().Be("John Doe");
         students[0].Birthday.Should().Be(new DateTime(2012, 12, 21, 0, 0, 0, DateTimeKind.Local));
+        students[0].Genre.Should().Be("Masculino");
     }
 
     private static void FillRegisterStudentsForm(IHtmlFormElement form, string classroomName, IFile file)

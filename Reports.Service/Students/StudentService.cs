@@ -20,23 +20,6 @@ public class StudentService : IStudentService
         _bulkInsertHelper = bulkInsertHelper;
     }
 
-    /// <summary>
-    /// update the student list.
-    /// </summary>
-    /// <param name="students"></param>
-    /// <returns></returns>
-    public async Task UpdateStudentList(List<Student> students)
-    {
-
-        foreach (var student in students)
-        {
-            var repo = await _studentRepository.GetByNameAsync(student.Name);
-            repo.Genre = student.Genre;
-            _studentRepository.Update(repo);
-        }
-        await _unitOfWork.SaveChangesAsync();
-    }
-
     public async Task UpdateStudent(Student student)
     {
         try

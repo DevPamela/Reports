@@ -34,7 +34,7 @@ public class StudentFactory : IStudentFactory
     {
         var name = row.GetCell(_nameColumn.Index).StringCellValue.Trim();
         var birthdate = row.GetCell(_birthdateColumn.Index).DateCellValue!.Value.Date;
-        var gender = row.GetCell(_genderColumn.Index).StringCellValue.Trim();
+        var gender = row.GetCell(_genderColumn.Index).StringCellValue;
 
         return new Student
         {
