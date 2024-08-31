@@ -100,7 +100,7 @@ public class RegisterStudentsFromFileTests
     }
 
     [Fact]
-    public async Task SubmitRegisterStudentsForm_ShouldRedirectToSuccess_WhenFormIsValid()
+    public async Task SubmitRegisterStudentsForm_ShouldRedirectToHomeIndex_WhenFormIsValid()
     {
         // Arrange
         var indexPage = await _client.GetAsync(StudentControllerRoute);
@@ -149,7 +149,10 @@ public class RegisterStudentsFromFileTests
         var classroom = await _sharedDbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
         classroom.Name.Should().Be(classroomName);
 
-        var students = await _sharedDbContext.Students.Where(s => s.ClassRoomId == classroom.Id).ToListAsync();
+        var students = await _sharedDbContext.Students
+            .Where(s => s.ClassRoomId == classroom.Id && s.TeacherId == _sharedFixture.Teacher.Id)
+            .ToListAsync();
+
         students.Should().HaveCount(1);
         students[0].Name.Should().Be("John Doe");
         students[0].Birthday.Should().Be(new DateTime(2012, 12, 21, 0, 0, 0, DateTimeKind.Local));
