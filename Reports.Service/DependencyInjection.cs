@@ -3,6 +3,7 @@ using Reports.Service.ExcelParser;
 using Reports.Service.ExcelParser.Factories;
 using Reports.Service.ExcelParser.Interfaces;
 using Reports.Service.ExcelParser.Validators.StudentBirthdayColumn;
+using Reports.Service.ExcelParser.Validators.StudentGenderColumn;
 using Reports.Service.ExcelParser.Validators.StudentNameColumn;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
 
@@ -43,5 +44,11 @@ public static class DependencyInjection
             sp.GetRequiredService<StudentBirthdayColumnValidator>());
         services.AddScoped<IStudentBirthdayColumn>(sp =>
             sp.GetRequiredService<StudentBirthdayColumnValidator>());
+
+        services.AddScoped<StudentGenderColumnValidator>();
+        services.AddScoped<IColumnValidator>(sp =>
+            sp.GetRequiredService<StudentGenderColumnValidator>());
+        services.AddScoped<IStudentGenderColumn>(sp =>
+            sp.GetRequiredService<StudentGenderColumnValidator>());
     }
 }

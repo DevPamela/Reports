@@ -9,15 +9,17 @@ namespace Reports.Service.Tests.Factories;
 
 public class StudentFactoryTests
 {
-    private readonly IStudentNameColumn _mockNameColumnInfo = Substitute.For<IStudentNameColumn>();
-    private readonly IStudentBirthdayColumn _mockBirthdayColumnInfo = Substitute.For<IStudentBirthdayColumn>();
+    private readonly IStudentNameColumn _mockNameColumn = Substitute.For<IStudentNameColumn>();
+    private readonly IStudentBirthdayColumn _mockBirthdayColumn = Substitute.For<IStudentBirthdayColumn>();
+    private readonly IStudentGenderColumn _mockGenderColumn = Substitute.For<IStudentGenderColumn>();
     private readonly StudentFactory _studentFactory;
 
     public StudentFactoryTests()
     {
-        _mockNameColumnInfo.Index.Returns(0);
-        _mockBirthdayColumnInfo.Index.Returns(1);
-        _studentFactory = new StudentFactory(_mockNameColumnInfo, _mockBirthdayColumnInfo);
+        _mockNameColumn.Index.Returns(0);
+        _mockBirthdayColumn.Index.Returns(1);
+        _mockGenderColumn.Index.Returns(2);
+        _studentFactory = new StudentFactory(_mockNameColumn, _mockBirthdayColumn, _mockGenderColumn);
     }
 
     [Theory]
@@ -37,5 +39,6 @@ public class StudentFactoryTests
         // Assert
         result.Name.Should().Be("John Doe");
         result.Birthday.Should().Be(new DateTime(2012, 12, 21, 0, 0, 0, DateTimeKind.Local));
+        result.Genre.Should().Be("Masculino");
     }
 }

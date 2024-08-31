@@ -9,32 +9,38 @@ namespace Reports.Service.ExcelParser.Factories;
 /// </summary>
 public class StudentFactory : IStudentFactory
 {
-    private readonly IStudentNameColumn _nameColumnInfo;
-    private readonly IStudentBirthdayColumn _birthdayColumnInfo;
+    private readonly IStudentNameColumn _nameColumn;
+    private readonly IStudentBirthdayColumn _birthdayColumn;
+    private readonly IStudentGenderColumn _genderColumn;
 
     /// <summary>
     /// Initializes a new instance of the StudentFactory class.
     /// </summary>
-    /// <param name="nameColumnInfo">The column information for the student name.</param>
-    /// <param name="birthdayColumnInfo">The column information for the student birthday.</param>
+    /// <param name="nameColumn">The column information for the student name.</param>
+    /// <param name="birthdayColumn">The column information for the student birthday.</param>
+    /// <param name="genderColumn">The column information for the student gender.</param>
     public StudentFactory(
-        IStudentNameColumn nameColumnInfo,
-        IStudentBirthdayColumn birthdayColumnInfo)
+        IStudentNameColumn nameColumn,
+        IStudentBirthdayColumn birthdayColumn,
+        IStudentGenderColumn genderColumn)
     {
-        _nameColumnInfo = nameColumnInfo;
-        _birthdayColumnInfo = birthdayColumnInfo;
+        _nameColumn = nameColumn;
+        _birthdayColumn = birthdayColumn;
+        _genderColumn = genderColumn;
     }
 
     /// <inheritdoc />
     public Student CreateStudent(IRow row)
     {
-        var name = row.GetCell(_nameColumnInfo.Index).StringCellValue.Trim();
-        var birthday = row.GetCell(_birthdayColumnInfo.Index).DateCellValue!.Value.Date;
+        var name = row.GetCell(_nameColumn.Index).StringCellValue.Trim();
+        var birthday = row.GetCell(_birthdayColumn.Index).DateCellValue!.Value.Date;
+        var gender = row.GetCell(_genderColumn.Index).StringCellValue.Trim();
 
         return new Student
         {
             Name = name,
-            Birthday = birthday
+            Birthday = birthday,
+            Genre = gender,
         };
     }
 }
