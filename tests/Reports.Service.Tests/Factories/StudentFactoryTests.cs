@@ -10,16 +10,16 @@ namespace Reports.Service.Tests.Factories;
 public class StudentFactoryTests
 {
     private readonly IStudentNameColumn _mockNameColumn = Substitute.For<IStudentNameColumn>();
-    private readonly IStudentBirthdayColumn _mockBirthdayColumn = Substitute.For<IStudentBirthdayColumn>();
+    private readonly IStudentBirthdateColumn _mockBirthdateColumn = Substitute.For<IStudentBirthdateColumn>();
     private readonly IStudentGenderColumn _mockGenderColumn = Substitute.For<IStudentGenderColumn>();
     private readonly StudentFactory _studentFactory;
 
     public StudentFactoryTests()
     {
         _mockNameColumn.Index.Returns(0);
-        _mockBirthdayColumn.Index.Returns(1);
+        _mockBirthdateColumn.Index.Returns(1);
         _mockGenderColumn.Index.Returns(2);
-        _studentFactory = new StudentFactory(_mockNameColumn, _mockBirthdayColumn, _mockGenderColumn);
+        _studentFactory = new StudentFactory(_mockNameColumn, _mockBirthdateColumn, _mockGenderColumn);
     }
 
     [Theory]

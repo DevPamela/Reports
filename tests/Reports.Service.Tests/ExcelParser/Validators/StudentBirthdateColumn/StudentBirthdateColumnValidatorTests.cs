@@ -1,15 +1,15 @@
 ﻿using FluentAssertions;
 using FluentResults.Extensions.FluentAssertions;
 using NPOI.SS.UserModel;
-using Reports.Service.ExcelParser.Validators.StudentBirthdayColumn;
+using Reports.Service.ExcelParser.Validators.StudentBirthdateColumn;
 using Reports.Tests.TestHelpers.Files;
 
-namespace Reports.Service.Tests.ExcelParser.Validators.StudentBirthdayColumn;
+namespace Reports.Service.Tests.ExcelParser.Validators.StudentBirthdateColumn;
 
-public class StudentBirthdayColumnValidatorTests
+public class StudentBirthdateColumnValidatorTests
 {
-    private readonly string[] _filePaths = ["ExcelParser", "Files", "BirthdayColumnValidator"];
-    private readonly StudentBirthdayColumnValidator _validator = new();
+    private readonly string[] _filePaths = ["ExcelParser", "Files", "BirthdateColumnValidator"];
+    private readonly StudentBirthdateColumnValidator _validator = new();
 
     [Fact]
     public void Index_ShouldReturn1()
@@ -32,14 +32,14 @@ public class StudentBirthdayColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnInvalidType_WhenCellDateValueIsNull()
+    public void ValidateCellValue_ShouldReturnInvalidType_WhenCellDateValueIsNull()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "cell-is-not-numeric.xlsx"]);
         using IWorkbook workbook = WorkbookFactory.Create(helper.FileStream);
         ICell cell = workbook.GetSheetAt(0).GetRow(0).GetCell(0);
 
-        var expectedError = StudentBirthdayColumnValidationErrors.InvalidType(cell.Address);
+        var expectedError = StudentBirthdateColumnValidationErrors.InvalidType(cell.Address);
 
         // Act
         var result = _validator.ValidateCellValue(cell);
@@ -50,14 +50,14 @@ public class StudentBirthdayColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnInvalidType_WhenCellIsNotDateFormatted()
+    public void ValidateCellValue_ShouldReturnInvalidType_WhenCellIsNotDateFormatted()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "cell-is-not-date.xlsx"]);
         using IWorkbook workbook = WorkbookFactory.Create(helper.FileStream);
         ICell cell = workbook.GetSheetAt(0).GetRow(0).GetCell(0);
 
-        var expectedError = StudentBirthdayColumnValidationErrors.InvalidType(cell.Address);
+        var expectedError = StudentBirthdateColumnValidationErrors.InvalidType(cell.Address);
 
         // Act
         var result = _validator.ValidateCellValue(cell);
@@ -68,7 +68,7 @@ public class StudentBirthdayColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnSuccess_WhenCellValueIsValid()
+    public void ValidateCellValue_ShouldReturnSuccess_WhenCellValueIsValid()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "date-is-valid.xlsx"]);

@@ -36,13 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ExcelParser\Files\BirthdayColumnValidator\cell-is-not-date.xlsx">
+    <None Update="ExcelParser\Files\BirthdateColumnValidator\cell-is-not-date.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelParser\Files\BirthdayColumnValidator\cell-is-not-numeric.xlsx">
+    <None Update="ExcelParser\Files\BirthdateColumnValidator\cell-is-not-numeric.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ExcelParser\Files\BirthdayColumnValidator\date-is-valid.xlsx">
+    <None Update="ExcelParser\Files\BirthdateColumnValidator\date-is-valid.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ExcelParser\Files\empty-cell.xlsx">

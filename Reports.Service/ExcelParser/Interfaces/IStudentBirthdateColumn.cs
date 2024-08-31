@@ -1,9 +1,9 @@
 ﻿namespace Reports.Service.ExcelParser.Interfaces;
 
 /// <summary>
-/// Represents the interface for a Student Birthday column in an Excel file.
+/// Represents the interface for a Student Birthdate column in an Excel file.
 /// </summary>
-public interface IStudentBirthdayColumn
+public interface IStudentBirthdateColumn
 {
     /// <summary>
     /// Gets the index of the column.

@@ -32,7 +32,7 @@ public class StudentNameColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnInvalidType_WhenCellTypeIsNotString()
+    public void ValidateCellValue_ShouldReturnInvalidType_WhenCellTypeIsNotString()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "cell-is-not-string.xlsx"]);
@@ -50,7 +50,7 @@ public class StudentNameColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnNameIsEmpty_WhenCellValueIsNullOrWhiteSpace()
+    public void ValidateCellValue_ShouldReturnNameIsEmpty_WhenCellValueIsNullOrWhiteSpace()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "cell-is-whitespace.xlsx"]);
@@ -68,7 +68,7 @@ public class StudentNameColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnNameIsTooLong_WhenCellValueExceedsMaxLength()
+    public void ValidateCellValue_ShouldReturnNameIsTooLong_WhenCellValueExceedsMaxLength()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "cell-exceeds-max-length.xlsx"]);
@@ -87,7 +87,7 @@ public class StudentNameColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnSuccess_WhenCellValueIsValid()
+    public void ValidateCellValue_ShouldReturnSuccess_WhenCellValueIsValid()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "valid-name.xlsx"]);
@@ -102,7 +102,7 @@ public class StudentNameColumnValidatorTests
     }
 
     [Fact]
-    public void ConvertCellValue_ShouldReturnSuccess_WhenNameIsMaxLength()
+    public void ValidateCellValue_ShouldReturnSuccess_WhenNameIsMaxLength()
     {
         // Arrange
         using var helper = new FileStreamHelper([.. _filePaths, "name-is-max-length.xlsx"]);
