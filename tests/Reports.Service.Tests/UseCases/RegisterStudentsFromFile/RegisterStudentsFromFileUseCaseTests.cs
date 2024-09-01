@@ -1,13 +1,14 @@
 ﻿using Bogus;
+using Bogus.DataSets;
 using FluentAssertions;
 using FluentResults;
 using FluentResults.Extensions.FluentAssertions;
 using NSubstitute;
+using Reports.Domain.Enums;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Service.ExcelParser.Interfaces;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
-using static Bogus.DataSets.Name;
 
 namespace Reports.Service.Tests.UseCases.RegisterStudentsFromFile;
 
@@ -19,15 +20,14 @@ public class RegisterStudentsFromFileUseCaseTests
     private readonly Faker<Student> _studentFaker = new();
     private readonly Faker<RegisterStudentsFromFileRequest> _requestFaker = new();
     private readonly RegisterStudentsFromFileUseCase _useCase;
-    private readonly List<string> _genders = ["Feminino", "Masculino"];
 
     public RegisterStudentsFromFileUseCaseTests()
     {
         _studentFaker
-            .RuleFor(s => s.Birthday, f => f.Person.DateOfBirth)
-            .RuleFor(s => s.Genre, f => f.PickRandom(_genders))
+            .RuleFor(s => s.Birthdate, f => DateOnly.FromDateTime(f.Person.DateOfBirth))
+            .RuleFor(s => s.Gender, f => f.PickRandom(Enum.GetValues<Gender>()))
             .RuleFor(s => s.Name, (f, s) =>
-                f.Name.FullName(s.Genre == "Feminino" ? Gender.Female : Gender.Male));
+                f.Name.FullName(s.Gender == Gender.Female ? Name.Gender.Female : Name.Gender.Male));
 
         _requestFaker.CustomInstantiator(f =>
             new RegisterStudentsFromFileRequest(
@@ -99,22 +99,5 @@ public class RegisterStudentsFromFileUseCaseTests
         // Assert
         result.Should().BeSuccess();
         students.Should().AllSatisfy(s => s.TeacherId.Should().Be(request.TeacherId));
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_ShouldBeSuccess_WhenOperationSucceeds()
-    {
-        // Arrange
-        var students = new List<Student> { _studentFaker.Generate() };
-        var readStudentsResult = Result.Ok(students);
-        _mockExcelFileService.ReadStudentsFromFile(Arg.Any<Stream>()).Returns(readStudentsResult);
-
-        var request = _requestFaker.Generate();
-
-        // Act
-        var result = await _useCase.ExecuteAsync(request);
-
-        // Assert
-        result.Should().BeSuccess();
     }
 }

@@ -9,7 +9,7 @@ public class AppDbContext : DbContext, IUnitOfWork
 {
     public DbSet<Student> Students { get; set; } = null!;
     public DbSet<Goal> Goals { get; set; } = null!;
-    public DbSet<Report> Reports { get; set; } = null!;
+    public DbSet<Report> Report { get; set; } = null!;
     public DbSet<ClassRoom> Classroom { get; set; } = null!;
     public DbSet<Assessment> Assessments { get; set; } = null!;
     public DbSet<Teacher> Teacher { get; set; } = null!;
@@ -24,5 +24,5 @@ public class AppDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new GoalConfiguration());
         modelBuilder.ApplyConfiguration(new StudentConfiguration());
     }
-        
+
 }

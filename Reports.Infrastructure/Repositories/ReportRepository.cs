@@ -15,11 +15,11 @@ namespace Reports.Infrastructure.Repositories
 
         /// <inheritdoc />
         public void Add(Report report) =>
-            _dbContext.Reports.Add(report);
+            _dbContext.Report.Add(report);
 
         /// <inheritdoc />
         public async Task<List<Report>> GetAllAsync(int id) =>
-            await _dbContext.Reports.ToListAsync();
+            await _dbContext.Report.ToListAsync();
 
         public Task<Student?> GetByIdAsync(int id)
         {
@@ -28,10 +28,10 @@ namespace Reports.Infrastructure.Repositories
 
         /// <inheritdoc />
         public async Task<Report?> GetByNameAsync(string name) =>
-            await _dbContext.Reports
+            await _dbContext.Report
                 .FirstOrDefaultAsync(s => s.Name == name);
         public async Task<Report> ObterRelatorioPorId(int idDoRelatorio) =>
-              _dbContext.Reports
+              _dbContext.Report
                 .Include(r => r.Student)
                 .FirstOrDefault(r => r.Id == idDoRelatorio);
 

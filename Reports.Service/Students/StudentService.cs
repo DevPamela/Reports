@@ -25,12 +25,12 @@ public class StudentService : IStudentService
         try
         {
             var repo = await _studentRepository.GetByNameAsync(student.Name);
-            repo.Genre = student.Genre;
+            repo.Gender = student.Gender;
             repo.Name = student.Name;
             repo.ClassRoomId = student.ClassRoomId;
             //Estourar uma exception se student.Birthday < DateTime.Now
-            if (student.Birthday != DateTime.MinValue && student.Birthday < DateTime.Now)
-                repo.Birthday = student.Birthday;
+            if (student.Birthdate != DateOnly.MinValue && student.Birthdate < DateOnly.FromDateTime(DateTime.Now))
+                repo.Birthdate = student.Birthdate;
 
             _studentRepository.Update(repo);
 

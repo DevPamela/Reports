@@ -10,6 +10,7 @@ using Reports.Tests.TestHelpers.Files;
 using Reports.Tests.TestHelpers.IntegrationTesting;
 using Reports.Tests.TestHelpers.Web;
 using System.Net;
+using Reports.Domain.Enums;
 
 namespace Reports.Application.Tests.IntegrationTests;
 
@@ -155,8 +156,8 @@ public class RegisterStudentsFromFileTests
 
         students.Should().HaveCount(1);
         students[0].Name.Should().Be("John Doe");
-        students[0].Birthday.Should().Be(new DateTime(2012, 12, 21, 0, 0, 0, DateTimeKind.Local));
-        students[0].Genre.Should().Be("Masculino");
+        students[0].Birthdate.Should().Be(new DateOnly(2012, 12, 21));
+        students[0].Gender.Should().Be(Gender.Male);
     }
 
     private static void FillRegisterStudentsForm(IHtmlFormElement form, string classroomName, IFile file)

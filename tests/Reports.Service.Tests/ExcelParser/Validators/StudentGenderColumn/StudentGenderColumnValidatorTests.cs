@@ -87,7 +87,9 @@ public class StudentGenderColumnValidatorTests
 
     [Theory]
     [InlineData("feminino")]
+    [InlineData("feminino-lower")]
     [InlineData("masculino")]
+    [InlineData("masculino-lower")]
     public void ValidateCellValue_ShouldReturnSuccess_WhenCellValueIsValid(string filename)
     {
         // Arrange

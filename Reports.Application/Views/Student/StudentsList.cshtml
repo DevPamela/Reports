@@ -34,10 +34,10 @@
                         @Model.Students[i].Name
                     </td>
                     <td>
-                        @Model.Students[i].Birthday.ToString("dd/MM/yyyy")
+                        @Model.Students[i].Birthdate.ToString("dd/MM/yyyy")
                     </td>
                     <td>
-                        @Model.Students[i].Genre
+                        @Model.Students[i].Gender
                     </td>
                     <td>
                         @Html.HiddenFor(model => model.Student.Id)

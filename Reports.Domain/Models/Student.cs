@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Reports.Domain.Enums;
 using Reports.Domain.Exceptions;
 using Reports.Domain.Interfaces.Model;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace Reports.Domain.Models
 {
@@ -11,34 +10,26 @@ namespace Reports.Domain.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
-        public DateTime Birthday { get; set; }
-        public string? Genre { get; set; }
-        public int Absences { get; set; } = 0;
-        //TODO: check nullability of foreign key
-        public int? TeacherId { get; set; }
+        public DateOnly Birthdate { get; set; }
+        public Gender Gender { get; set; }
+        public int Absences { get; set; }
+        public int TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
-        //TODO: check nullability of foreign key
-        public int? ClassRoomId { get; set; }
+        public int ClassRoomId { get; set; }
         public ClassRoom? Class { get; set; }
-        public List<Report> Reports { get; set; } = new();
-        public List<Goal> Goals { get; set; } = new();
-        public List<Assessment> Assessments { get; set; } = new();
-        public bool IsSelected { get; set; } = false;
+        public List<Report> Reports { get; set; } = [];
+        public List<Goal> Goals { get; set; } = [];
+        public List<Assessment> Assessments { get; set; } = [];
+        public bool IsSelected { get; set; }
 
         public bool IsAGirl()
         {
-            if (Genre == "Feminino")
+            return Gender switch
             {
-                return true;
-            }
-            else if (Genre == "Masculino")
-            {
-                return false;
-            }
-            else
-            {
-                throw new GenreNotFoundException("Invalid gender, please select F for female and M for male.");
-            }
+                Gender.Female => true,
+                Gender.Male => false,
+                _ => throw new GenderNotFoundException("Invalid gender, please select F for female and M for male.")
+            };
         }
     }
 }

@@ -73,7 +73,7 @@ public class StudentController : Controller
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
         var students = await _studentService.GetStudentsListAsync();
 
-        var filteredStudents = students.Where(student => selectedClasses.Contains(student.ClassRoomId ?? default)).ToList();
+        var filteredStudents = students.Where(student => selectedClasses.Contains(student.ClassRoomId)).ToList();
         await _studentService.ClearSelection(students);
         var model = new StudentViewModel()
         {

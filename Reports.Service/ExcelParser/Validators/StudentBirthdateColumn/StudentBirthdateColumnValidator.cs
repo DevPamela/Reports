@@ -18,7 +18,7 @@ public class StudentBirthdateColumnValidator : IColumnValidator, IStudentBirthda
     /// <inheritdoc />
     public Result ValidateCellValue(ICell cell)
     {
-        if (cell.DateCellValue is null
+        if (cell.DateOnlyCellValue is null
             || !DateUtil.IsCellDateFormatted(cell))
         {
             return StudentBirthdateColumnValidationErrors.InvalidType(cell.Address);

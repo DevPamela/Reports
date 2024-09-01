@@ -1,4 +1,5 @@
 ﻿using NPOI.SS.UserModel;
+using Reports.Domain.Enums;
 using Reports.Domain.Models;
 using Reports.Service.ExcelParser.Interfaces;
 
@@ -33,14 +34,17 @@ public class StudentFactory : IStudentFactory
     public Student CreateStudent(IRow row)
     {
         var name = row.GetCell(_nameColumn.Index).StringCellValue.Trim();
-        var birthdate = row.GetCell(_birthdateColumn.Index).DateCellValue!.Value.Date;
-        var gender = row.GetCell(_genderColumn.Index).StringCellValue;
+        var birthdate = row.GetCell(_birthdateColumn.Index).DateOnlyCellValue!.Value;
+        var gender = row.GetCell(_genderColumn.Index).StringCellValue
+            .Equals("Masculino", StringComparison.OrdinalIgnoreCase)
+            ? Gender.Male
+            : Gender.Female;
 
         return new Student
         {
             Name = name,
-            Birthday = birthdate,
-            Genre = gender,
+            Birthdate = birthdate,
+            Gender = gender,
         };
     }
 }
