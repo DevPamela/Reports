@@ -14,6 +14,8 @@ namespace Reports.Tests.TestHelpers.IntegrationTesting;
 /// </summary>
 public class SharedFixture : IAsyncLifetime
 {
+    private const string DbName = "reportsdbtest";
+
     private readonly bool _useContainers = Convert.ToBoolean(Environment.GetEnvironmentVariable("USE_CONTAINERS"));
 
     private MySqlContainer? _mySqlContainer;
@@ -86,7 +88,10 @@ public class SharedFixture : IAsyncLifetime
 
     private async Task SetupContainers()
     {
-        _mySqlContainer = new MySqlBuilder().Build();
+        _mySqlContainer = new MySqlBuilder()
+            .WithDatabase(DbName)
+            .Build();
+
         await _mySqlContainer.StartAsync();
     }
 
@@ -115,7 +120,8 @@ public class SharedFixture : IAsyncLifetime
         _respawner = await Respawner.CreateAsync(_dbConnection,
             new RespawnerOptions
             {
-                DbAdapter = DbAdapter.MySql
+                DbAdapter = DbAdapter.MySql,
+                SchemasToInclude = [DbName]
             });
     }
 }
