@@ -36,9 +36,6 @@ public class StudentController : Controller
         [FromServices] IValidator<RegisterStudentsFromFileViewModel> validator,
         RegisterStudentsFromFileViewModel viewModel)
     {
-        //TODO resolver object tamanho das fontes navmenu ellipse object problema datalist home que não acha a class css
-        //TODO bloquear mais de um aluno com mesmo nome
-
         var validationResult = await validator.ValidateAsync(viewModel);
 
         if (!validationResult.IsValid)
@@ -73,7 +70,8 @@ public class StudentController : Controller
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
         var students = await _studentService.GetStudentsListAsync();
 
-        var filteredStudents = students.Where(student => selectedClasses.Contains(student.ClassRoomId)).ToList();
+        
+        var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses); 
         await _studentService.ClearSelection(students);
         var model = new StudentViewModel()
         {
@@ -86,10 +84,9 @@ public class StudentController : Controller
     [HttpPost]
     public async Task<ActionResult> SetIsSelectedPropertyStudentAstrue(List<int> studentsId)
     {
-        var students = await _studentService.GetStudentsListAsync();
-        var selectedStudents = students.Where(_ => studentsId.Contains(_.Id)).ToList();
-        await _studentService.SetStudentAsTrue(selectedStudents);
+        var students = await _studentService.GetStudentsByIdListAsync(studentsId);
 
+        await _studentService.SetStudentAsTrue(students);
 
         return RedirectToAction("GetAbsencesNumber", "Student");
     }
@@ -97,8 +94,8 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<ActionResult> GetAbsencesNumber()
     {
-        var students = await _studentService.GetStudentsListAsync();
-        var studentList = students.Where(_ => _.IsSelected == true).ToList();
+        var studentList = await _studentService.GetByIsSelectedProperty();
+        
         var model = new StudentViewModel
         {
             Students = studentList

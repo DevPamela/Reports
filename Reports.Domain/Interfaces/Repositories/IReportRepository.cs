@@ -23,6 +23,10 @@ public interface IReportRepository
     /// <returns>A student, or null in case it wasn't found.</returns>
     Task<Report?> GetByNameAsync(string name);
 
-   Task<Report> ObterRelatorioPorId(int idDoRelatorio);
-    Task<Student?> GetByIdAsync(int id);
+    /// <summary>
+    /// Get Report by id.
+    /// </summary>
+    /// <param name="idDoRelatorio"></param>
+    /// <returns></returns>
+    Task<Report> GetReportById(int idDoRelatorio);
 }

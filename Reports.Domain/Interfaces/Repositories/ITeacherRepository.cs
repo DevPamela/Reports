@@ -10,6 +10,10 @@ public interface ITeacherRepository
     /// <returns></returns>
     void Add(Teacher teacher);
 
+    /// <summary>
+    /// Update the teacher from the database.
+    /// </summary>
+    /// <param name="teacher"></param>
     void Update(Teacher teacher);
 
     /// <summary>
