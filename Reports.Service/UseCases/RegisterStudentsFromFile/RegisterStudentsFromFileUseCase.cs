@@ -35,7 +35,7 @@ public class RegisterStudentsFromFileUseCase
     /// </summary>
     /// <param name="request">The request data.</param>
     /// <returns>The result of the use case execution.</returns>
-    public async Task<Result<RegisterStudentsFromFileResponse>> ExecuteAsync(RegisterStudentsFromFileRequest request)
+    public async Task<Result> ExecuteAsync(RegisterStudentsFromFileRequest request)
     {
         var readStudentsResult = _excelFileHeaderService.ReadStudentsFromFile(request.Stream);
 
@@ -43,6 +43,8 @@ public class RegisterStudentsFromFileUseCase
         {
             return new Result().WithErrors(readStudentsResult.Errors);
         }
+
+        readStudentsResult.Value.ForEach(s => s.TeacherId = request.TeacherId);
 
         var classroom = new ClassRoom
         {
@@ -55,6 +57,6 @@ public class RegisterStudentsFromFileUseCase
 
         await _unitOfWork.SaveChangesAsync();
 
-        return new RegisterStudentsFromFileResponse(classroom.Id);
+        return Result.Ok();
     }
 }

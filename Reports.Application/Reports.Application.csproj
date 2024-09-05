@@ -27,7 +27,6 @@
     <Content Include="Views\Reports\Success.cshtml.css" />
     <Content Include="Views\Student\Index.cshtml.css" />
     <Content Include="Views\Student\RemoveStudent.cshtml.css" />
-    <Content Include="Views\Student\Success.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>

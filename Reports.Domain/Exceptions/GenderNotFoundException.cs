@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Reports.Domain.Exceptions
 {
     [Serializable]
-    public class GenreNotFoundException: Exception
+    public class GenderNotFoundException: Exception
     {
-        public GenreNotFoundException(string message) 
+        public GenderNotFoundException(string message) 
             : base(message) { }
         
     }

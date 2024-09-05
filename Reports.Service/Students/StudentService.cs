@@ -20,34 +20,17 @@ public class StudentService : IStudentService
         _bulkInsertHelper = bulkInsertHelper;
     }
 
-    /// <summary>
-    /// update the student list.
-    /// </summary>
-    /// <param name="students"></param>
-    /// <returns></returns>
-    public async Task UpdateStudentList(List<Student> students)
-    {
-
-        foreach (var student in students)
-        {
-            var repo = await _studentRepository.GetByNameAsync(student.Name);
-            repo.Genre = student.Genre;
-            _studentRepository.Update(repo);
-        }
-        await _unitOfWork.SaveChangesAsync();
-    }
-
     public async Task UpdateStudent(Student student)
     {
         try
         {
             var repo = await _studentRepository.GetByNameAsync(student.Name);
-            repo.Genre = student.Genre;
+            repo.Gender = student.Gender;
             repo.Name = student.Name;
             repo.ClassRoomId = student.ClassRoomId;
             //Estourar uma exception se student.Birthday < DateTime.Now
-            if (student.Birthday != DateTime.MinValue && student.Birthday < DateTime.Now)
-                repo.Birthday = student.Birthday;
+            if (student.Birthdate != DateOnly.MinValue && student.Birthdate < DateOnly.FromDateTime(DateTime.Now))
+                repo.Birthdate = student.Birthdate;
 
             _studentRepository.Update(repo);
 

@@ -99,7 +99,7 @@ namespace Reports.Service
         public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
         {
             var goal = await _goalRepository.GetByNameAsync(goalName);
-            var newDescription = await SetPronounForGenre(description);
+            var newDescription = await SetPronounForGender(description);
             if (goal == null)
             {
                 goal = new Goal { Name = goalName };
@@ -149,7 +149,7 @@ namespace Reports.Service
            await _goalRepository.GetByIdAsync(id);
 
 
-        public async Task<string> SetPronounForGenre(string description)
+        public async Task<string> SetPronounForGender(string description)
         {
             var adjustedDescription = new StringBuilder(description);
 

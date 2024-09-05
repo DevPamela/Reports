@@ -233,13 +233,13 @@ namespace Reports.Service
         /// <param name="application"></param>
         private async Task CreateHeader(Student student, XWPFDocument doc)
         {
-            var classroom = await _classroomService.GetById(student.ClassRoomId ?? default);
+            var classroom = await _classroomService.GetById(student.ClassRoomId);
             var firstLine = classroom.Name;
             var teacher = "pamela";//TODO pegar pelo student.Teacher
             var secondLine = student.Name.ToUpper();
             var thirdLine = $"PROFESSORA: {teacher.ToUpper()}";
 
-            var fourthLine = $"DATA DE NASCIMENTO: {student.Birthday.ToString("dd/MM/yyyy")}";
+            var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
             string[] param = { firstLine, secondLine, thirdLine, fourthLine, fifthLine };
 

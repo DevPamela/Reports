@@ -18,6 +18,9 @@ internal class StudentConfiguration : IEntityTypeConfiguration<Student>
             .WithOne(r => r.Student);
         builder.HasIndex(s => s.Name)
                    .IsUnique();
+
+        builder.Property(s => s.Gender)
+            .HasConversion<string>();
     }
-       
+
 }

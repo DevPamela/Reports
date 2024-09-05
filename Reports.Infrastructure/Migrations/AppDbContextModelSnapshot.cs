@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Reports.Infrastructure.DbContexts;
 
@@ -16,8 +17,10 @@ namespace Reports.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.28")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("Reports.Domain.Models.Assessment", b =>
                 {
@@ -44,6 +47,8 @@ namespace Reports.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<bool>("IsSelected")
                         .HasColumnType("tinyint(1)");
 
@@ -66,6 +71,8 @@ namespace Reports.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AtendedDescription")
                         .IsRequired()
@@ -108,6 +115,8 @@ namespace Reports.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("FirtsParagraph")
                         .HasColumnType("longtext");
 
@@ -125,7 +134,7 @@ namespace Reports.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Report");
                 });
 
             modelBuilder.Entity("Reports.Domain.Models.Student", b =>
@@ -134,16 +143,19 @@ namespace Reports.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("Absences")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateOnly>("Birthdate")
+                        .HasColumnType("date");
 
-                    b.Property<int?>("ClassRoomId")
+                    b.Property<int>("ClassRoomId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Genre")
+                    b.Property<string>("Gender")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsSelected")
@@ -153,7 +165,7 @@ namespace Reports.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("TeacherId")
+                    b.Property<int>("TeacherId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -173,6 +185,8 @@ namespace Reports.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -237,11 +251,15 @@ namespace Reports.Infrastructure.Migrations
                 {
                     b.HasOne("Reports.Domain.Models.ClassRoom", "Class")
                         .WithMany("Students")
-                        .HasForeignKey("ClassRoomId");
+                        .HasForeignKey("ClassRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Reports.Domain.Models.Teacher", "Teacher")
                         .WithMany("Students")
-                        .HasForeignKey("TeacherId");
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Class");
 
