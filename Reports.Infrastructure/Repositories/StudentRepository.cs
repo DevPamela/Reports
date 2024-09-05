@@ -39,19 +39,16 @@ namespace Reports.Infrastructure.Repositories
                 .FirstOrDefaultAsync(s => s.Id == id);
 
         /// <inheritdoc />
-        public async Task<Student?> GetByClassroomIdAsync(int id) =>//TODO testar amanhã
+        public async Task<Student?> GetByClassroomIdAsync(int id) =>
        await _dbContext.Students
            .Where(s => s.ClassRoomId == id)
            .FirstOrDefaultAsync();
 
-        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) => //TODO checar amanhã
+        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) => 
     await _dbContext.Students
-        .Where(student => selectedClasses.Contains(student.ClassRoomId ?? default))
+        .Where(student => selectedClasses.Contains(student.ClassRoomId))
         .ToListAsync();
 
-        //     public async Task<Student> GetByIsSelectedProperty(Student student) => //TODO checar amanhã
-        //await _dbContext.Students
-        //    .FirstOrDefaultAsync(student => student.IsSelected == true);
         public async Task<List<Student>> GetByIsSelectedProperty() =>
          await _dbContext.Students
              .Where(student => student.IsSelected == true)

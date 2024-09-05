@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MathNet.Numerics.Distributions;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
@@ -68,6 +69,7 @@ public class StudentController : Controller
     public async Task<ActionResult> SelectStudentsForReport()
     {
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
+        
         var students = await _studentService.GetStudentsListAsync();
 
         

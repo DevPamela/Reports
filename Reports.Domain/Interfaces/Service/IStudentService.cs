@@ -46,12 +46,6 @@ public interface IStudentService
     Task DeleteStudent(Student student);
 
     /// <summary>
-    /// Updates the details of an existing student.
-    /// </summary>
-    /// <param name="students"> The Student object containing the fields and their new values that need to be updated </param>
-    /// <returns></returns>
-    Task UpdateStudentList(List<Student> students);
-    /// <summary>
     /// Marks the Student as selected for future saving in the database.
     /// </summary>
     /// <param name="students"></param>

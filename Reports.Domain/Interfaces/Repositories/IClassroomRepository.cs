@@ -17,12 +17,6 @@ namespace Reports.Domain.Interfaces.Repositories
         Task<List<ClassRoom>> GetAllAsync();
 
         /// <summary>
-        /// Retrieve one <see cref="ClassRoom"/> from data store.
-        /// </summary>
-        /// <param name="classRoom"></param>
-        void UpdateAsync(ClassRoom classRoom);
-
-        /// <summary>
         /// Retrieve one <see cref="ClassRoom"/>by name.
         /// </summary>
         /// <param name="name"></param>

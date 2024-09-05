@@ -26,7 +26,7 @@ namespace Reports.Infrastructure.Repositories
             await _dbContext.Report
                 .FirstOrDefaultAsync(s => s.Name == name);
         public async Task<Report> GetReportById(int id) =>
-            await  _dbContext.Reports
+            await  _dbContext.Report
                 .Include(r => r.Student)
                 .FirstOrDefaultAsync(r => r.Id == id);
     }
