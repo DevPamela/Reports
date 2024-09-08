@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.Distributions;
-using Reports.Domain.Interfaces.Repositories;
+﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
 
@@ -139,9 +138,9 @@ public class StudentService : IStudentService
     }
 
     public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses)
-        =>  await _studentRepository.GetStudentsSelectedByClasses(selectedClasses);
+        => await _studentRepository.GetStudentsSelectedByClasses(selectedClasses);
 
-    public async Task<List<Student>> GetByIsSelectedProperty() 
+    public async Task<List<Student>> GetByIsSelectedProperty()
         => await _studentRepository.GetByIsSelectedProperty();
 
     public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)

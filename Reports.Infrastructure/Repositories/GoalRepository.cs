@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.Distributions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
@@ -31,7 +30,7 @@ internal class GoalRepository : IGoalRepository
               .FirstOrDefaultAsync(s => s.Id == id);
 
     /// <inheritdoc />
-    public async Task <List<Goal>> GetByIsSelectedProperty() => 
+    public async Task<List<Goal>> GetByIsSelectedProperty() =>
    await _dbContext.Goals
        .Where(g => g.IsSelected == true).ToListAsync();
 

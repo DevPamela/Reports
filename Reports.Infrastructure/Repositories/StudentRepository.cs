@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.Distributions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
@@ -44,7 +43,7 @@ namespace Reports.Infrastructure.Repositories
            .Where(s => s.ClassRoomId == id)
            .FirstOrDefaultAsync();
 
-        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) => 
+        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) =>
     await _dbContext.Students
         .Where(student => selectedClasses.Contains(student.ClassRoomId))
         .ToListAsync();

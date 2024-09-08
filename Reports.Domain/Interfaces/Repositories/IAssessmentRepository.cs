@@ -1,5 +1,4 @@
 ﻿using Reports.Domain.Models;
-using System.Data;
 
 namespace Reports.Domain.Interfaces.Repositories;
 public interface IAssessmentRepository
