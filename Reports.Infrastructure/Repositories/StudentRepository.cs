@@ -32,9 +32,32 @@ namespace Reports.Infrastructure.Repositories
             await _dbContext.Students
                 .FirstOrDefaultAsync(s => s.Name == name);
 
+        /// <inheritdoc />
         public async Task<Student?> GetByIdAsync(int id) =>
             await _dbContext.Students
                 .FirstOrDefaultAsync(s => s.Id == id);
 
+        /// <inheritdoc />
+        public async Task<Student?> GetByClassroomIdAsync(int id) =>
+       await _dbContext.Students
+           .Where(s => s.ClassRoomId == id)
+           .FirstOrDefaultAsync();
+
+        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) =>
+    await _dbContext.Students
+        .Where(student => selectedClasses.Contains(student.ClassRoomId))
+        .ToListAsync();
+
+        public async Task<List<Student>> GetByIsSelectedProperty() =>
+         await _dbContext.Students
+             .Where(student => student.IsSelected == true)
+             .ToListAsync();
+
+        public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)
+        {
+            return await _dbContext.Students
+                .Where(student => ids.Contains(student.Id))
+                .ToListAsync();
+        }
     }
 }

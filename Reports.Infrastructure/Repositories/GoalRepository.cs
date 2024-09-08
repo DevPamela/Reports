@@ -23,8 +23,15 @@ internal class GoalRepository : IGoalRepository
     public async Task<Goal?> GetByNameAsync(string name) =>
         await _dbContext.Goals
             .FirstOrDefaultAsync(g => g.Name == name);
+
+    /// <inheritdoc />
     public async Task<Goal?> GetByIdAsync(int id) =>
           await _dbContext.Goals
               .FirstOrDefaultAsync(s => s.Id == id);
+
+    /// <inheritdoc />
+    public async Task<List<Goal>> GetByIsSelectedProperty() =>
+   await _dbContext.Goals
+       .Where(g => g.IsSelected == true).ToListAsync();
 
 }

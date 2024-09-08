@@ -5,13 +5,14 @@ namespace Reports.Domain.Interfaces.Service
     public interface IReportService
     {
         /// <summary>
-        /// Creates the report.
+        /// Creates the <see cref="Report">.
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
         Task CreateReportAsync(Report report);
+
         /// <summary>
-        /// Gets the repor by Id.
+        /// Gets the <see cref="Report"> by Id.
         /// </summary>
         /// <param name="report"></param>
         /// <returns></returns>

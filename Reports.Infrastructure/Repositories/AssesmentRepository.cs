@@ -29,10 +29,13 @@ internal class AssessmentRepository : IAssessmentRepository
     public async Task<Assessment?> GetByIdAsync(int id) =>
           await _dbContext.Assessments
               .FirstOrDefaultAsync(a => a.GoalId == id);
-    public async Task<Assessment?> GetByStudentIdAsync(int id) =>
+    public async Task<List<Assessment>> GetByStudentIdAsync(int id) =>
           await _dbContext.Assessments
-              .FirstOrDefaultAsync(a => a.StudentId == id);
+              .Where(a => a.StudentId == id).ToListAsync();
     public async Task<Assessment?> GetByStudentIdAndGoalId(int studentId, int goalId) => _dbContext.Assessments
     .FirstOrDefault(a => a.StudentId == studentId && a.GoalId == goalId);
 
+    public async Task DeleteAllAsync(int id) => 
+        await _dbContext.Assessments.Where(_ => _.StudentId == id).ExecuteDeleteAsync();
+    
 }

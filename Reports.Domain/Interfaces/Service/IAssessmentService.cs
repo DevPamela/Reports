@@ -1,41 +1,40 @@
-﻿using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Reports.Domain.Models;
 
 namespace Reports.Domain.Interfaces.Service
 {
     public interface IAssessmentService
     {
         /// <summary>
-        /// Add a new assessment.
+        /// Add a new <see cref="Assessment">.
         /// </summary>
-        /// <param name="goal"></param>
-        /// <param name="student"></param>
-        /// <returns></returns>
+        /// <param name="goal">The selected <see cref="Goal"/></param>
+        /// <param name="student">The selected <see cref="Student"/></param>
         Task AddAssessmentForByGoalId(Goal goal, Student student);
 
         /// <summary>
         /// Add Satisfactory description.
         /// </summary>
         /// <param name="student"></param>
-        /// <returns></returns>
         Task AddIsAtendedInformation(List<Student> student);
 
         /// <summary>
-        /// Get Assessments list.
+        /// Get <see cref="Assessment"> list.
         /// </summary>
         /// <returns></returns>
         Task<List<Assessment>> GetAllAssessmentsAsync();
 
         /// <summary>
-        /// Get the assessment by Id.
+        /// Get the <see cref="Assessment"> by <see cref="Student"/> Id .
         /// </summary>
         /// <param name="id"></param>
+        /// <returns>A list of <see cref="Assessment"/></returns>
+        Task<List<Assessment?>> GetByStudentIdAsync(int id);
+
+        /// <summary>
+        /// Delete all <see cref="Assessment"/>for the <see cref="Student"/>id.
+        /// </summary>
+        /// <param name="studentId"></param>
         /// <returns></returns>
-        Task<Assessment> GetById(int id);
+        Task DeleteAllAsync(int studentId);
     }
 }

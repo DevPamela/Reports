@@ -37,7 +37,8 @@ namespace Reports.Service
                 SetIsSelectedAsTrue(goal);
             }
             await _unitOfWork.SaveChangesAsync();
-            var goalsList = _goalRepository.GetAllAsync().Result.Where(_ => _.IsSelected == true).ToList();
+            var goalsList = await _goalRepository.GetByIsSelectedProperty();
+
             var students = await SetGoalsForStudentList(goalsList);
 
             return students;
@@ -45,10 +46,13 @@ namespace Reports.Service
 
         public async Task<List<Student>> SetGoalsForStudentList(List<Goal> goals)
         {
-            var students = await _studentService.GetStudentsListAsync();
-            var selectedStudents = students.Where(_ => _.IsSelected == true);
+            var selectedStudents = await _studentService.GetByIsSelectedProperty();
+            
+
             foreach (var student in selectedStudents)
             {
+                await _assessmentService.DeleteAllAsync(student.Id);
+
                 foreach (var goal in goals)
                 {
                     await _assessmentService.AddAssessmentForByGoalId(goal, student);
@@ -63,16 +67,17 @@ namespace Reports.Service
             SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
             selectableSomeEntity.SetSelectionAsTrue(goal);
         }
-        public void SetStudentId(Student student, Goal goal)
+        public async Task SetStudentId(Student student, Goal goal)
         {
-            if (!CheckIfHasStudentId(student))
+            var hasStudentId = await CheckIfHasStudentId(student);
+            if (!hasStudentId)
             {
                 goal.StudentId = student.Id;
             }
         }
-        public bool CheckIfHasStudentId(Student student)
+        public async Task<bool> CheckIfHasStudentId(Student student)
         {
-            var goals = _goalRepository.GetAllAsync().Result;
+            var goals = await _goalRepository.GetAllAsync();
 
             foreach (var goal in goals)
             {
@@ -126,20 +131,16 @@ namespace Reports.Service
         {
             var assessmentName = assessment.Goal.Name;
             var name = await _goalRepository.GetByNameAsync(assessment.Goal.Name);
-            if (name != null)
-            {
-                return assessmentName = assessment.IsSatisfactory switch
-                {
-                    "S" => name.AtendedDescription,
-                    "PS" => name.ParciallyAtendedDescription,
-                    "I" => name.UnatendedDescription
-                };
-            }
-
-            else
+            if (name == null)
             {
                 return assessmentName;
             }
+            return assessmentName = assessment.IsSatisfactory switch
+            {
+                "S" => name.AtendedDescription,
+                "PS" => name.ParciallyAtendedDescription,
+                "I" => name.UnatendedDescription
+            };
         }
 
         public async Task<List<Goal>> GetGoalsListAsync() =>

@@ -120,7 +120,7 @@ namespace Reports.Service
             {
                 XWPFDocument doc = new XWPFDocument();
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                //TODO abrir o arquivo
+                
                 string reportsFolder = Path.Combine(path, "Relatorios");
 
                 await CreateReportsFolder(reportsFolder);
@@ -137,10 +137,10 @@ namespace Reports.Service
                 }
 
                 var IsAGirl = report.Student.IsAGirl();
-                var assessments = await _assessmentService.GetAllAssessmentsAsync();
-                var studentAssessments = assessments.Where(_ => _.StudentId == report.Student.Id);
+                 
+               var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
 
-                foreach (var a in studentAssessments)
+                foreach (var a in assessments)
                 {
                     var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
                     string validation = IsAGirl ? "a" : "o";

@@ -22,5 +22,18 @@ public interface IGoalRepository
     /// <param name="name">The goal's name.</param>
     /// <returns>A goal, or null in case it wasn't found.</returns>
     Task<Goal?> GetByNameAsync(string name);
+
+    /// <summary>
+    /// Get the goal by id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     Task<Goal?> GetByIdAsync(int id);
+
+    /// <summary>
+    /// Set IsSelected property as true.
+    /// </summary>
+    /// <param name="goal"></param>
+    /// <returns></returns>
+    Task<List<Goal>> GetByIsSelectedProperty();
 }

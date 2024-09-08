@@ -1,13 +1,6 @@
-﻿using MathNet.Numerics.Distributions;
-using Reports.Domain.Interfaces.Repositories;
+﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Reports.Service.Assessments
 {
@@ -32,7 +25,7 @@ namespace Reports.Service.Assessments
 
         public async Task AddAssessmentForByGoalId(Goal goal, Student student)
         {
-            var existingAssessment = _assessmentRepository.GetByStudentIdAndGoalId(student.Id, goal.Id).Result;
+            var existingAssessment =await _assessmentRepository.GetByStudentIdAndGoalId(student.Id, goal.Id);
             
             if (existingAssessment == null)
             {
@@ -84,6 +77,8 @@ namespace Reports.Service.Assessments
         }
         public async Task<List<Assessment>> GetAllAssessmentsAsync() => await _assessmentRepository.GetAllAsync();
 
-        public async Task<Assessment> GetById (int id) => await _assessmentRepository.GetByStudentIdAsync(id);
+        public async Task<List<Assessment?>> GetByStudentIdAsync(int id) => await _assessmentRepository.GetByStudentIdAsync(id);
+       
+        public async Task DeleteAllAsync(int studentId) => await _assessmentRepository.DeleteAllAsync(studentId);
     }
 }
