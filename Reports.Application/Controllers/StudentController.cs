@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
+using Reports.Domain.Enums;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Models;
-using Reports.Service.UseCases.RegisterStudentsFromFile;
+using Reports.Service.UseCases.Students.AddStudent;
+using Reports.Service.UseCases.Students.RegisterStudentsFromFile;
 
 namespace Reports.Application.Controllers;
 
@@ -46,11 +49,11 @@ public class StudentController : Controller
 
         var stream = viewModel.ExcelFile.OpenReadStream();
         var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, 1);
-        var response = await useCase.ExecuteAsync(request);
+        var result = await useCase.ExecuteAsync(request);
 
-        if (response.IsFailed)
+        if (result.IsFailed)
         {
-            response.AddToModelState(ModelState);
+            result.AddToModelState(ModelState);
             return View(nameof(Index), viewModel);
         }
 
@@ -165,23 +168,49 @@ public class StudentController : Controller
         return RedirectToAction("Index", "Home");
     }
 
-    public async Task<ActionResult> AddNewStudent()
+    public async Task<ActionResult> AddNewStudent([FromServices] IClassroomRepository repository)
     {
-        var classes = await _classroomService.GetAllAsync();
+        var classrooms = await repository.GetClassroomNames(1);
 
-        var model = new ClassroomAndStudentViewModel()
-        {
-            Classes = classes
-        };
+        var viewModel = new AddStudentViewModel(null, null, null, null, classrooms);
 
-        return View(model);
+        return View(viewModel);
     }
 
     [HttpPost]
-    public async Task<ActionResult> AddStudent(Student student)
+    public async Task<ActionResult> AddNewStudent(
+        [FromServices] IValidator<AddStudentViewModel> validator,
+        [FromServices] IClassroomRepository repository,
+        [FromServices] AddStudentUseCase addStudents,
+        AddStudentViewModel studentDetails)
     {
-        await _studentService.AddStudentAsync(student);
+        var validationResult = await validator.ValidateAsync(studentDetails);
 
-        return RedirectToAction("Index", "Home");
+        if (!validationResult.IsValid)
+        {
+            validationResult.AddToModelState(ModelState);
+            var classrooms = await repository.GetClassroomNames(1);
+            var viewModel = studentDetails with { Classrooms = classrooms };
+            return View(viewModel);
+        }
+
+        var request = new AddStudentRequest(
+            studentDetails.Name!,
+            studentDetails.Birthdate!.Value,
+            (Gender)studentDetails.Gender!.Value,
+            studentDetails.ClassroomId!.Value,
+            1);
+
+        var result = await addStudents.ExecuteAsync(request);
+
+        if (result.IsFailed)
+        {
+            result.AddToModelState(ModelState);
+            var classrooms = await repository.GetClassroomNames(1);
+            var viewModel = studentDetails with { Classrooms = classrooms };
+            return View(viewModel);
+        }
+
+        return RedirectToAction(nameof(StudentsList));
     }
 }

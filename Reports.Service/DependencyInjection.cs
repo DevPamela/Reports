@@ -5,7 +5,8 @@ using Reports.Service.ExcelParser.Interfaces;
 using Reports.Service.ExcelParser.Validators.StudentBirthdateColumn;
 using Reports.Service.ExcelParser.Validators.StudentGenderColumn;
 using Reports.Service.ExcelParser.Validators.StudentNameColumn;
-using Reports.Service.UseCases.RegisterStudentsFromFile;
+using Reports.Service.UseCases.Students.AddStudent;
+using Reports.Service.UseCases.Students.RegisterStudentsFromFile;
 
 namespace Reports.Service;
 
@@ -25,6 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped<RegisterStudentsFromFileUseCase>();
         services.AddScoped<IStudentFactory, StudentFactory>();
+        services.AddScoped<AddStudentUseCase>();
 
         return services;
     }

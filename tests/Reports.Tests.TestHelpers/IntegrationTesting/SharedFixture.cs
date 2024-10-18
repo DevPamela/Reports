@@ -42,12 +42,23 @@ public class SharedFixture : IAsyncLifetime
     };
 
     /// <summary>
+    /// Gets the classroom instance.
+    /// </summary>
+    public ClassRoom Classroom { get; } = new()
+    {
+        Id = 1,
+        Name = "Classroom 1",
+        TeacherId = 1
+    };
+
+    /// <summary>
     /// Seeds the database with initial data.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task SeedAsync()
     {
         SharedDbContext.Teacher.Add(Teacher);
+        SharedDbContext.Classroom.Add(Classroom);
         await SharedDbContext.SaveChangesAsync();
     }
 

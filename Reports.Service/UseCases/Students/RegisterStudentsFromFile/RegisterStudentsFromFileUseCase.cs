@@ -3,7 +3,7 @@ using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Service.ExcelParser.Interfaces;
 
-namespace Reports.Service.UseCases.RegisterStudentsFromFile;
+namespace Reports.Service.UseCases.Students.RegisterStudentsFromFile;
 
 /// <summary>
 /// Use case for registering students from a file.

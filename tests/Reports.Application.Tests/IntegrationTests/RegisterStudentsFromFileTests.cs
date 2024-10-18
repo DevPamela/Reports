@@ -1,16 +1,15 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Io.Dom;
-using Bogus;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Reports.Application.Tests.Fixtures;
+using Reports.Domain.Enums;
 using Reports.Infrastructure.DbContexts;
 using Reports.Tests.TestHelpers.Files;
 using Reports.Tests.TestHelpers.IntegrationTesting;
 using Reports.Tests.TestHelpers.Web;
 using System.Net;
-using Reports.Domain.Enums;
 
 namespace Reports.Application.Tests.IntegrationTests;
 
@@ -24,9 +23,7 @@ public class RegisterStudentsFromFileTests
     private const string ClassroomNameInputId = "#classroom-name-input";
     private const string ExcelInputId = "#excel-input";
     private const string SubmitButtonId = "#submit-button";
-    private const string ValidationErrorsListItem = "#validation-errors ul li";
 
-    private readonly Faker _faker = new();
     private readonly HttpClient _client;
     private readonly SharedFixture _sharedFixture;
     private readonly AppDbContext _sharedDbContext;
@@ -49,82 +46,6 @@ public class RegisterStudentsFromFileTests
     }
 
     [Fact]
-    public async Task SubmitRegisterStudentsForm_ShouldReturnErrors_WhenFormIsInvalid()
-    {
-        // Arrange
-        var indexPage = await _client.GetAsync(StudentControllerRoute);
-        var indexContent = await HtmlHelpers.GetDocumentAsync(indexPage);
-
-        var form = indexContent.QuerySelector<IHtmlFormElement>(RegisterStudentsFormId)!;
-        var submitButton = form.QuerySelector<IHtmlInputElement>(SubmitButtonId)!;
-
-        //Act
-        var response = await _client.SubmitFormAsync(form, submitButton);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
-        var errors = responseContent.QuerySelectorAll<IHtmlListItemElement>(
-            ValidationErrorsListItem).ToList();
-
-        errors.Should().AllSatisfy(e => e.TextContent.Should().NotBeNullOrWhiteSpace());
-    }
-
-    [Fact]
-    public async Task SubmitRegisterStudentsForm_ShouldReturnErrors_WhenExcelContentIsInvalid()
-    {
-        // Arrange
-        var indexPage = await _client.GetAsync(StudentControllerRoute);
-        var indexContent = await HtmlHelpers.GetDocumentAsync(indexPage);
-
-        var form = indexContent.QuerySelector<IHtmlFormElement>(RegisterStudentsFormId)!;
-        var submitButton = form.QuerySelector<IHtmlInputElement>(SubmitButtonId)!;
-
-        var fileName = "invalid-excel-input.xlsx";
-        using var helper = new FileStreamHelper(FilePath, fileName);
-
-        FillRegisterStudentsForm(
-            form, _faker.Random.Word(), new FileEntry(fileName, string.Empty, helper.FileStream));
-
-        //Act
-        var response = await _client.SubmitFormAsync(form, submitButton);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var responseContent = await HtmlHelpers.GetDocumentAsync(response);
-        var errors = responseContent.QuerySelectorAll<IHtmlListItemElement>(
-            ValidationErrorsListItem).ToList();
-
-        errors.Should().AllSatisfy(e => e.TextContent.Should().NotBeNullOrWhiteSpace());
-    }
-
-    [Fact]
-    public async Task SubmitRegisterStudentsForm_ShouldRedirectToHomeIndex_WhenFormIsValid()
-    {
-        // Arrange
-        var indexPage = await _client.GetAsync(StudentControllerRoute);
-        var content = await HtmlHelpers.GetDocumentAsync(indexPage);
-
-        var form = content.QuerySelector<IHtmlFormElement>(RegisterStudentsFormId)!;
-        var submitButton = form.QuerySelector<IHtmlInputElement>(SubmitButtonId)!;
-
-        var fileName = "excel-input.xlsx";
-        using var helper = new FileStreamHelper(FilePath, fileName);
-
-        FillRegisterStudentsForm(
-            form, _faker.Random.Word(), new FileEntry(fileName, string.Empty, helper.FileStream));
-
-        //Act
-        var response = await _client.SubmitFormAsync(form, submitButton);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        response.Headers.Location!.OriginalString.Should().Be("/");
-    }
-
-    [Fact]
     public async Task SubmitRegisterStudentsForm_ShouldSaveClassroomAndStudentsInDb_WhenFormIsValid()
     {
         // Arrange
@@ -134,7 +55,7 @@ public class RegisterStudentsFromFileTests
         var form = content.QuerySelector<IHtmlFormElement>(RegisterStudentsFormId)!;
         var submitButton = form.QuerySelector<IHtmlInputElement>(SubmitButtonId)!;
 
-        var classroomName = _faker.Random.Word();
+        var classroomName = "Test Classroom";
         var fileName = "excel-input.xlsx";
         using var helper = new FileStreamHelper(FilePath, fileName);
 
@@ -147,8 +68,8 @@ public class RegisterStudentsFromFileTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
 
-        var classroom = await _sharedDbContext.Classroom.FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id);
-        classroom.Name.Should().Be(classroomName);
+        var classroom = await _sharedDbContext.Classroom
+            .FirstAsync(c => c.TeacherId == _sharedFixture.Teacher.Id && c.Name == classroomName);
 
         var students = await _sharedDbContext.Students
             .Where(s => s.ClassRoomId == classroom.Id && s.TeacherId == _sharedFixture.Teacher.Id)

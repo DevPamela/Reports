@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Reports.Application.Models;
+using Reports.Domain.Models;
 
 namespace Reports.Application.Validators;
 
@@ -9,7 +10,6 @@ namespace Reports.Application.Validators;
 public class RegisterStudentsFromFileValidator
     : AbstractValidator<RegisterStudentsFromFileViewModel>
 {
-    private const int MaxClassroomNameLength = 80;
     private const int MaxFileSizeInKb = 100;
     private const int MaxFileSizeInBytes = MaxFileSizeInKb * 1024;
 
@@ -28,8 +28,8 @@ public class RegisterStudentsFromFileValidator
         RuleFor(vm => vm.ClassroomName)
             .NotEmpty()
             .WithMessage("Nome da turma é obrigatório.")
-            .MaximumLength(MaxClassroomNameLength)
-            .WithMessage($"Nome da turma deve ter até {MaxClassroomNameLength} caracteres.");
+            .MaximumLength(ClassRoom.NameMaxLength)
+            .WithMessage($"Nome da turma deve ter até {ClassRoom.NameMaxLength} caracteres.");
 
         RuleFor(vm => vm.ExcelFile)
             .NotNull()

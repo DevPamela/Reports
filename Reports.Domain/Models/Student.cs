@@ -7,6 +7,8 @@ namespace Reports.Domain.Models
 {
     public class Student : ISelectable
     {
+        public const int NameMaxLength = 120;
+
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]

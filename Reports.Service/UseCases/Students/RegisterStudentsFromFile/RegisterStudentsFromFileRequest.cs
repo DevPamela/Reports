@@ -1,4 +1,4 @@
-﻿namespace Reports.Service.UseCases.RegisterStudentsFromFile;
+﻿namespace Reports.Service.UseCases.Students.RegisterStudentsFromFile;
 
 /// <summary>
 /// Represents the request to register students from a file.

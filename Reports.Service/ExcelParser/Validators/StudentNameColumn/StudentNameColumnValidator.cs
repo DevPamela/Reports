@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using NPOI.SS.UserModel;
+using Reports.Domain.Models;
 using Reports.Service.ExcelParser.Interfaces;
 
 namespace Reports.Service.ExcelParser.Validators.StudentNameColumn;
@@ -9,8 +10,6 @@ namespace Reports.Service.ExcelParser.Validators.StudentNameColumn;
 /// </summary>
 public class StudentNameColumnValidator : IColumnValidator, IStudentNameColumn
 {
-    private const int MaxLength = 120;
-
     /// <inheritdoc cref="IStudentNameColumn.Index" />
     public int Index => 0;
 
@@ -32,9 +31,9 @@ public class StudentNameColumnValidator : IColumnValidator, IStudentNameColumn
             return StudentNameColumnValidationErrors.NameIsEmpty(cell.Address);
         }
 
-        if (content.Length > MaxLength)
+        if (content.Length > Student.NameMaxLength)
         {
-            return StudentNameColumnValidationErrors.NameIsTooLong(cell.Address, MaxLength);
+            return StudentNameColumnValidationErrors.NameIsTooLong(cell.Address, Student.NameMaxLength);
         }
 
         return Result.Ok();

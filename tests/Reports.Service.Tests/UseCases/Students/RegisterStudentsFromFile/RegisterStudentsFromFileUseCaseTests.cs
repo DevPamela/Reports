@@ -8,9 +8,9 @@ using Reports.Domain.Enums;
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Service.ExcelParser.Interfaces;
-using Reports.Service.UseCases.RegisterStudentsFromFile;
+using Reports.Service.UseCases.Students.RegisterStudentsFromFile;
 
-namespace Reports.Service.Tests.UseCases.RegisterStudentsFromFile;
+namespace Reports.Service.Tests.UseCases.Students.RegisterStudentsFromFile;
 
 public class RegisterStudentsFromFileUseCaseTests
 {
@@ -57,7 +57,7 @@ public class RegisterStudentsFromFileUseCaseTests
         // Assert
         result.Should().BeFailure();
         result.Should().HaveError(errorMessage);
-        _mockClassroomRepository.DidNotReceive().Add(Arg.Any<ClassRoom>());
+        _mockClassroomRepository.DidNotReceive().Add(Arg.Any<Domain.Models.ClassRoom>());
         await _mockUnitOfWork.DidNotReceive().SaveChangesAsync();
     }
 
@@ -76,7 +76,7 @@ public class RegisterStudentsFromFileUseCaseTests
 
         // Assert
         result.Should().BeSuccess();
-        _mockClassroomRepository.Received(1).Add(Arg.Is<ClassRoom>(c =>
+        _mockClassroomRepository.Received(1).Add(Arg.Is<Domain.Models.ClassRoom>(c =>
             c.Name == request.ClassroomName
             && c.TeacherId == request.TeacherId
             && c.Students == students));

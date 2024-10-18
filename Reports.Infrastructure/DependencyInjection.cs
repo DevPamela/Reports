@@ -5,7 +5,6 @@ using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Infrastructure.DbContexts;
 using Reports.Infrastructure.Repositories;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Reports.Infrastructure;
 
@@ -20,32 +19,25 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(
    this IServiceCollection services, IConfiguration configuration)
     {
-        try
+        var connectionString = configuration.GetConnectionString("ReportsConnection");
+
+        services.AddDbContext<AppDbContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("ReportsConnection");
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        });
 
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-            });
+        services.AddScoped<IUnitOfWork>(sp =>
+            sp.GetRequiredService<AppDbContext>());
 
-            services.AddScoped<IUnitOfWork>(sp =>
-                sp.GetRequiredService<AppDbContext>());
-
-            services.AddScoped<IStudentRepository, StudentRepository>();
-            services.AddScoped<IGoalRepository, GoalRepository>();
-            services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<IAssessmentRepository, AssessmentRepository>();
-            services.AddScoped<IClassroomRepository, ClassroomRepository>();
-            services.AddScoped<ITeacherRepository, TeacherRepository>();
-            services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IGoalRepository, GoalRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<IAssessmentRepository, AssessmentRepository>();
+        services.AddScoped<IClassroomRepository, ClassroomRepository>();
+        services.AddScoped<ITeacherRepository, TeacherRepository>();
+        services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
 
 
-            return services;
-        }
-        catch (global::System.Exception)
-        {
-            throw;
-        }
+        return services;
     }
 }

@@ -6,11 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Students\Goal\**" />
-    <EmbeddedResource Remove="Students\Goal\**" />
-    <None Remove="Students\Goal\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="3.16.0" />
@@ -20,10 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reports.Domain\Reports.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Report\" />
   </ItemGroup>
 
 </Project>
