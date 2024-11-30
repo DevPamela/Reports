@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reports.Application.Controllers
 {
+    [Authorize]
     public class TeacherController : Controller
     {
         private readonly ITeacherService _teacherService;

@@ -1,0 +1,47 @@
+﻿@model Reports.Application.Models.RegisterUserViewModel
+
+<div class="container mt-5">
+    <h2 class="text-center">Registrar</h2>
+    <form method="post" action="/User/register" class="mx-auto mt-4" style="max-width: 400px;" id="registerForm">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="username" class="form-label">Nome de Usuário:</label>
+            <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu nome de usuário" required />
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail:</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Senha:</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha" required />
+        </div>
+        <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar Senha:</label>
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirme sua senha" required />
+            <div class="text-danger mt-1" id="passwordMismatchMessage" style="display: none;">
+                As senhas não coincidem.
+            </div>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-success" id="submitButton">Registrar</button>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-muted">Já tem uma conta? <a href="/User/login" class="text-primary">Entre agora</a></p>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            e.preventDefault(); // Prevent form submission
+            document.getElementById('passwordMismatchMessage').style.display = 'block';
+        } else {
+            document.getElementById('passwordMismatchMessage').style.display = 'none';
+        }
+    });
+</script>

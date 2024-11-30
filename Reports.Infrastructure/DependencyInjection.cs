@@ -27,6 +27,7 @@ public static class DependencyInjection
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            options.UseOpenIddict();
             });
 
             services.AddScoped<IUnitOfWork>(sp =>
@@ -38,8 +39,40 @@ public static class DependencyInjection
             services.AddScoped<IAssessmentRepository, AssessmentRepository>();
             services.AddScoped<IClassroomRepository, ClassroomRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
+        services.AddOpenIddict()
+        .AddCore(options =>
+        {
+            // Configure OpenIddict to use the Entity Framework Core stores.
+            options.UseEntityFrameworkCore()
+                   .UseDbContext<AppDbContext>();
+        })
+        .AddServer(options =>
+        {
+            // Enable the token endpoint.
+            options.SetTokenEndpointUris("/connect/token");
 
+            // Enable the client credentials flow.
+            options.AllowClientCredentialsFlow();
+
+            // Register the signing and encryption credentials.
+            options.AddDevelopmentEncryptionCertificate()
+                   .AddDevelopmentSigningCertificate();
+
+            // Register the ASP.NET Core host and configure the endpoints.
+            options.UseAspNetCore()
+                   .EnableTokenEndpointPassthrough();
+
+            // Optionally set access token lifetime
+            options.SetAccessTokenLifetime(TimeSpan.FromHours(1));
+        })
+        .AddValidation(options =>
+        {
+            // Enable JWT token validation.
+            options.UseLocalServer();
+            options.UseAspNetCore();
+        });
 
             return services;
         }

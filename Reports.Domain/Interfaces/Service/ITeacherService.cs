@@ -1,5 +1,5 @@
 ﻿using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,7 +6,7 @@ using FluentResults.Extensions.FluentAssertions;
 using NSubstitute;
 using Reports.Domain.Enums;
 using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Service.ExcelParser.Interfaces;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
 

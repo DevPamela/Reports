@@ -1,27 +1,30 @@
 ﻿@model HomeModel;
-<br />
-<br />
-<br />
-<br />
 
-<br />
-<br />
-@if(Model.Classrooms.Count == 0)
+@if (User.Identity.IsAuthenticated)
 {
-    <h3>Olá, @Model.Name! Seja bem vindo ao simple edu!</h3>
-    <h3>Você pode começar vendo o tutorial de uso da nossa plataforma:</h3>
-    <a href="@Url.Action("Index", "Student")">Para começar, vamos cadastrar sua turma?</a>
+    <!-- Display when the user is logged in -->
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="display-4">O que você gostaria de fazer hoje, @Model.Name.ToUpper()?</h1>
+            <div class="d-flex flex-column align-items-center mt-4">
+                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-primary mb-2 w-50">Criar relatório</a>
+                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-secondary mb-2 w-50">Editar turma</a>
+                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-success mb-2 w-50">Adicionar aluno</a>
+                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-danger mb-2 w-50">Remover aluno</a>
+                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-info mb-2 w-50">Ver últimos relatórios</a>
+            </div>
+        </div>
+    </div>
 }
-
-else{
-<h1>O QUE VOCÊ GOSTARIA DE FAZER HOJE, @Model.Name.ToUpper()?</h1>
-<a href="@Url.Action("SelectGoalsForReport", "Goals")">Criar relatório</a>
-<br />
-<a href="@Url.Action("SelectGoalsForReport", "Goals")">Editar turma</a>
-<br />
-<a href="@Url.Action("SelectGoalsForReport", "Goals")">Adicionar aluno</a>
-<br />
-<a href="@Url.Action("SelectGoalsForReport", "Goals")">Remover aluno</a>
-<br />
-<a href="@Url.Action("SelectGoalsForReport", "Goals")">Ver últimos relatórios</a>
+else
+{
+    <!-- Display when the user is not logged in -->
+    <div class="container mt-5 text-center">
+        <h3 class="text-primary">Olá! Seja bem-vindo ao Simple Edu!</h3>
+        <p class="lead">Você pode começar criando uma conta ou entrando na sua conta:</p>
+        <div class="mt-4">
+            <a href="/User/Login" class="btn btn-outline-primary btn-lg me-3">Entre agora</a>
+            <a href="/User/Register" class="btn btn-outline-success btn-lg">Registrar</a>
+        </div>
+    </div>
 }

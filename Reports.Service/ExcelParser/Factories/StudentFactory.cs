@@ -1,6 +1,6 @@
 ﻿using NPOI.SS.UserModel;
 using Reports.Domain.Enums;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Service.ExcelParser.Interfaces;
 
 namespace Reports.Service.ExcelParser.Factories;

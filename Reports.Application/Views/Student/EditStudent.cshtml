@@ -1,6 +1,7 @@
 ﻿@model ClassroomAndStudentViewModel
 
 <form asp-controller="Student" asp-action="UpdateStudent" method="post">
+    @Html.AntiForgeryToken()
     <div class="form-group col-md-5">
         <br/>
         <br />

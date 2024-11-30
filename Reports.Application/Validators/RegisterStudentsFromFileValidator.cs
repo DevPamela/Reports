@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Reports.Application.Models;
+using Reports.Domain.Entities;
 
 namespace Reports.Application.Validators;
 

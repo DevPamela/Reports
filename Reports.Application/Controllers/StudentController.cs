@@ -2,12 +2,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
+using Reports.Domain.Enums;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reports.Application.Controllers;
 
+[Authorize]
 public class StudentController : Controller
 {
     private readonly IStudentService _studentService;

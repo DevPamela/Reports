@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Infrastructure.DbContexts;
 using Respawn;
 using System.Data.Common;

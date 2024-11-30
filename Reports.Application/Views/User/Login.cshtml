@@ -1,0 +1,22 @@
+﻿@model Reports.Application.Models.LoginUserViewModel
+
+<div class="container mt-5">
+    <h2 class="text-center">Entrar</h2>
+    <form method="post" action="/User/login" class="mx-auto mt-4" style="max-width: 400px;">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail:</label>
+            <input type="text" name="email" id="email" class="form-control" placeholder="Digite seu e-mail" required />
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Senha:</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha" required />
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-muted">Não tem uma conta? <a href="/User/Register" class="text-primary">Crie uma agora</a></p>
+        </div>
+    </form>
+</div>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Reports.Domain.Models;
+using Reports.Domain.Enums;
+using Reports.Domain.Entities;
 
 namespace Reports.Infrastructure.Configs;
 internal class StudentConfiguration : IEntityTypeConfiguration<Student>
@@ -8,19 +9,25 @@ internal class StudentConfiguration : IEntityTypeConfiguration<Student>
     public void Configure(EntityTypeBuilder<Student> builder)
     {
         builder
-           .HasMany(a => a.Goals)
-           .WithMany(g => g.Students)
-           .UsingEntity<Assessment>();
+        .HasKey(s => s.Id);
 
+        builder
+            .HasOne(s => s.Teacher)
+            .WithMany(t => t.Students)
+            .HasForeignKey(s => s.TeacherId);
 
-        builder.HasKey(a => a.Id);
-        builder.HasMany(x => x.Reports)
-            .WithOne(r => r.Student);
-        builder.HasIndex(s => s.Name)
-                   .IsUnique();
+        builder
+            .HasOne(s => s.Class)
+            .WithMany(c => c.Students)
+            .HasForeignKey(s => s.ClassRoomId);
 
-        builder.Property(s => s.Gender)
-            .HasConversion<string>();
+        builder
+            .Property(s => s.Gender)
+            .IsRequired()
+            .HasConversion(
+                v => v.ToString(),
+                v => (Gender)Enum.Parse(typeof(Gender), v)) // Convert to/from string
+            .HasColumnType("ENUM('Male', 'Female')"); // MySQL ENUM type
     }
 
 }
