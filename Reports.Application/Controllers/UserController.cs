@@ -58,7 +58,8 @@ namespace Reports.Application.Controllers
 
             try
             {
-                await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);
+                await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher
+                //cadastrar teacher 
                 return RedirectToAction("Login");
             }
             catch (InvalidOperationException ex)

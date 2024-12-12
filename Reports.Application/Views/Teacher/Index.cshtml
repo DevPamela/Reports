@@ -1,7 +1,25 @@
 ﻿
-@{
-    ViewData["Title"] = "Index";
-}
-
 <h1>Index</h1>
 
+@model TeacherViewModel
+
+<h2>Para começar a usar o SimpleEdu, precisamos confirmar alguns dados</h2>
+
+<form asp-controller="Teacher" asp-action="RegisterNewTeacher" method="post">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Escreva o nome que você deseja que esteja no campo professor do seu relatório</label>
+        <br />
+        <br />
+        <input asp-for="Name" class="form-control" value="@User.Identity.Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

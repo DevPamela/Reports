@@ -28,14 +28,16 @@ namespace Reports.Application.Controllers
         [HttpPost]
         public async Task<ActionResult> RegisterNewTeacher(TeacherViewModel teacherViewModel)
         {
-            var teacher = new Teacher
+            var userId = User.FindFirst("UserId")?.Value;// se primeiro acesso tutorial básico(guia)
+            var teacher = new Teacher//não forçar a entrar direto em cadastrar turma
             {
-                Name = teacherViewModel.Name
+                Name = teacherViewModel.Name,
+                UserId = int.Parse(userId)
             };
 
             await _teacherService.RegisterTeacher(teacher);
 
-            return View("Index");
+            return RedirectToAction("Index", "Student");
         }
     }
 }

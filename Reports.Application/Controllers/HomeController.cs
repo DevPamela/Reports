@@ -19,20 +19,21 @@ namespace Reports.Application.Controllers
 
         public async Task<IActionResult> Index()
         {
-           var classrooms= await _classroomService.GetAllAsync();
-            var teacherName = new Teacher();
-            foreach (var classroom in classrooms)
+            var user = User.FindFirst("UserId")?.Value;
+            var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(user));
+             if (teacherId == null)
             {
-                 teacherName = await _teacherService.GetByIdAsync(classroom.TeacherId);
+                return RedirectToAction("Index", "Teacher");
             }
-
-            HomeModel home = new HomeModel()
+            else
             {
-                Name = teacherName.Name,
-                Classrooms = classrooms
-            };
-
-            return View(home);
+                
+                HomeModel home = new HomeModel()
+                {
+                    Name = teacherId.Name,
+                };
+                return View(home);
+            }
         }
 
         public IActionResult Privacy()

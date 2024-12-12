@@ -4,7 +4,7 @@ using Reports.Domain.Entities;
 
 namespace Reports.Infrastructure.Configs
 {
-    internal class AssessmentConfiguration : IEntityTypeConfiguration<Assessment>
+    public class AssessmentConfiguration : IEntityTypeConfiguration<Assessment>
     {
         public void Configure(EntityTypeBuilder<Assessment> builder)
         {

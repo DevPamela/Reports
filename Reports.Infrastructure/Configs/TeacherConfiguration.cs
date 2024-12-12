@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Entities;
+using System.Reflection.Emit;
 
 namespace Reports.Infrastructure.Configs
 {
@@ -25,6 +26,9 @@ namespace Reports.Infrastructure.Configs
                 .HasMany(t => t.Goals)
                 .WithOne(g => g.Teacher)
                 .HasForeignKey(g => g.TeacherId);
+
+            builder.HasOne(e => e.User)
+                .WithOne(u => u.Teacher);
         }
     }
 }

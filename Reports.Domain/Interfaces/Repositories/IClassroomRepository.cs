@@ -38,5 +38,7 @@ namespace Reports.Domain.Interfaces.Repositories
         /// <param name="teacherId">The Id of the teacher.</param>
         /// <returns>True if the classroom exists for the teacher, false otherwise.</returns>
         Task<bool> ClassroomForTeacherExists(int classroomId, int teacherId);
+
+        Task<List<ClassroomNameResponse>> GetClassroomNames(int teacherId);
     }
 }

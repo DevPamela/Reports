@@ -8,6 +8,7 @@ using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
 using Microsoft.AspNetCore.Authorization;
+using Reports.Service;
 
 namespace Reports.Application.Controllers;
 
@@ -16,17 +17,19 @@ public class StudentController : Controller
 {
     private readonly IStudentService _studentService;
     private readonly IClassroomService _classroomService;
+    private readonly ITeacherService _teacherService;
 
     public StudentController(
         IStudentService studentService,
-        IClassroomService classroomService)
+        IClassroomService classroomService,
+        ITeacherService teacherService)
     {
         _studentService = studentService;
         _classroomService = classroomService;
+        _teacherService = teacherService;
     }
     public IActionResult Index()
     {
-
         return View();
     }
     public ActionResult Error()
@@ -47,9 +50,11 @@ public class StudentController : Controller
             validationResult.AddToModelState(ModelState);
             return View(nameof(Index), viewModel);
         }
+        var user = User.FindFirst("UserId")?.Value;
 
+        var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
         var stream = viewModel.ExcelFile.OpenReadStream();
-        var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, 1);
+        var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, teacher.Id);
         var response = await useCase.ExecuteAsync(request);
 
         if (response.IsFailed)
@@ -131,8 +136,10 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<ActionResult> EditStudent(int id)
     {
+        var user = User.FindFirst("UserId")?.Value;
+        var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(user));
         var student = await _studentService.GetByIdAsync(id);
-        var classroom = await _classroomService.GetAllAsync();
+        var classroom = await _classroomService.GetByTeacherId(teacherId.Id);
         var model = new ClassroomAndStudentViewModel
         {
             Student = student,
@@ -145,10 +152,10 @@ public class StudentController : Controller
     [HttpPost]
     public async Task<ActionResult> UpdateStudent(Student student)
     {
-        await _studentService.UpdateStudent(student);
+        await _studentService.UpdateStudent(student); //TODO ver genero chegando errado, ver data de nascimento que não está preencida, acrescentar botões de voltar, ver cookies de autenticação
 
         return RedirectToAction("Index", "Home");
-    }
+    } 
 
     [HttpGet]
     public async Task<ActionResult> RemoveStudent(int id)
@@ -175,7 +182,7 @@ public class StudentController : Controller
 
         var model = new ClassroomAndStudentViewModel()
         {
-            Classes = classes
+           // Classes = classes //TODO
         };
 
         return View(model);
@@ -184,6 +191,10 @@ public class StudentController : Controller
     [HttpPost]
     public async Task<ActionResult> AddStudent(Student student)
     {
+        var user = User.FindFirst("UserId")?.Value;
+        var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
+        student.Teacher = teacher;
+        student.TeacherId = teacher.Id;
         await _studentService.AddStudentAsync(student);
 
         return RedirectToAction("Index", "Home");

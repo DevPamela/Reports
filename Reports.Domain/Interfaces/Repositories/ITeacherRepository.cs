@@ -17,9 +17,17 @@ public interface ITeacherRepository
     void Update(Teacher teacher);
 
     /// <summary>
-    /// Retrieve one goal from the data store by its name.
+    /// Retrieve one goal from the data store by Id.
     /// </summary>
     /// <param name="name">The goal's name.</param>
     /// <returns>A goal, or null in case it wasn't found.</returns>
     Task<Teacher?> GetByIdAsync(int id);
+
+
+    /// <summary>
+    /// Retrieve one goal from the data store by User Id.
+    /// </summary>
+    /// <param name="name">The goal's name.</param>
+    /// <returns>A goal, or null in case it wasn't found.</returns>
+    Task<Teacher?> GetByUserIdAsync(int id);
 }

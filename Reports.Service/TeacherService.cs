@@ -20,6 +20,7 @@ namespace Reports.Service
         }
 
         public async Task<Teacher> GetByIdAsync(int id) => await _teacherRepository.GetByIdAsync(id);
+        public async Task<Teacher> GetByUserIdAsync(int id) => await _teacherRepository.GetByUserIdAsync(id);
     }
     //getclassroom with teacherId
 }

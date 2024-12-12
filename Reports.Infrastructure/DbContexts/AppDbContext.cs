@@ -2,6 +2,7 @@
 using OpenIddict.EntityFrameworkCore.Models;
 using Reports.Domain.Entities;
 using Reports.Domain.Interfaces.Repositories;
+using Reports.Infrastructure.Configs;
 
 namespace Reports.Infrastructure.DbContexts;
 
@@ -23,6 +24,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.UseOpenIddict();
+        modelBuilder.ApplyConfiguration(new GoalConfiguration());
+        modelBuilder.ApplyConfiguration(new StudentConfiguration());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

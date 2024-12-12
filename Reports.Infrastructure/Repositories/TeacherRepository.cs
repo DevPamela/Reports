@@ -21,4 +21,8 @@ internal class TeacherRepository : ITeacherRepository
     public async Task<Teacher?> GetByIdAsync(int id) =>
           await _dbContext.Teacher
               .FirstOrDefaultAsync(a => a.Id == id);
+
+    public async Task<Teacher?> GetByUserIdAsync(int id) =>
+         await _dbContext.Teacher
+             .FirstOrDefaultAsync(a => a.UserId == id);
 }

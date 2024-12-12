@@ -1,6 +1,7 @@
 ﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
+using Reports.Domain.Entities.Responses;
 
 namespace Reports.Service.Classroom
 {
@@ -37,6 +38,7 @@ namespace Reports.Service.Classroom
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task<List<ClassroomNameResponse>> GetByTeacherId(int id) => await _classroomRepository.GetClassroomNames(id);
         public async Task<ClassRoom> GetById(int id) => await _classroomRepository.GetByIdAsync(id);
         public async Task<List<ClassRoom>> GetAllAsync() => await _classroomRepository.GetAllAsync();
         public async Task SetClassroomAsTrue(ClassRoom classroom)
