@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
-using Reports.Domain.Enums;
-using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
 using Microsoft.AspNetCore.Authorization;
-using Reports.Service;
+
 
 namespace Reports.Application.Controllers;
 
@@ -155,7 +153,7 @@ public class StudentController : Controller
         await _studentService.UpdateStudent(student); //TODO ver genero chegando errado, ver data de nascimento que não está preencida, acrescentar botões de voltar, ver cookies de autenticação
 
         return RedirectToAction("Index", "Home");
-    } 
+    }
 
     [HttpGet]
     public async Task<ActionResult> RemoveStudent(int id)
@@ -182,7 +180,7 @@ public class StudentController : Controller
 
         var model = new ClassroomAndStudentViewModel()
         {
-           // Classes = classes //TODO
+            // Classes = classes //TODO
         };
 
         return View(model);

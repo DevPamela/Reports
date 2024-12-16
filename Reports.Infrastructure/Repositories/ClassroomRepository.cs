@@ -46,4 +46,10 @@ public class ClassroomRepository : IClassroomRepository
             .Select(c => new ClassroomNameResponse(c.Id, c.Name))
             .ToListAsync();
     }
+    public async Task<List<ClassRoom>> GetClassroomByTeacherId(int teacherId)
+    {
+        return await _dbContext.Classroom
+            .Where(c => c.TeacherId == teacherId)
+            .ToListAsync();
+    }
 }

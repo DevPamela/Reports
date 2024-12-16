@@ -2,6 +2,7 @@
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
+using System.Collections.Generic;
 
 namespace Reports.Service
 {
@@ -54,21 +55,24 @@ namespace Reports.Service
         /// <param name="report"></param>
         /// <param name="student"></param>
         /// <returns></returns>
-        private List<Report> CreateReportForStudents(Report report, Student student)
+        private async Task<List<Report>> CreateReportForStudents(Report report, Student student)
         {
-            var reports = new Report
+            return await Task.Run(() =>
             {
-                FirtsParagraph = report.FirtsParagraph,
-                LastParagraph = report.LastParagraph,
-                Student = student,
-                StudentId = student.Id,
-                Name = report.Name
-            };
-            var list = new List<Report>
+                var reports = new Report
+                {
+                    FirtsParagraph = report.FirtsParagraph,
+                    LastParagraph = report.LastParagraph,
+                    Student = student,
+                    StudentId = student.Id,
+                    Name = report.Name
+                };
+                var list = new List<Report>
             {
               reports
             };
-            return list;
+                return list;
+            });
         }
 
         /// <summary>
@@ -94,7 +98,7 @@ namespace Reports.Service
                 var students = await _studentService.GetStudentsListAsync();
                 foreach (var student in students)
                 {
-                    var list = CreateReportForStudents(report, student);
+                    var list = await CreateReportForStudents(report, student);
                     report.StudentId = student.Id;
                     await SetStudentIdForReport(report);
                     // await AddReport(list);
@@ -142,16 +146,25 @@ namespace Reports.Service
 
                 foreach (var a in assessments)
                 {
-                    var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                    string validation = IsAGirl ? "a" : "o";
-                    var name = studentName.Split(' ');
-                    var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                    var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+                    try
+                    {
+                        var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
+                        string validation = IsAGirl ? "a" : "o";
+                        var name = studentName.Split(' ');
+                        var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
+                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
 
 
-                    string param = string.Format(goalDescription, validation, name[0]);
-                    await CreateParagraph(param, doc);
+                        string param = string.Format(goalDescription, validation, name[0]);
+                        await CreateParagraph(param, doc);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
                 }
+
 
                 if (report.FirtsParagraph != null)
                 {
@@ -169,6 +182,28 @@ namespace Reports.Service
                 new Exception(e.Message);
             }
         }
+
+        public async Task GenerateParagraphsAsync(IEnumerable<Assessment> assessments, XWPFDocument doc, Report report)
+        {
+            var tasks = assessments.Select(async a =>
+            {
+                var IsAGirl = report.Student.IsAGirl();
+                var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
+                string validation = IsAGirl ? "a" : "o";
+                var name = studentName.Split(' ');
+
+                var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
+                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+
+                string param = string.Format(goalDescription, validation, name[0]);
+
+                await CreateParagraph(param, doc);
+            });
+
+            // Aguarda todas as tasks serem concluídas em paralelo
+            await Task.WhenAll(tasks);
+        }
+
 
         /// <summary>
         /// Creates the paragraphs.
@@ -206,11 +241,11 @@ namespace Reports.Service
         /// <param name="path"></param>
         static async Task SaveDocument(string path, XWPFDocument doc, string studentName)
         {
-            using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
-                FileMode.Create, FileAccess.Write))
-            {
-                doc.Write(fs);
-            };
+                using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
+                    FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+                {
+                    await Task.Run(() => doc.Write(fs));
+                };
         }
 
         /// <summary>
@@ -235,13 +270,13 @@ namespace Reports.Service
         {
             var classroom = await _classroomService.GetById(student.ClassRoomId);
             var firstLine = classroom.Name;
-            var teacher = "pamela";//TODO pegar pelo student.Teacher
+            var teacher = await _teacherService.GetByIdAsync(student.TeacherId);//TODO passar o teacher id de alguma forma
             var secondLine = student.Name.ToUpper();
-            var thirdLine = $"PROFESSORA: {teacher.ToUpper()}";
+            var thirdLine = $"PROFESSORA: {teacher.Name.ToUpper()}";
 
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
-            string[] param = { firstLine, secondLine, thirdLine, fourthLine, fifthLine };
+            string[] param = {secondLine, thirdLine, fourthLine, fifthLine };
 
             foreach (var p in param)
             {
@@ -255,6 +290,8 @@ namespace Reports.Service
         /// <returns></returns>
         private async Task CreateReportsFolder(string reportsFolder)
         {
+             await Task.Run(() =>
+            { 
             try
             {
                 if (!Directory.Exists(reportsFolder))
@@ -265,6 +302,7 @@ namespace Reports.Service
             catch
             {
             }
+        });
         }
         /// <inheritdoc />
         Task IReportService.GetReportById(Report report)

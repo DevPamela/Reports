@@ -40,5 +40,6 @@ namespace Reports.Domain.Interfaces.Repositories
         Task<bool> ClassroomForTeacherExists(int classroomId, int teacherId);
 
         Task<List<ClassroomNameResponse>> GetClassroomNames(int teacherId);
+        Task<List<ClassRoom>> GetClassroomByTeacherId(int teacherId);
     }
 }

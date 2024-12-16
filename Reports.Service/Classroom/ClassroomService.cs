@@ -38,7 +38,7 @@ namespace Reports.Service.Classroom
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<List<ClassroomNameResponse>> GetByTeacherId(int id) => await _classroomRepository.GetClassroomNames(id);
+        public async Task<List<ClassRoom>> GetByTeacherId(int id) => await _classroomRepository.GetClassroomByTeacherId(id);
         public async Task<ClassRoom> GetById(int id) => await _classroomRepository.GetByIdAsync(id);
         public async Task<List<ClassRoom>> GetAllAsync() => await _classroomRepository.GetAllAsync();
         public async Task SetClassroomAsTrue(ClassRoom classroom)

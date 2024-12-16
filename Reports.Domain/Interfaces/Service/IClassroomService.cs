@@ -41,6 +41,6 @@ namespace Reports.Domain.Interfaces.Service
         /// <returns></returns>
         Task SetClassroomAsTrue(ClassRoom classroom);
 
-        Task<List<ClassroomNameResponse>> GetByTeacherId(int id);
+        Task<List<ClassRoom>> GetByTeacherId(int id);
     }
 }
