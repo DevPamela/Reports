@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Report\**" />
     <Compile Remove="Students\Goal\**" />
+    <EmbeddedResource Remove="Report\**" />
     <EmbeddedResource Remove="Students\Goal\**" />
+    <None Remove="Report\**" />
     <None Remove="Students\Goal\**" />
   </ItemGroup>
 
@@ -21,10 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reports.Domain\Reports.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Report\" />
   </ItemGroup>
 
 </Project>
