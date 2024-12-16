@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Reports.Domain.Interfaces.Service;
 using System.Security.Claims;
 using Reports.Application.Models;
+using Reports.Service;
+using Reports.Domain.Entities;
 
 namespace Reports.Application.Controllers
 {
@@ -11,10 +13,11 @@ namespace Reports.Application.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-
-        public UserController(IUserService userService)
+        private readonly ITeacherService _teacherService;
+        public UserController(IUserService userService, ITeacherService teacherService)
         {
             _userService = userService;
+            _teacherService = teacherService;
         }
 
         public IActionResult Login() => View();
@@ -58,8 +61,10 @@ namespace Reports.Application.Controllers
 
             try
             {
-                await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher
+                var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher
                 //cadastrar teacher 
+                var teacher = new Teacher { Name = model.Username, UserId = user.Id };
+                await _teacherService.RegisterTeacher(teacher);
                 return RedirectToAction("Login");
             }
             catch (InvalidOperationException ex)

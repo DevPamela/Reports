@@ -12,8 +12,8 @@ using Reports.Infrastructure.DbContexts;
 namespace Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241129213625_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241216175617_initialdatabase")]
+    partial class initialdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,7 +233,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("OpenIddictTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Assessment", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Assessment", b =>
                 {
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
@@ -252,7 +252,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("Assessments");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.ClassRoom", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.ClassRoom", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,7 +277,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("Classroom");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Goal", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Goal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -317,7 +317,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("Goals");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Report", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Report", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -345,7 +345,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("Report");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Student", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Student", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -385,7 +385,7 @@ namespace Reports.Infrastructure.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Teacher", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Teacher", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -397,9 +397,46 @@ namespace Reports.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Teacher");
+                });
+
+            modelBuilder.Entity("Reports.Domain.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
@@ -426,15 +463,15 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Authorization");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Assessment", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Assessment", b =>
                 {
-                    b.HasOne("Reports.Domain.Models.Goal", "Goal")
+                    b.HasOne("Reports.Domain.Entities.Goal", "Goal")
                         .WithMany("Assessments")
                         .HasForeignKey("GoalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reports.Domain.Models.Student", "Student")
+                    b.HasOne("Reports.Domain.Entities.Student", "Student")
                         .WithMany("Assessments")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -445,9 +482,9 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.ClassRoom", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.ClassRoom", b =>
                 {
-                    b.HasOne("Reports.Domain.Models.Teacher", "Teacher")
+                    b.HasOne("Reports.Domain.Entities.Teacher", "Teacher")
                         .WithMany("Class")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -456,18 +493,18 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Goal", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Goal", b =>
                 {
-                    b.HasOne("Reports.Domain.Models.Teacher", "Teacher")
+                    b.HasOne("Reports.Domain.Entities.Teacher", "Teacher")
                         .WithMany("Goals")
                         .HasForeignKey("TeacherId");
 
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Report", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Report", b =>
                 {
-                    b.HasOne("Reports.Domain.Models.Student", "Student")
+                    b.HasOne("Reports.Domain.Entities.Student", "Student")
                         .WithMany("Reports")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -476,15 +513,15 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Student", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Student", b =>
                 {
-                    b.HasOne("Reports.Domain.Models.ClassRoom", "Class")
+                    b.HasOne("Reports.Domain.Entities.ClassRoom", "Class")
                         .WithMany("Students")
                         .HasForeignKey("ClassRoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Reports.Domain.Models.Teacher", "Teacher")
+                    b.HasOne("Reports.Domain.Entities.Teacher", "Teacher")
                         .WithMany("Students")
                         .HasForeignKey("TeacherId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -493,6 +530,17 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Class");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("Reports.Domain.Entities.Teacher", b =>
+                {
+                    b.HasOne("Reports.Domain.Entities.User", "User")
+                        .WithOne("Teacher")
+                        .HasForeignKey("Reports.Domain.Entities.Teacher", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
@@ -507,30 +555,36 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.ClassRoom", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.ClassRoom", b =>
                 {
                     b.Navigation("Students");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Goal", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Goal", b =>
                 {
                     b.Navigation("Assessments");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Student", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Student", b =>
                 {
                     b.Navigation("Assessments");
 
                     b.Navigation("Reports");
                 });
 
-            modelBuilder.Entity("Reports.Domain.Models.Teacher", b =>
+            modelBuilder.Entity("Reports.Domain.Entities.Teacher", b =>
                 {
                     b.Navigation("Class");
 
                     b.Navigation("Goals");
 
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("Reports.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Teacher")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

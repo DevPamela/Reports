@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Entities;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 
@@ -9,7 +8,7 @@ namespace Reports.Application.Controllers
 {
     public class HomeController : Controller
     {
-       private readonly IClassroomService _classroomService;
+        private readonly IClassroomService _classroomService;
         ITeacherService _teacherService;
         public HomeController(IClassroomService classroomService, ITeacherService teacherService)
         {
@@ -19,21 +18,19 @@ namespace Reports.Application.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var user = User.FindFirst("UserId")?.Value;
-            var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(user));
-             if (teacherId == null)
+            var home = new HomeModel();
+            if (User != null && User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Teacher");
-            }
-            else
-            {
-                
-                HomeModel home = new HomeModel()
+                var userid = int.Parse(User.FindFirst("UserId")?.Value);
+                if (userid > 0)
                 {
-                    Name = teacherId.Name,
-                };
-                return View(home);
+                    home.Teacher = await _teacherService.GetByUserIdAsync(userid);
+                    if (home.Teacher != null)
+                        home.HasClassRoom = true;
+                }
             }
+
+            return View(home);
         }
 
         public IActionResult Privacy()

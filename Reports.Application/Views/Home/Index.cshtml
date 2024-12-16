@@ -1,17 +1,25 @@
 ﻿@model HomeModel;
 
-@if (User.Identity.IsAuthenticated)
+@if (User != null && User.Identity != null && User.Identity.IsAuthenticated)
 {
     <!-- Display when the user is logged in -->
     <div class="container mt-5">
         <div class="text-center">
-            <h1 class="display-4">O que você gostaria de fazer hoje, @Model.Name.ToUpper()?</h1>
+            <h1 class="display-4">O que você gostaria de fazer hoje, @Model.Teacher.Name.ToUpper()?</h1>
             <div class="d-flex flex-column align-items-center mt-4">
-                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-primary mb-2 w-50">Criar relatório</a>
-                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-secondary mb-2 w-50">Editar turma</a>
-                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-success mb-2 w-50">Adicionar aluno</a>
-                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-danger mb-2 w-50">Remover aluno</a>
-                <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-info mb-2 w-50">Ver últimos relatórios</a>
+
+                @if (Model.HasClassRoom)
+                {
+                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-primary mb-2 w-50">Criar relatório</a>
+                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-secondary mb-2 w-50">Editar turma</a>
+                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-success mb-2 w-50">Adicionar aluno</a>
+                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-danger mb-2 w-50">Remover aluno</a>
+                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-info mb-2 w-50">Ver últimos relatórios</a>
+                }
+                else
+                {
+                    <h1>colocar tutorial</h1>
+                }
             </div>
         </div>
     </div>

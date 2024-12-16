@@ -399,7 +399,8 @@ namespace Reports.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Teacher");
                 });
@@ -531,9 +532,9 @@ namespace Reports.Infrastructure.Migrations
             modelBuilder.Entity("Reports.Domain.Entities.Teacher", b =>
                 {
                     b.HasOne("Reports.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne("Teacher")
+                        .HasForeignKey("Reports.Domain.Entities.Teacher", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -575,6 +576,12 @@ namespace Reports.Infrastructure.Migrations
                     b.Navigation("Goals");
 
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("Reports.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Teacher")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
