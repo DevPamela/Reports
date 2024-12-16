@@ -50,7 +50,7 @@ namespace Reports.Service
         }
 
         /// <summary>
-        /// Create a new s]instance of report.
+        /// Create a new instance of report.
         /// </summary>
         /// <param name="report"></param>
         /// <param name="student"></param>
@@ -268,13 +268,15 @@ namespace Reports.Service
         {
             var classroom = await _classroomService.GetById(student.ClassRoomId);
             var firstLine = classroom.Name;
-            var teacher = await _teacherService.GetByIdAsync(student.TeacherId);//TODO passar o teacher id de alguma forma
+            var teacher = await _teacherService.GetByIdAsync(student.TeacherId);
             var secondLine = student.Name.ToUpper();
+            var absences = student.Absences;
             var thirdLine = $"PROFESSORA: {teacher.Name.ToUpper()}";
 
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
-            string[] param = {secondLine, thirdLine, fourthLine, fifthLine };
+            var sixthLine = $"Faltas: {absences}";
+            string[] param = {secondLine, thirdLine, fourthLine, fifthLine, sixthLine };
 
             foreach (var p in param)
             {
