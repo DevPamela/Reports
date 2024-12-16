@@ -170,12 +170,10 @@ namespace Reports.Service
                 {
                     await CreateParagraph(report.LastParagraph, doc);
                 }
-                //TODO Resolver o bug de goals
-                //TODO resolver o bulk insert 
+                
                 XWPFParagraph pageBreak = doc.CreateParagraph();
                 await SaveDocument(reportsFolder, doc, report.Student.Name);
 
-                //Process.Start("explorer.exe", path);
             }
             catch (Exception e)
             {
