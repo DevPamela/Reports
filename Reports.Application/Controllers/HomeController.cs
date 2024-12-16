@@ -25,7 +25,8 @@ namespace Reports.Application.Controllers
                 if (userid > 0)
                 {
                     home.Teacher = await _teacherService.GetByUserIdAsync(userid);
-                    if (home.Teacher != null)
+                    var teacherClass = await _classroomService.GetByTeacherId(userid);
+                    if (teacherClass.Count != 0)
                         home.HasClassRoom = true;
                 }
             }
