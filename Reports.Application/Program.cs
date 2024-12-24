@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Reports.Infrastructure;
@@ -21,13 +22,24 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddAuthentication(options =>
 {
     // Set the default schemes
-    options.DefaultAuthenticateScheme = "CookieAuthentication"; // Default to cookies
-    options.DefaultChallengeScheme = "CookieAuthentication";
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default to cookies
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie("CookieAuthentication", options =>
 {
+    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = null;
+    options.SlidingExpiration = false;
     options.LoginPath = "/User/Login"; // Redirect unauthenticated users here
     options.AccessDeniedPath = "/User/AccessDenied"; // Redirect unauthorized users here
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.Redirect("/User/Login" + context.Request.Path);
+        return Task.CompletedTask;
+    };
 })
 .AddJwtBearer("Bearer", options =>
 {

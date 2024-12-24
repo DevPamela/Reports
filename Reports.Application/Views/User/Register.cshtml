@@ -5,8 +5,9 @@
     <form method="post" action="/User/register" class="mx-auto mt-4" style="max-width: 400px;" id="registerForm">
         @Html.AntiForgeryToken()
         <div class="mb-3">
-            <label for="username" class="form-label">Nome de Usuário:</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu nome de usuário" required />
+            <label for="username" class="form-label">Nome:</label>
+            <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu nome" required />
+
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">E-mail:</label>
@@ -15,6 +16,8 @@
         <div class="mb-3">
             <label for="password" class="form-label">Senha:</label>
             <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha" required />
+            <span class="text-muted">A senha deve conter pelo menos 6 caracteres e um caracter especial</span>
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
         </div>
         <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirmar Senha:</label>

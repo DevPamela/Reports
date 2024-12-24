@@ -29,10 +29,10 @@ namespace Reports.Application.Controllers
                 return View(model);
 
             var user = await _userService.ValidateUserAsync(model.email, model.Password);
-
+            
             if (user == null)
             {
-                ModelState.AddModelError("", "Invalid username or password.");
+                ModelState.AddModelError("", "Email ou senha inválidos, por favor tente novamente.");
                 return View(model);
             }
 
