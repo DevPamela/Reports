@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Reports.Application.Models;
 using Reports.Service;
 using Reports.Domain.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Reports.Application.Controllers
 {
@@ -43,10 +44,10 @@ namespace Reports.Application.Controllers
                 new Claim("UserId", user.Id.ToString())
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, "CookieAuthentication");
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-            await HttpContext.SignInAsync("CookieAuthentication", new ClaimsPrincipal(claimsIdentity), authProperties);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToAction("Index", "Home");
         }

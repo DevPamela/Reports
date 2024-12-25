@@ -18,6 +18,12 @@ namespace Reports.Application.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // Verificar o estado do usuário
+            var mostrarMenuCompleto = HttpContext.Items["MostrarMenuCompleto"] as bool?;
+
+            // Passar essa informação para a View
+            ViewBag.MostrarMenuCompleto = mostrarMenuCompleto;
+
             var home = new HomeModel();
             if (User != null && User.Identity.IsAuthenticated)
             {

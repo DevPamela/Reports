@@ -21,11 +21,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddAuthentication(options =>
 {
-    // Set the default schemes
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default to cookies
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; 
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie("CookieAuthentication", options =>
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => 
 {
     options.ExpireTimeSpan = TimeSpan.FromHours(1);
     options.Cookie.HttpOnly = true;
@@ -33,8 +32,8 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.MaxAge = null;
     options.SlidingExpiration = false;
-    options.LoginPath = "/User/Login"; // Redirect unauthenticated users here
-    options.AccessDeniedPath = "/User/AccessDenied"; // Redirect unauthorized users here
+    options.LoginPath = "/User/Login";
+    options.AccessDeniedPath = "/User/AccessDenied";
     options.Events.OnRedirectToLogin = context =>
     {
         context.Response.Redirect("/User/Login" + context.Request.Path);
@@ -56,7 +55,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-
+app.UseMiddleware<ValidacaoUsuarioMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
