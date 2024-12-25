@@ -1,6 +1,6 @@
 ﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 
 namespace Reports.Service
 {
@@ -20,6 +20,7 @@ namespace Reports.Service
         }
 
         public async Task<Teacher> GetByIdAsync(int id) => await _teacherRepository.GetByIdAsync(id);
+        public async Task<Teacher> GetByUserIdAsync(int id) => await _teacherRepository.GetByUserIdAsync(id);
     }
     //getclassroom with teacherId
 }

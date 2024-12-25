@@ -4,7 +4,7 @@ using FluentResults.Extensions.FluentAssertions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NSubstitute;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Service.ExcelParser;
 using Reports.Service.ExcelParser.Interfaces;
 using Reports.Tests.TestHelpers.Files;

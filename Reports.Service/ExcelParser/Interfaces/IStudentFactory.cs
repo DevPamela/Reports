@@ -1,5 +1,5 @@
 ﻿using NPOI.SS.UserModel;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 
 namespace Reports.Service.ExcelParser.Interfaces;
 

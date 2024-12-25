@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reports.Application.Controllers
 {
     public class HomeController : Controller
     {
-       private readonly IClassroomService _classroomService;
+        private readonly IClassroomService _classroomService;
         ITeacherService _teacherService;
         public HomeController(IClassroomService classroomService, ITeacherService teacherService)
         {
@@ -18,18 +18,18 @@ namespace Reports.Application.Controllers
 
         public async Task<IActionResult> Index()
         {
-           var classrooms= await _classroomService.GetAllAsync();
-            var teacherName = new Teacher();
-            foreach (var classroom in classrooms)
+            var home = new HomeModel();
+            if (User != null && User.Identity.IsAuthenticated)
             {
-                 teacherName = await _teacherService.GetByIdAsync(classroom.TeacherId);
+                var userid = int.Parse(User.FindFirst("UserId")?.Value);
+                if (userid > 0)
+                {
+                    home.Teacher = await _teacherService.GetByUserIdAsync(userid);
+                    var teacherClass = await _classroomService.GetByTeacherId(userid);
+                    if (teacherClass.Count != 0)
+                        home.HasClassRoom = true;
+                }
             }
-
-            HomeModel home = new HomeModel()
-            {
-                Name = teacherName.Name,
-                Classrooms = classrooms
-            };
 
             return View(home);
         }
@@ -39,10 +39,31 @@ namespace Reports.Application.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode = null, string? message = null)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var errorMessage = message;
+
+            if (statusCode.HasValue && string.IsNullOrEmpty(errorMessage))
+            {
+                errorMessage = statusCode switch
+                {
+                    404 => "A página que você está procurando não foi encontrada.",
+                    500 => "Ocorreu um erro interno no servidor. Tente novamente mais tarde.",
+                    403 => "Você não tem permissão para acessar este recurso.",
+                    401 => "Você precisa estar autenticado para acessar este recurso.",
+                    400 => "A solicitação enviada contém erros ou está inválida.",
+                    _ => "Ocorreu um erro inesperado."
+                };
+            }
+            var model = new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                StatusCode = statusCode,
+                Message = errorMessage
+            };
+            return View(model);
         }
     }
 }

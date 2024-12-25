@@ -1,6 +1,6 @@
 ﻿using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using System.Text;
 
 
@@ -152,15 +152,18 @@ namespace Reports.Service
 
         public async Task<string> SetPronounForGender(string description)
         {
-            var adjustedDescription = new StringBuilder(description);
+            return await Task.Run(() =>
+            {
+                var adjustedDescription = new StringBuilder(description);
 
-            adjustedDescription.Replace("O Aluno", "{0} alun{0}");
+                adjustedDescription.Replace("O Aluno", "{0} alun{0}");
 
-            adjustedDescription.Replace("Nome do aluno", "{1}");
+                adjustedDescription.Replace("Nome do aluno", "{1}");
 
-            adjustedDescription.Replace("(o)", "{0}");
+                adjustedDescription.Replace("(o)", "{0}");
 
-            return adjustedDescription.ToString();
+                return adjustedDescription.ToString();
+            });
         }
     }
 }

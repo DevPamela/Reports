@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reports.Application.Controllers
 {
+    [Authorize]
     public class TeacherController : Controller
     {
         private readonly ITeacherService _teacherService;
@@ -26,14 +28,16 @@ namespace Reports.Application.Controllers
         [HttpPost]
         public async Task<ActionResult> RegisterNewTeacher(TeacherViewModel teacherViewModel)
         {
-            var teacher = new Teacher
+            var userId = User.FindFirst("UserId")?.Value;// se primeiro acesso tutorial básico(guia)
+            var teacher = new Teacher//não forçar a entrar direto em cadastrar turma
             {
-                Name = teacherViewModel.Name
+                Name = teacherViewModel.Name,
+                UserId = int.Parse(userId)
             };
 
             await _teacherService.RegisterTeacher(teacher);
 
-            return View("Index");
+            return RedirectToAction("Index", "Student");
         }
     }
 }

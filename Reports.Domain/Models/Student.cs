@@ -1,4 +1,5 @@
-﻿using Reports.Domain.Enums;
+﻿using Reports.Domain.Entities;
+using Reports.Domain.Enums;
 using Reports.Domain.Exceptions;
 using Reports.Domain.Interfaces.Model;
 using System.ComponentModel.DataAnnotations;

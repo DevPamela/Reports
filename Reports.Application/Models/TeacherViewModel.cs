@@ -1,4 +1,6 @@
-﻿namespace Reports.Application.Models
+﻿
+using Microsoft.AspNetCore.Authorization;
+namespace Reports.Application.Models
 {
     public class TeacherViewModel
     {

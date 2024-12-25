@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using NPOI.SS.UserModel;
+using Reports.Domain.Entities;
 using Reports.Service.ExcelParser.Interfaces;
 
 namespace Reports.Service.ExcelParser.Validators.StudentNameColumn;

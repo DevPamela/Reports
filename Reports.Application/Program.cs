@@ -1,41 +1,102 @@
 using FluentValidation;
-using Reports.Domain.Interfaces.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Reports.Infrastructure;
+using Reports.Infrastructure.DbContexts;
 using Reports.Service;
-using Reports.Service.Assessments;
-using Reports.Service.Classroom;
-using Reports.Service.Students;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
-    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
-
-builder.Services.AddScoped<IReportService, ReportService>();
-builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<IFormatterService, FormatterService>();
-builder.Services.AddScoped<IGoalService, GoalService>();
-builder.Services.AddScoped<IAssessmentService, AssessmentService>();
-builder.Services.AddScoped<IClassroomService, ClassroomService>();
-builder.Services.AddScoped<ITeacherService, TeacherService>();
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
 
 builder.Services.AddServiceLayer();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddAuthentication(options =>
+{
+    // Set the default schemes
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default to cookies
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie("CookieAuthentication", options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = null;
+    options.SlidingExpiration = false;
+    options.LoginPath = "/User/Login"; // Redirect unauthenticated users here
+    options.AccessDeniedPath = "/User/AccessDenied"; // Redirect unauthorized users here
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.Redirect("/User/Login" + context.Request.Path);
+        return Task.CompletedTask;
+    };
+})
+.AddJwtBearer("Bearer", options =>
+{
+    options.Authority = builder.Configuration["OpenIddict:Authority"];
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["OpenIddict:Issuer"],
+        ValidateAudience = false
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        try
+        {
+            // Apply migrations directly
+            dbContext.Database.Migrate();
+            Console.WriteLine("Migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            // Log any migration errors
+            Console.WriteLine($"An error occurred while applying migrations: {ex.Message}");
+        }
+    }
+
+    app.UseDeveloperExceptionPage();
+}
+
+// Seed OpenIddict during application startup.
+await Reports.Infrastructure.Seeders.OpenIddictSeeder.SeedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
     app.UseExceptionHandler("/Home/Error");
 }
+
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
+app.UseExceptionHandler("/Home/Error");
+
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

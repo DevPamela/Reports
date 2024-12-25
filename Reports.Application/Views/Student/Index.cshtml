@@ -22,6 +22,7 @@
             <br />
             <div asp-validation-summary="All" id="validation-errors" class="d-flex justify-content-center text-danger"></div>
             <form asp-action="RegisterStudentsFromFile" id="register-students-form" enctype="multipart/form-data" method="post">
+                @Html.AntiForgeryToken()
                 <div class="form-container">
                     <div class="form-group">
                         <h5 for="classroom-name-input" class="custom-label">Escreva o nome da sua turma:</h5>
@@ -43,6 +44,7 @@
                             <br />
                             <br />
                             <input id="submit-button" type="submit" class="btn btn btn-secondary color" value="Enviar" />
+                            <a href="javascript:history.back()" class="btn btn-secondary mt-3">Voltar</a>
                         </div>
                     </div>
                 </div>

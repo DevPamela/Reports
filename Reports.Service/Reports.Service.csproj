@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Report\**" />
     <Compile Remove="Students\Goal\**" />
+    <EmbeddedResource Remove="Report\**" />
     <EmbeddedResource Remove="Students\Goal\**" />
+    <None Remove="Report\**" />
     <None Remove="Students\Goal\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="NPOI" Version="2.7.1" />
@@ -20,10 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reports.Domain\Reports.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Report\" />
   </ItemGroup>
 
 </Project>

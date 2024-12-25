@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Infrastructure.DbContexts;
 
 namespace Reports.Infrastructure.Repositories

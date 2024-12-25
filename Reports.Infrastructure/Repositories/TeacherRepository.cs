@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Infrastructure.DbContexts;
 
 namespace Reports.Infrastructure.Repositories;
@@ -21,4 +21,8 @@ internal class TeacherRepository : ITeacherRepository
     public async Task<Teacher?> GetByIdAsync(int id) =>
           await _dbContext.Teacher
               .FirstOrDefaultAsync(a => a.Id == id);
+
+    public async Task<Teacher?> GetByUserIdAsync(int id) =>
+         await _dbContext.Teacher
+             .FirstOrDefaultAsync(a => a.UserId == id);
 }

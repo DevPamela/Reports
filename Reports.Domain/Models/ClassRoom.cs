@@ -1,4 +1,5 @@
-﻿using Reports.Domain.Interfaces.Model;
+﻿using Reports.Domain.Entities;
+using Reports.Domain.Interfaces.Model;
 
 namespace Reports.Domain.Models
 {

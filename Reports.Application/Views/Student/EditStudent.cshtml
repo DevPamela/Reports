@@ -2,45 +2,38 @@
 
 <form asp-controller="Student" asp-action="UpdateStudent" method="post">
     <div class="form-group col-md-5">
-        <br/>
-        <br />
-        <br />
-        <label for="Nome" class="form-label">NOME</label>
-        <input type="text" asp-for="Student.Name" class="form-control" placeholder="@Model.Student.Name.ToUpper()">
+        <label for="Nome">NOME</label>
+        <input type="text" asp-for="Student.Name" class="form-control" id="Nome" placeholder="@Model.Student.Name.ToUpper()">
     </div>
-    <br />
     <div class="form-group">
-        <label for="Nome" class="form-label">GÊNERO</label>
-        <select name="Student.Gender" style="width: 10em;" maxlength="10">
-            <option value="@Model.Student.Gender">SELECIONE</option>
-            <option value="FEMININO">FEMININO</option>
-            <option value="MASCULINO">MASCULINO</option>
+        <label for="Genero">GÊNERO</label>
+        <select name="Student.Gender" class="form-control" id="Genero" style="width: 10em;" maxlength="10">
+            <option value="">SELECIONE</option>
+            <option value="Female">FEMININO</option>
+            <option value="Male">MASCULINO</option>
         </select>
     </div>
-    <br />
     <div class="form-group col-md-3">
-        <label for="Nome" class="form-label">DATA DE NASCIMENTO</label>
-        <input type="date" asp-for="Student.Birthdate" id="dataNascimento"
+        <label for="DataNascimento">DATA DE NASCIMENTO</label>
+        <input type="date" asp-for="Student.Birthdate" id="DataNascimento"
                class="form-control" onkeydown="return false" onclick="showDatePicker()">
     </div>
-    <br />
     <div class="form-group">
-        <label for="Class" class="form-label">TURMA</label>
-        <select name="Student.ClassRoomId" class="form-control" style="width: 10em;" maxlength="10">
+        <label for="Class">TURMA</label>
+        <select name="Student.Class" class="form-control" id="Class" style="width: 10em;" maxlength="10">
             @foreach (var item in Model.Classes)
             {
-                <option value="@item.Id">@item.Name</option>
+                <option value="@item.Name">@item.Name</option> //ver aqui
             }
         </select>
+
     </div>
-    <br />
-   
     <button type="submit">Enviar</button>
 </form>
 
 <script>
     function showDatePicker() {
-        const input = document.getElementById("dataNascimento");
+        const input = document.getElementById("DataNascimento");
         input.focus();
         input.click();
     }

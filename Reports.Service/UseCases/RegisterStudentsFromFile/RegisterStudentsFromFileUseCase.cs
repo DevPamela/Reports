@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
+using Reports.Domain.Entities;
 using Reports.Service.ExcelParser.Interfaces;
 
 namespace Reports.Service.UseCases.RegisterStudentsFromFile;

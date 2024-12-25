@@ -1,4 +1,5 @@
-﻿using Reports.Domain.Models;
+﻿using Reports.Domain.Entities;
+using Reports.Domain.Entities.Responses;
 
 namespace Reports.Domain.Interfaces.Service
 {
@@ -39,5 +40,7 @@ namespace Reports.Domain.Interfaces.Service
         /// <param name="classroom"></param>
         /// <returns></returns>
         Task SetClassroomAsTrue(ClassRoom classroom);
+
+        Task<List<ClassRoom>> GetByTeacherId(int id);
     }
 }
