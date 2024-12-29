@@ -25,6 +25,7 @@ nupkg/
 *.user
 *.userosscache
 *.sln.docstates
+*.csproj.user
 
 # Build results
 [Dd]ebug/
@@ -41,3 +42,7 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+logs/
+logs/**/*.log
+*.log
+log-*.txt
