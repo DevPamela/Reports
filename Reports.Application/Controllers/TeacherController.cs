@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 namespace Reports.Application.Controllers
 {
     [Authorize]
-    public class TeacherController : Controller
+    public class TeacherController : BaseController
     {
         private readonly ITeacherService _teacherService;
+        private readonly ILogger<TeacherController> _logger;
 
-        public TeacherController(ITeacherService teacherService)
+        public TeacherController(ITeacherService teacherService, ILogger<TeacherController> logger): base(logger)
         {
             _teacherService = teacherService;
+            _logger = logger;
         }
         public IActionResult Index()
         {

@@ -26,6 +26,7 @@ nupkg/
 *.userosscache
 *.sln.docstates
 *.csproj.user
+.sln
 
 # Build results
 [Dd]ebug/
@@ -46,3 +47,4 @@ logs/
 logs/**/*.log
 *.log
 log-*.txt
+/Reports.Application/Reports.Application.sln

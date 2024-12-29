@@ -6,13 +6,15 @@ using Reports.Domain.Interfaces.Service;
 namespace Reports.Application.Controllers
 {
     [Authorize]
-    public class ReportsController : Controller
+    public class ReportsController : BaseController
     {
         private readonly IReportService _service;
+        private readonly ILogger<ReportsController> _logger;
 
-        public ReportsController(IReportService service)
+        public ReportsController(IReportService service, ILogger<ReportsController> logger): base(logger)
         {
             _service = service;
+            _logger = logger;
         }
         public IActionResult Index()
         {

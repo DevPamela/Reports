@@ -1,86 +1,143 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Reports.Application.Models;
+using Reports.Application.Models.Configuration;
+using Reports.Domain.Entities;
 using Reports.Domain.Interfaces.Service;
 using System.Security.Claims;
-using Reports.Application.Models;
-using Reports.Service;
-using Reports.Domain.Entities;
 
 namespace Reports.Application.Controllers
 {
-    [AllowAnonymous] // Allow unauthenticated access
-    public class UserController : Controller
+    [AllowAnonymous]
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly ITeacherService _teacherService;
-        public UserController(IUserService userService, ITeacherService teacherService)
+        private readonly ILogger<UserController> _logger;
+        private readonly int _sessionTimeoutMinutes;
+
+        public UserController(IUserService userService, ITeacherService teacherService, ILogger<UserController> logger, IOptions<SessionConfig> sessionConfig) : base(logger)
         {
             _userService = userService;
             _teacherService = teacherService;
+            _logger = logger;
+            _sessionTimeoutMinutes = sessionConfig.Value.IdleTimeoutMinutes;
         }
 
+        // Login view
         public IActionResult Login() => View();
 
+        // Handle login POST
         [HttpPost]
         public async Task<IActionResult> Login(LoginUserViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            var user = await _userService.ValidateUserAsync(model.email, model.Password);
-            
-            if (user == null)
             {
-                ModelState.AddModelError("", "Email ou senha inválidos, por favor tente novamente.");
                 return View(model);
             }
 
-            var claims = new List<Claim>
+            try
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("UserId", user.Id.ToString())
-            };
+                // Validate user credentials
+                var user = await _userService.ValidateUserAsync(model.Email, model.Password);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Invalid email or password.");
+                    return View(model);
+                }
 
-            var claimsIdentity = new ClaimsIdentity(claims, "CookieAuthentication");
-            var authProperties = new AuthenticationProperties { IsPersistent = true };
+                // Store user details in session
+                HttpContext.Session.SetString("UserId", user.Id.ToString());
+                HttpContext.Session.SetString("Username", user.Username);
 
-            await HttpContext.SignInAsync("CookieAuthentication", new ClaimsPrincipal(claimsIdentity), authProperties);
+                // Create claims for cookie authentication
+                var claims = new List<Claim>
+                {
+                    new(ClaimTypes.Name, user.Username),
+                    new(ClaimTypes.Email, user.Email),
+                    new("UserId", user.Id.ToString())
+                };
 
-            return RedirectToAction("Index", "Home");
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in the user with a cookie
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(_sessionTimeoutMinutes)
+                });
+
+                SetNotification("Login successful!", Enums.NotificationType.Success);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unexpected error during login: {Message}", ex.Message);
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again later.");
+                return View(model);
+            }
         }
 
+        // Registration view
         public IActionResult Register() => View();
 
+        // Handle registration POST
         [HttpPost]
         public async Task<IActionResult> Register(RegisterUserViewModel model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             try
             {
-                var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher
-                //cadastrar teacher 
-                var teacher = new Teacher { Name = model.Username, UserId = user.Id };
-                await _teacherService.RegisterTeacher(teacher);
+                // Register the user
+                var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);
+
+                // Register a teacher if applicable
+                await _teacherService.RegisterTeacher(new Teacher { Name = model.Username, UserId = user.Id });
+
+                SetNotification("User registered successfully!", Enums.NotificationType.Success);
                 return RedirectToAction("Login");
             }
             catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                _logger.LogError("Error during user registration: {Message}", ex.Message);
+                ModelState.AddModelError("", "Invalid operation. Please review the provided data.");
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unexpected error during registration: {Message}", ex.Message);
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again later.");
                 return View(model);
             }
         }
 
+        // Logout functionality
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync("CookieAuthentication");
-            Response.Cookies.Delete(".AspNetCore.Cookies");
-            return RedirectToAction("Login", "User");
+            try
+            {
+                // Clear session and sign out user
+                HttpContext.Session.Clear();
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                return RedirectToAction("Login", "User");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unexpected error during logout: {Message}", ex.Message);
+                SetNotification("An unexpected error occurred during logout. Please try again.", Enums.NotificationType.Error);
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

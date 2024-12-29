@@ -7,14 +7,17 @@ using Microsoft.AspNetCore.Authorization;
 namespace Reports.Application.Controllers
 {
     [Authorize]
-    public class GoalsController : Controller
+    public class GoalsController : BaseController
     {
         private readonly IGoalService _goalService;
         private readonly IAssessmentService _assessmentService;
-        public GoalsController(IGoalService goalService, IAssessmentService assessmentService)
+        private readonly ILogger<GoalsController> _logger;
+
+        public GoalsController(IGoalService goalService, IAssessmentService assessmentService, ILogger<GoalsController> logger) :base(logger)
         {
             _goalService = goalService;
             _assessmentService = assessmentService;
+            _logger = logger;
         }
 
         public IActionResult Index()

@@ -6,7 +6,7 @@ namespace Reports.Application.Models
     {
         public List<ClassRoom> Classrooms { get; set; }
 
-        public bool HasClassRoom { get; set; }
+        public bool HasClassRoom => Classrooms != null && Classrooms.Count > 0;
 
         public Teacher Teacher { get; set; }
     }

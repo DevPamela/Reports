@@ -11,20 +11,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace Reports.Application.Controllers;
 
 [Authorize]
-public class StudentController : Controller
+public class StudentController : BaseController
 {
     private readonly IStudentService _studentService;
     private readonly IClassroomService _classroomService;
     private readonly ITeacherService _teacherService;
+    private readonly ILogger<StudentController> _logger;
 
     public StudentController(
         IStudentService studentService,
         IClassroomService classroomService,
-        ITeacherService teacherService)
+        ITeacherService teacherService,
+        ILogger<StudentController> logger) : base(logger)
     {
         _studentService = studentService;
         _classroomService = classroomService;
         _teacherService = teacherService;
+        _logger = logger;
     }
     public IActionResult Index()
     {

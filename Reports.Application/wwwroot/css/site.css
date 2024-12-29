@@ -1,5 +1,8 @@
-html {
-  font-size: 14px;
+@font-face {
+    font-family: 'Roboto';
+    src: url('/fonts/Roboto-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
 }
 
 @media (min-width: 768px) {
@@ -13,12 +16,14 @@ html {
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 60px;
 }
 
 .close-alert {
@@ -30,9 +35,6 @@ body {
     height: 31px;
 }
 
-.navbar-nav .nav-item .nav-link:hover {
-    background-color: #f8f9fa; /* Light grey background */
-    border-radius: 5px; /* Rounded corners for better aesthetics */
-    color: #007bff; /* Change text color on hover */
-    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+.navbar-brand img{
+    height: 70px;
 }

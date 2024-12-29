@@ -3,21 +3,25 @@ using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Reports.Application.Enums;
 
 namespace Reports.Application.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly IClassroomService _classroomService;
         ITeacherService _teacherService;
-        public HomeController(IClassroomService classroomService, ITeacherService teacherService)
+        private readonly ILogger<HomeController> _logger;
+        public HomeController(IClassroomService classroomService, ITeacherService teacherService, ILogger<HomeController> logger) : base(logger)
         {
             _classroomService = classroomService;
             _teacherService = teacherService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("Processing request in Home Index - Welcome to the application!");
             var home = new HomeModel();
             if (User != null && User.Identity.IsAuthenticated)
             {
@@ -25,9 +29,7 @@ namespace Reports.Application.Controllers
                 if (userid > 0)
                 {
                     home.Teacher = await _teacherService.GetByUserIdAsync(userid);
-                    var teacherClass = await _classroomService.GetByTeacherId(userid);
-                    if (teacherClass.Count != 0)
-                        home.HasClassRoom = true;
+                    home.Classrooms = await _classroomService.GetByTeacherId(userid);
                 }
             }
 
@@ -43,25 +45,11 @@ namespace Reports.Application.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int? statusCode = null, string? message = null)
         {
-            var errorMessage = message;
-
-            if (statusCode.HasValue && string.IsNullOrEmpty(errorMessage))
-            {
-                errorMessage = statusCode switch
-                {
-                    404 => "A página que você está procurando não foi encontrada.",
-                    500 => "Ocorreu um erro interno no servidor. Tente novamente mais tarde.",
-                    403 => "Você não tem permissão para acessar este recurso.",
-                    401 => "Você precisa estar autenticado para acessar este recurso.",
-                    400 => "A solicitação enviada contém erros ou está inválida.",
-                    _ => "Ocorreu um erro inesperado."
-                };
-            }
             var model = new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
                 StatusCode = statusCode,
-                Message = errorMessage
+                Message = message ?? "Ocorreu um erro inesperado."
             };
             return View(model);
         }
