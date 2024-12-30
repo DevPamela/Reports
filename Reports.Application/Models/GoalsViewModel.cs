@@ -1,6 +1,4 @@
-﻿using Reports.Domain.Entities;
-
-namespace Reports.Application.Models
+﻿namespace Reports.Application.Models
 {
     public class GoalsViewModel
     {

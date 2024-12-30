@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.Validation.AspNetCore;
-using Reports.Application.Controllers;
 using Reports.Application.Middlewares;
 using Reports.Application.Models.Configuration;
 using Reports.Infrastructure;

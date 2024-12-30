@@ -12,25 +12,21 @@ using System.Security.Claims;
 namespace Reports.Application.Controllers
 {
     [AllowAnonymous]
-    public class UserController : BaseController
+    public class UserController : BaseController<UserController>
     {
         private readonly IUserService _userService;
         private readonly ITeacherService _teacherService;
-        private readonly ILogger<UserController> _logger;
         private readonly int _sessionTimeoutMinutes;
 
         public UserController(IUserService userService, ITeacherService teacherService, ILogger<UserController> logger, IOptions<SessionConfig> sessionConfig) : base(logger)
         {
             _userService = userService;
             _teacherService = teacherService;
-            _logger = logger;
             _sessionTimeoutMinutes = sessionConfig.Value.IdleTimeoutMinutes;
         }
 
-        // Login view
         public IActionResult Login() => View();
 
-        // Handle login POST
         [HttpPost]
         public async Task<IActionResult> Login(LoginUserViewModel model)
         {
@@ -76,16 +72,14 @@ namespace Reports.Application.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unexpected error during login: {Message}", ex.Message);
+                Logger.LogError("Unexpected error during login: {Message}", ex.Message);
                 ModelState.AddModelError("", "An unexpected error occurred. Please try again later.");
                 return View(model);
             }
         }
 
-        // Registration view
         public IActionResult Register() => View();
 
-        // Handle registration POST
         [HttpPost]
         public async Task<IActionResult> Register(RegisterUserViewModel model)
         {
@@ -107,19 +101,18 @@ namespace Reports.Application.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogError("Error during user registration: {Message}", ex.Message);
+                Logger.LogError("Error during user registration: {Message}", ex.Message);
                 ModelState.AddModelError("", "Invalid operation. Please review the provided data.");
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unexpected error during registration: {Message}", ex.Message);
+                Logger.LogError("Unexpected error during registration: {Message}", ex.Message);
                 ModelState.AddModelError("", "An unexpected error occurred. Please try again later.");
                 return View(model);
             }
         }
 
-        // Logout functionality
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -134,7 +127,7 @@ namespace Reports.Application.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Unexpected error during logout: {Message}", ex.Message);
+                Logger.LogError("Unexpected error during logout: {Message}", ex.Message);
                 SetNotification("An unexpected error occurred during logout. Please try again.", Enums.NotificationType.Error);
                 return RedirectToAction("Index", "Home");
             }

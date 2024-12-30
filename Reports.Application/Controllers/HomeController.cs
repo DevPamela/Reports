@@ -1,36 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Interfaces.Service;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
-using Reports.Application.Enums;
 
 namespace Reports.Application.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : BaseController<HomeController>
     {
         private readonly IClassroomService _classroomService;
-        ITeacherService _teacherService;
-        private readonly ILogger<HomeController> _logger;
-        public HomeController(IClassroomService classroomService, ITeacherService teacherService, ILogger<HomeController> logger) : base(logger)
+        private readonly ITeacherService _teacherService;
+
+        public HomeController(
+            IClassroomService classroomService,
+            ITeacherService teacherService,
+            ILogger<HomeController> logger) : base(logger)
         {
             _classroomService = classroomService;
             _teacherService = teacherService;
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            _logger.LogInformation("Processing request in Home Index - Welcome to the application!");
+            Logger.LogInformation("Home Index page accessed.");
             var home = new HomeModel();
-            if (User != null && User.Identity.IsAuthenticated)
+
+            try
             {
-                var userid = int.Parse(User.FindFirst("UserId")?.Value);
-                if (userid > 0)
+                if (User.Identity.IsAuthenticated)
                 {
-                    home.Teacher = await _teacherService.GetByUserIdAsync(userid);
-                    home.Classrooms = await _classroomService.GetByTeacherId(userid);
+                    var userId = int.Parse(User.FindFirst("UserId")?.Value);
+                    home.Teacher = await _teacherService.GetByUserIdAsync(userId);
+                    home.Classrooms = await _classroomService.GetByTeacherId(userId);
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while loading Home Index.");
+                return Error(null, "Failed to load Home Index.");
             }
 
             return View(home);
@@ -38,20 +43,8 @@ namespace Reports.Application.Controllers
 
         public IActionResult Privacy()
         {
+            Logger.LogInformation("Privacy page accessed.");
             return View();
-        }
-
-        [AllowAnonymous]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error(int? statusCode = null, string? message = null)
-        {
-            var model = new ErrorViewModel
-            {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-                StatusCode = statusCode,
-                Message = message ?? "Ocorreu um erro inesperado."
-            };
-            return View(model);
         }
     }
 }

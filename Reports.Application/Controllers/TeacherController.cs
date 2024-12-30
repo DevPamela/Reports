@@ -1,45 +1,67 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
-using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
+using Reports.Domain.Interfaces.Service;
 
 namespace Reports.Application.Controllers
 {
     [Authorize]
-    public class TeacherController : BaseController
+    public class TeacherController : BaseController<TeacherController>
     {
         private readonly ITeacherService _teacherService;
-        private readonly ILogger<TeacherController> _logger;
 
-        public TeacherController(ITeacherService teacherService, ILogger<TeacherController> logger): base(logger)
+        public TeacherController(ITeacherService teacherService, ILogger<TeacherController> logger) : base(logger)
         {
             _teacherService = teacherService;
-            _logger = logger;
         }
+
         public IActionResult Index()
         {
+            var userId = GetUserIdFromSession();
+            Logger.LogInformation("User {UserId} navigated to Teacher Index page.", userId);
             return View();
         }
 
         public IActionResult AddTeacher()
         {
+            var userId = GetUserIdFromSession();
+            Logger.LogInformation("User {UserId} navigated to Add Teacher page.", userId);
             return View();
         }
 
         [HttpPost]
         public async Task<ActionResult> RegisterNewTeacher(TeacherViewModel teacherViewModel)
         {
-            var userId = User.FindFirst("UserId")?.Value;// se primeiro acesso tutorial básico(guia)
-            var teacher = new Teacher//não forçar a entrar direto em cadastrar turma
+            var userId = GetUserIdFromSession();
+
+            if (!ModelState.IsValid)
             {
-                Name = teacherViewModel.Name,
-                UserId = int.Parse(userId)
-            };
+                Logger.LogWarning("User {UserId} submitted invalid data for RegisterNewTeacher: {@ModelStateErrors}", userId, ModelState.Values.SelectMany(v => v.Errors));
+                return View("AddTeacher", teacherViewModel);
+            }
 
-            await _teacherService.RegisterTeacher(teacher);
+            try
+            {
+                Logger.LogInformation("User {UserId} is attempting to register a new teacher: {@TeacherViewModel}", userId, teacherViewModel);
 
-            return RedirectToAction("Index", "Student");
+                var teacher = new Teacher
+                {
+                    Name = teacherViewModel.Name,
+                    UserId = int.Parse(userId)
+                };
+
+                await _teacherService.RegisterTeacher(teacher);
+
+                Logger.LogInformation("User {UserId} successfully registered a new teacher with Name: {Name}", userId, teacher.Name);
+                return RedirectToAction("Index", "Student");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred for User {UserId} while registering a new teacher: {@TeacherViewModel}", userId, teacherViewModel);
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
+                return View("AddTeacher", teacherViewModel);
+            }
         }
     }
 }

@@ -6,46 +6,69 @@ using Reports.Domain.Interfaces.Service;
 namespace Reports.Application.Controllers
 {
     [Authorize]
-    public class ClassroomController : BaseController
+    public class ClassroomController : BaseController<ClassroomController>
     {
         private readonly IClassroomService _classroomService;
-        private readonly ILogger<ClassroomController> _logger;
 
         public ClassroomController(IClassroomService classroomService, ILogger<ClassroomController> logger) : base(logger)
         {
             _classroomService = classroomService;
-            _logger = logger;
         }
 
         public IActionResult Index()
         {
+            Logger.LogInformation("Accessing Classroom Index page.");
             return View();
         }
 
         [HttpGet]
         public async Task<ActionResult> SelectClassroomForReport()
         {
-            var classroom = await _classroomService.GetAllAsync();
-
-            var classModel = new ClassroomViewModel
+            Logger.LogInformation("Fetching all classrooms for report selection.");
+            try
             {
-                Classes = classroom
-            };
+                var classrooms = await _classroomService.GetAllAsync();
 
-            return View(classModel);
+                Logger.LogInformation("Successfully fetched {ClassroomCount} classrooms.", classrooms.Count);
+
+                var classModel = new ClassroomViewModel
+                {
+                    Classes = classrooms
+                };
+
+                return View(classModel);
+            }
+            catch (Exception ex)
+            {
+                var userId = GetUserIdFromSession();
+                Logger.LogError(ex, "An error occurred for User {UserId} while fetching classrooms for report selection.", userId);
+                return await ErrorAsync(null, "Failed to fetch classrooms for the report.");
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult> SetIsSelectedPropertyAstrue(List<int> SelectedClasses)
+        public async Task<ActionResult> SetIsSelectedPropertyAstrue(List<int> selectedClasses)
         {
-            foreach (var classroom in SelectedClasses)
+            Logger.LogInformation("Setting 'IsSelected' property for {ClassCount} classrooms.", selectedClasses.Count);
+            try
             {
-                var classes = await _classroomService.GetById(classroom);
-                await _classroomService.SetClassroomAsTrue(classes);
-            }
-            TempData["SelectedClasses"] = SelectedClasses;
+                foreach (var classroomId in selectedClasses)
+                {
+                    var classroom = await _classroomService.GetById(classroomId);
+                    await _classroomService.SetClassroomAsTrue(classroom);
+                }
 
-            return RedirectToAction("SelectStudentsForReport", "Student");
+                Logger.LogInformation("Successfully updated 'IsSelected' property for classrooms.");
+                TempData["SelectedClasses"] = selectedClasses;
+
+                return RedirectToAction("SelectStudentsForReport", "Student");
+            }
+            catch (Exception ex)
+            {
+                var userId = GetUserIdFromSession();
+                Logger.LogError(ex, "An error occurred for User {UserId} while updating 'IsSelected' property for classrooms.", userId);
+                return await ErrorAsync(null, "Failed to update 'IsSelected' property for classrooms.");
+            }
         }
     }
 }
