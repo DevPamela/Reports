@@ -2,6 +2,7 @@
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using System.Text;
+using Org.BouncyCastle.Asn1.X509;
 
 
 namespace Reports.Service
@@ -13,17 +14,21 @@ namespace Reports.Service
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAssessmentService _assessmentService;
         private readonly IBulkInsertHelper _bulkInsertHelper;
+        private readonly DescriptionService _descriptionService;
 
         public GoalService(
             IStudentService studentService,
             IGoalRepository goalRepository,
-            IUnitOfWork unitOfWork, IAssessmentService assessmentService, IBulkInsertHelper bulkInsertHelper)
+            IUnitOfWork unitOfWork, IAssessmentService assessmentService, 
+            IBulkInsertHelper bulkInsertHelper,
+            DescriptionService descriptionService)
         {
             _studentService = studentService;
             _goalRepository = goalRepository;
             _unitOfWork = unitOfWork;
             _assessmentService = assessmentService;
             _bulkInsertHelper = bulkInsertHelper;
+
         }
 
         public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
@@ -101,47 +106,35 @@ namespace Reports.Service
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
+        public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)//no collectionName, teremos satisfactory female
         {
-            var goal = await _goalRepository.GetByNameAsync(goalName);
-            var newDescription = await SetPronounForGender(description);
+            var goal = await _goalRepository.GetByNameAsync(goalName);// vai para a controller
             if (goal == null)
             {
                 goal = new Goal { Name = goalName };
                 _goalRepository.Add(goal);
             }
-
-            switch (collectionName)
-            {
-                case "Satisfatório":
-                    goal.AtendedDescription = newDescription;
-                    break;
-                case "Parcialmente satisfatório":
-                    goal.ParciallyAtendedDescription = newDescription;
-                    break;
-                case "Insatisfatório":
-                    goal.UnatendedDescription = newDescription;
-                    break;
-            }
+            _descriptionService.AddDescription(description, collectionName);
+           
 
             await _unitOfWork.SaveChangesAsync();
         }
-
-        public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment)
-        {
-            var assessmentName = assessment.Goal.Name;
-            var name = await _goalRepository.GetByNameAsync(assessment.Goal.Name);
-            if (name == null)
-            {
-                return assessmentName;
-            }
-            return assessmentName = assessment.IsSatisfactory switch
-            {
-                "S" => name.AtendedDescription,
-                "PS" => name.ParciallyAtendedDescription,
-                "I" => name.UnatendedDescription
-            };
-        }
+        //TODO revisar esse metodo
+        //public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment)
+        //{
+        //    var assessmentName = assessment.Goal.Name;
+        //    var name = await _goalRepository.GetByNameAsync(assessment.Goal.Name);
+        //    if (name == null)
+        //    {
+        //        return  ;
+        //    }
+        //    return assessmentName = assessment.IsSatisfactory switch
+        //    {
+        //        "S" => name.  ,
+        //        "PS" => name.ParciallyAtendedDescription,
+        //        "I" => name.UnatendedDescription
+        //    };
+        //}
 
         public async Task<List<Goal>> GetGoalsListAsync() =>
             await _goalRepository.GetAllAsync();

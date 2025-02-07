@@ -25,7 +25,7 @@ namespace Reports.Domain.Interfaces.Service
         /// </summary>
         /// <param name="assessment"></param>
         /// <returns></returns>
-        Task<string> GetDescriptionForParagrafAsync(Assessment assessment);
+       // Task<string> GetDescriptionForParagrafAsync(Assessment assessment);
 
         /// <summary>
         /// Get the <see cref="Goal"/> list.

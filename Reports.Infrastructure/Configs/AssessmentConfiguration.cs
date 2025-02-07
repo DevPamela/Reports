@@ -9,7 +9,7 @@ namespace Reports.Infrastructure.Configs
         public void Configure(EntityTypeBuilder<Assessment> builder)
         {
             builder
-            .HasKey(a => new { a.StudentId, a.GoalId }); // Composite key
+            .HasKey(a => new { a.StudentId, a.GoalId });
 
             builder
                 .HasOne(a => a.Student)

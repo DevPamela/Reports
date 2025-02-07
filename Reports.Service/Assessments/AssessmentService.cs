@@ -23,7 +23,7 @@ namespace Reports.Service.Assessments
         }
 
 
-        public async Task AddAssessmentForByGoalId(Goal goal, Student student)
+        public async Task  AddAssessmentForByGoalId(Goal goal, Student student)
         {
             var existingAssessment =await _assessmentRepository.GetByStudentIdAndGoalId(student.Id, goal.Id);
             

@@ -18,7 +18,7 @@ namespace Reports.Service
         // Register a new user
         public async Task<User> RegisterUserAsync(string username, string email, string password)
         {
-            if (await _userRepository.AnyAsync(u => u.Username == username || u.Email == email))
+            if (await _userRepository.AnyAsync(u => u.Email == email))
             {
                 throw new InvalidOperationException("A user with the same username or email already exists.");
             }

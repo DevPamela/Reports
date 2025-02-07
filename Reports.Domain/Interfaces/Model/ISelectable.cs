@@ -8,6 +8,6 @@ namespace Reports.Domain.Interfaces.Model
 {
     public interface ISelectable
     {
-        bool IsSelected { get; set; }
+        bool IsActive { get; set; }
     }
 }

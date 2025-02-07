@@ -59,7 +59,7 @@ namespace Reports.Application.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-
+            //TODO incluir mensagem de erro se usuario ja estiver cadastrado
             try
             {
                 var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher

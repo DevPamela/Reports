@@ -11,6 +11,6 @@ namespace Reports.Domain.Entities
         public int TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public List<Student> Students { get; set; } = [];
-        public bool IsSelected { get; set; } = false;
+        public bool IsActive { get; set; } = false;
     }
 }

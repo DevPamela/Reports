@@ -32,6 +32,6 @@ internal class GoalRepository : IGoalRepository
     /// <inheritdoc />
     public async Task<List<Goal>> GetByIsSelectedProperty() =>
    await _dbContext.Goals
-       .Where(g => g.IsSelected == true).ToListAsync();
+       .Where(g => g.IsActive == true).ToListAsync();
 
 }

@@ -152,11 +152,11 @@ namespace Reports.Service
                         string validation = IsAGirl ? "a" : "o";
                         var name = studentName.Split(' ');
                         var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+                        //var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
 
 
-                        string param = string.Format(goalDescription, validation, name[0]);
-                        await CreateParagraph(param, doc);
+                       // string param = string.Format(goalDescription, validation, name[0]);
+                       // await CreateParagraph(param, doc);
 
                     }
                     catch (Exception ex)
@@ -191,11 +191,11 @@ namespace Reports.Service
                 var name = studentName.Split(' ');
 
                 var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+             //   var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
 
-                string param = string.Format(goalDescription, validation, name[0]);
+                //string param = string.Format(goalDescription, validation, name[0]);
 
-                await CreateParagraph(param, doc);
+                //await CreateParagraph(param, doc);
             });
 
             // Aguarda todas as tasks serem concluídas em paralelo
