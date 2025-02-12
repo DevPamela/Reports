@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Models\ClassRoom.cs.orig" />
-    <None Remove="Models\Student.cs.orig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Models\ClassRoom.cs.orig" />
-    <Compile Include="Models\Student.cs.orig" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.7" />
     <PackageReference Include="NPOI" Version="2.7.1" />
   </ItemGroup>

@@ -19,6 +19,10 @@ public class StudentGenderColumnValidator : IColumnValidator, IStudentGenderColu
     /// <inheritdoc />
     public Result ValidateCellValue(ICell cell)
     {
+        if (cell.CellType == CellType.Blank)
+        {
+            return Result.Ok(); 
+        }
         if (cell.CellType is not CellType.String)
         {
             return StudentGenderColumnValidationErrors.InvalidType(cell.Address);

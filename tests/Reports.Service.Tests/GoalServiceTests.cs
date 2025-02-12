@@ -70,7 +70,7 @@ public class GoalServiceTests
         var teacherId = 1;
 
         // Simula a ausência da meta
-        _mockGoalRepository.Setup(r => r.GetGirlsGoalByNameAsync(goalName)).ReturnsAsync((Goal)null);
+       // _mockGoalRepository.Setup(r => r.GetGirlsGoalByNameAsync(goalName)).ReturnsAsync((Goal)null);
 
         // Act
         await _goalService.AddGoalsAsync(collectionName, goalName, description, isGirlsGoal, teacherId);

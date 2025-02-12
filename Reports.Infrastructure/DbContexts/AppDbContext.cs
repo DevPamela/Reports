@@ -2,7 +2,6 @@
 using OpenIddict.EntityFrameworkCore.Models;
 using Reports.Domain.Entities;
 using Reports.Domain.Interfaces.Repositories;
-using Reports.Domain.Models;
 using Reports.Infrastructure.Configs;
 
 namespace Reports.Infrastructure.DbContexts;
@@ -14,7 +13,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Report> Report { get; set; } = null!;
     public DbSet<ClassRoom> Classroom { get; set; } = null!;
     public DbSet<Assessment> Assessments { get; set; } = null!;
-    public DbSet<Description> Descriptions { get; set; } = null!;
     public DbSet<Teacher> Teacher { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
 

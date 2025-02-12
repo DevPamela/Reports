@@ -189,7 +189,7 @@ namespace Reports.Service
                 var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
                 var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
 
-                string param = string.Format(goalDescription, validation, name[0]);
+                //string param = string.Format(goalDescription, validation, name[0]);
 
                 await CreateParagraph(goalDescription, doc);
             });

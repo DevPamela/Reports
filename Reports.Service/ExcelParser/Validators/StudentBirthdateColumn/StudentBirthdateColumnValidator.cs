@@ -18,6 +18,10 @@ public class StudentBirthdateColumnValidator : IColumnValidator, IStudentBirthda
     /// <inheritdoc />
     public Result ValidateCellValue(ICell cell)
     {
+        if (cell.CellType == CellType.Blank)
+        {
+            return Result.Ok(); 
+        }
         if (cell.DateOnlyCellValue is null
             || !DateUtil.IsCellDateFormatted(cell))
         {

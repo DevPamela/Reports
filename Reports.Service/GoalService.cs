@@ -133,14 +133,14 @@ namespace Reports.Service
             var name = await _goalRepository.GetGirlsGoalsByNameAndTeacherIdAsync(assessment.Goal.Name, teacherId);
             if (name == null)
             {
-                return  ;
+                throw new ArgumentNullException(nameof(name));
             }
             return assessmentName = assessment.IsSatisfactory switch
             {
                 "S" => isGirl ? name.GirlsAtendedDescription : name.AtendedDescription,
                 "PS" => isGirl ? name.GirlsParciallyAtendedDescription : name.ParciallyAtendedDescription,
                 "I" => isGirl ? name.GirlsUnatendedDescription : name.UnatendedDescription,
-                _ => string.Empty // Se não for nenhum dos casos acima, retorna uma string vazia
+                _ => string.Empty 
             };
         }
 
