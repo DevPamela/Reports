@@ -1,34 +1,55 @@
 ﻿@model ClassroomAndStudentViewModel
 
+<br />
+<h3>Alterar dados do aluno</h3>
 <form asp-controller="Student" asp-action="UpdateStudent" method="post">
+   
+    <input type="hidden" asp-for="Student.Id" />
+    <input type="hidden" asp-for="Student.ClassRoomId" />
+
     <div class="form-group col-md-5">
         <label for="Nome">NOME</label>
-        <input type="text" asp-for="Student.Name" class="form-control" id="Nome" placeholder="@Model.Student.Name.ToUpper()">
+        <input type="text" asp-for="Student.Name" class="form-control" id="Nome" placeholder="Digite o nome">
     </div>
+
+    <br />
+
     <div class="form-group">
         <label for="Genero">GÊNERO</label>
-        <select name="Student.Gender" class="form-control" id="Genero" style="width: 10em;" maxlength="10">
+        <select asp-for="Student.Gender" class="form-control" id="Genero" style="width: 10em;" maxlength="10">
             <option value="">SELECIONE</option>
             <option value="Female">FEMININO</option>
             <option value="Male">MASCULINO</option>
         </select>
     </div>
+
+    <br />
+
     <div class="form-group col-md-3">
         <label for="DataNascimento">DATA DE NASCIMENTO</label>
         <input type="date" asp-for="Student.Birthdate" id="DataNascimento"
                class="form-control" onkeydown="return false" onclick="showDatePicker()">
     </div>
+
+    <br />
+
     <div class="form-group">
         <label for="Class">TURMA</label>
-        <select name="Student.Class" class="form-control" id="Class" style="width: 10em;" maxlength="10">
+        <select asp-for="Student.ClassRoomId" class="form-control" id="Class" style="width: 10em;" maxlength="10">
+            <option value="">SELECIONE</option>
             @foreach (var item in Model.Classes)
             {
-                <option value="@item.Name">@item.Name</option> //ver aqui
+                <option value="@item.Id">@item.Name</option>
             }
         </select>
-
     </div>
-    <button type="submit">Enviar</button>
+
+    <br />
+
+    <div style="display: flex; gap: 10px;">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+        <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
+    </div>
 </form>
 
 <script>

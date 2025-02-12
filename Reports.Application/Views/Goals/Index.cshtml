@@ -1,62 +1,132 @@
-﻿@model List<GoalsViewModel>;
+﻿@model List<GoalsViewModel>
 @{
-    ViewData["Title"] = "AddGoal";
+    ViewData["Title"] = "Adicionar Objetivo";
 }
 
-<br />
-<br />
-<br />
-<br />
-<h1>ADICIONAR OBJETIVOS</h1>
-<br />
-<h2>Não encontrou um objetivo que faz sentido para a sua turma?</h2>
-<h2>Sem problemas! Você pode criar os parágrafos do seu relatório de maneira personalizada!</h2>
-<br />
+<h1>Adicionar Objetivo</h1>
 
-@if (TempData["SuccessMessage"] != null)
+@using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post, new { id = "goalForm" }))
 {
-    <div class="alert alert-success" role="alert">
-        <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
-        @TempData["SuccessMessage"]
+    <br/>
+    <br />
+    <h1>CRIAR OBJETIVO</h1>
+    <div>
+        <p>
+            Para cada situação (Satisfatório, Parcialmente satisfatório e Insatisfatório), escreva um parágrafo descrevendo como você vê o desempenho ou a situação do aluno. <br />
+            Por exemplo:
+        </p>
+        <p>
+            <strong>Nome:</strong> Você vai usar depois para identificar seus objetivos. Exemplo: Hipótese de escrita.
+        </p>
+        <p>
+            <strong>Satisfatório:</strong> Escreva um parágrafo explicando quando o aluno está indo bem e cumprindo as metas.
+        </p>
+        <p>
+            <strong>Parcialmente satisfatório:</strong> Escreva quando o aluno está se esforçando, mas ainda precisa melhorar em algumas áreas.
+        </p>
+        <p>
+            <strong>Insatisfatório:</strong> Escreva quando o aluno está com dificuldades e precisa de mais apoio para atingir as metas.
+        </p>
+        <p>
+            Escreva como se estivesse escrevendo sobre meninos.
+        </p>
+        <p>
+            Após escrever os parágrafos para os meninos, as descrições serão copiadas automaticamente para as meninas. Não se preocupe, isso vai facilitar o preenchimento!
+        </p>
+
+        <input type="text" id="goalName" name="goalName" class="form-control" placeholder="Qual o nome do seu Objetivo?" required oninput="updateGoalNames(this.value)" />
+    </div>
+
+    <h1>Descrição para Meninos</h1>
+
+    <div class="form-group">
+        <label for="boysSatisfactory">Satisfatório:</label>
+        <textarea name="goalsViewModels[0].Description" class="form-control boys-input" style="height: 100px;" placeholder="Descrição para satisfatório..." required oninput="copyToGirlsInputs()"></textarea>
+        <input type="hidden" name="goalsViewModels[0].collectionName" value="Satisfatório" />
+        <input type="hidden" name="goalsViewModels[0].IsGirl" value="false" />
+        <input type="hidden" name="goalsViewModels[0].Name" class="goal-name" />
+    </div>
+
+    <div class="form-group">
+        <label for="boysPartialSatisfactory">Parcialmente Satisfatório:</label>
+        <textarea name="goalsViewModels[1].Description" class="form-control boys-input" style="height: 100px;" placeholder="Descrição para parcialmente satisfatório..." required oninput="copyToGirlsInputs()"></textarea>
+        <input type="hidden" name="goalsViewModels[1].collectionName" value="Parcialmente satisfatório" />
+        <input type="hidden" name="goalsViewModels[1].IsGirl" value="false" />
+        <input type="hidden" name="goalsViewModels[1].Name" class="goal-name" />
+    </div>
+
+    <div class="form-group">
+        <label for="boysUnsatisfactory">Insatisfatório:</label>
+        <textarea name="goalsViewModels[2].Description" class="form-control boys-input" style="height: 100px;" placeholder="Descrição para insatisfatório..." required oninput="copyToGirlsInputs()"></textarea>
+        <input type="hidden" name="goalsViewModels[2].collectionName" value="Insatisfatório" />
+        <input type="hidden" name="goalsViewModels[2].IsGirl" value="false" />
+        <input type="hidden" name="goalsViewModels[2].Name" class="goal-name" />
+    </div>
+
+    <h1>Descrição para Meninas</h1>
+    <div>
+        <p>
+            Depois que as descrições para os meninos forem copiadas, você só precisa alterar as palavras e pronomes para se referir às meninas. <br />
+            Por exemplo, se você escreveu "ele precisa melhorar", altere para "ela precisa melhorar". <br />
+            Isso garantirá que as descrições estejam corretas para as meninas.
+        </p>
+
+        <p>
+            <strong>Exemplo de ajuste:</strong>
+        </p>
+        <p>
+            Se no texto original você escreveu: <br />
+            "Ele está se esforçando, mas ainda precisa melhorar em algumas áreas." <br />
+            Você deve alterar para: <br />
+            "Ela está se esforçando, mas ainda precisa melhorar em algumas áreas."
+        </p>
+        <p>
+            Esse pequeno ajuste garantirá que suas descrições para as meninas estejam perfeitamente adaptadas. Não se preocupe, é fácil de fazer!
+        </p>
+    </div>
+
+    <div class="form-group">
+        <label for="girlsSatisfactory">Satisfatório:</label>
+        <textarea name="goalsViewModels[3].Description" class="form-control girls-input" style="height: 100px;" placeholder="Descrição para satisfatório..." required></textarea>
+        <input type="hidden" name="goalsViewModels[3].collectionName" value="Satisfatório" />
+        <input type="hidden" name="goalsViewModels[3].IsGirl" value="true" />
+        <input type="hidden" name="goalsViewModels[3].Name" class="goal-name" />
+    </div>
+
+    <div class="form-group">
+        <label for="girlsPartialSatisfactory">Parcialmente Satisfatório:</label>
+        <textarea name="goalsViewModels[4].Description" class="form-control girls-input" style="height: 100px;" placeholder="Descrição para parcialmente satisfatório..." required></textarea>
+        <input type="hidden" name="goalsViewModels[4].collectionName" value="Parcialmente satisfatório" />
+        <input type="hidden" name="goalsViewModels[4].IsGirl" value="true" />
+        <input type="hidden" name="goalsViewModels[4].Name" class="goal-name" />
+    </div>
+
+    <div class="form-group">
+        <label for="girlsUnsatisfactory">Insatisfatório:</label>
+        <textarea name="goalsViewModels[5].Description" class="form-control girls-input" style="height: 100px;" placeholder="Descrição para insatisfatório..." required></textarea>
+        <input type="hidden" name="goalsViewModels[5].collectionName" value="Insatisfatório" />
+        <input type="hidden" name="goalsViewModels[5].IsGirl" value="true" />
+        <input type="hidden" name="goalsViewModels[5].Name" class="goal-name" />
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+        <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
     </div>
 }
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        <button type="button" class="btn btn-danger btn-sm close-alert" arial-label="Close">x</button>
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-<div class="body-buttons">
-
-    @using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post))
-    {
-        string nomeDoObjetivo = Model[0].Name;
-        @Html.TextBoxFor(model => model[0].Name, new { @class = "form-control", placeholder = "Qual o nome do objetivo? (usaremos esse nome para facilitar a identificação na próxima etapa", required = "required" })
-        <br />
-        <br />
-
-        string[] nomesDosCampos = new string[] { "Satisfatório", "Parcialmente satisfatório", "Insatisfatório" };
-        for (int i = 0; i < 3; i++)
-        {
-            Model[i].Name = nomeDoObjetivo;
-            Model[i].collectionName = nomesDosCampos[i];
-            @Html.HiddenFor(model => model[i].Name)
-            @Html.HiddenFor(model => model[i].collectionName)
-            <br />
-            <br />
-            @Html.TextBox("NomeDoCampo", nomesDosCampos[i], new { @readonly = "readonly", @class = "form-control text-center" })
-            <br />
-            <br />
-            @Html.TextAreaFor(model => model[i].Description, new { style = "width: 500px; height: 100px;  text-align: center;", placeholder = "Escreva aqui", required = "required" })
-            <br />
-            <br />
-            <br />
-        }
-        <input type="submit" value="Enviar" />
+<script>
+    function updateGoalNames(value) {
+        let nameInputs = document.querySelectorAll('.goal-name');
+        nameInputs.forEach(input => input.value = value);
     }
-</div>
 
+    function copyToGirlsInputs() {
+        let boysInputs = document.querySelectorAll('.boys-input');
+        let girlsInputs = document.querySelectorAll('.girls-input');
 
+        for (let i = 0; i < boysInputs.length; i++) {
+            girlsInputs[i].value = boysInputs[i].value;
+        }
+    }
+</script>

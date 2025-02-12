@@ -28,5 +28,5 @@ public interface IReportRepository
     /// </summary>
     /// <param name="idDoRelatorio"></param>
     /// <returns></returns>
-    Task<Report> GetReportById(int idDoRelatorio);
+    Task<Report> GetReportById(int reportId);
 }

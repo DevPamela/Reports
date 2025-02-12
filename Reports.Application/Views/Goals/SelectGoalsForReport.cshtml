@@ -7,7 +7,7 @@
 <br />
 <br />
 <br />
-<h1>ETAPA 1- SELECIONAR OBJETIVOS</h1>
+<h1>SELECIONAR OBJETIVOS</h1>
 <br />
 <h2>Escolha quais objetivos você deseja incluir no seu relatório:</h2>
 <br />
@@ -25,7 +25,12 @@
         </div>
     }
     <br />
-    <button class="button center-button" type="submit">Enviar</button>
+    <br />
+    <div style="display: flex; gap: 10px;">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+        <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+    </div>
+
 }
 <br/>
 <h2>Quer tornar seu relatório personalizado? Clique no botão abaixo e <a href="@Url.Action("Index", "Goals")">crie seu próprio objetivo</a> para os relatórios</h2>

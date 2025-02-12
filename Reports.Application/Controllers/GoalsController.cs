@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
-using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
+using Reports.Domain.Interfaces.Service;
 
 namespace Reports.Application.Controllers
 {
@@ -11,10 +11,12 @@ namespace Reports.Application.Controllers
     {
         private readonly IGoalService _goalService;
         private readonly IAssessmentService _assessmentService;
-        public GoalsController(IGoalService goalService, IAssessmentService assessmentService)
+        private readonly ITeacherService _teacherService;
+        public GoalsController(IGoalService goalService, IAssessmentService assessmentService, ITeacherService teacherService)
         {
             _goalService = goalService;
             _assessmentService = assessmentService;
+            _teacherService = teacherService;
         }
 
         public IActionResult Index()
@@ -22,18 +24,21 @@ namespace Reports.Application.Controllers
             var viewModel = new List<GoalsViewModel> { new GoalsViewModel(), new GoalsViewModel(), new GoalsViewModel() };
             ViewBag.ValorDoBotao = "Enviar";
             return View(viewModel);
-            //TODO criar botão de voltar
         }
-        
-        public async Task<ActionResult> SelectGoalsForReport()
+
+        public async Task<ActionResult> SelectGoalsForReport() 
         {
-            var goals = await _goalService.GetGoalsListAsync();
+            var user = User.FindFirst("UserId")?.Value;
+
+            var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
+            var goals = await _goalService.GetGoalsListAsyncByTeacherId(teacher.Id);
+
             var goalsName = goals.Select(g => g.Name).ToList();
 
             ViewBag.Objetivos = goalsName;
             return View(goalsName);
         }
-        
+
 
         [HttpPost]
         public async Task<ActionResult> SaveStudentGoalsResults(List<string> goals)
@@ -43,30 +48,33 @@ namespace Reports.Application.Controllers
             return View(students);
 
         }
-
+       
         [HttpPost]
         public async Task<ActionResult> AddGoal(List<GoalsViewModel> goalsViewModels)
         {
             try
             {
                 var goalName = goalsViewModels[0].Name;
+                var user = User.FindFirst("UserId")?.Value;
 
-                for (int i = 0; i < goalsViewModels.Count; i++)
+                var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
+                foreach (var goalViewModel in goalsViewModels)
                 {
-                    var collectionName = goalsViewModels[i].collectionName;
-                    var description = goalsViewModels[i].Description;
+                    var collectionName = goalViewModel.collectionName;
+                    var description = goalViewModel.Description;
+                    var isGirlsGoal = goalViewModel.IsGirl;
 
-                    await _goalService.AddGoalInColletionAsync(collectionName, goalName.ToString(), description);
+                    // Chama o serviço para adicionar a meta
+                    await _goalService.AddGoalsAsync(collectionName, goalName, description, isGirlsGoal, teacher.Id);
                 }
+                
 
-                TempData[("SuccessMessage")] = "Cadastro realizado com sucesso!";
+                TempData["SuccessMessage"] = "Cadastro realizado com sucesso!";
                 return RedirectToAction("Index");
             }
-
             catch (Exception e)
             {
-                TempData[("ErrorMessage")] = $"Encontramos um problema ao cadastrar " +
-                    $"seu objetivo! Por favor tente novamente. Detalhes do erro: {e.Message}";
+                TempData["ErrorMessage"] = $"Encontramos um problema ao cadastrar seu objetivo! Erro: {e.Message}";
                 return View("Index", goalsViewModels);
             }
         }

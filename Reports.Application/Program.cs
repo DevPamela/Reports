@@ -55,7 +55,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseMiddleware<ValidacaoUsuarioMiddleware>();
+//app.UseMiddleware<ValidacaoUsuarioMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())

@@ -6,7 +6,7 @@
     text-align: center;
 }
 .warning {
-    color: red;
+    color: black;
     font-weight: bold;
 }
 
@@ -18,8 +18,8 @@
     text-align: center;
 }
 .small-input {
-    width: 300px; /* Define a largura desejada */
-    font-size: 20px; /* Ajusta o tamanho da fonte se necessário */
+    width: 300px; 
+    font-size: 20px; 
 }
 /*esse aqui*/
 input[type='file'] {
@@ -27,7 +27,7 @@ input[type='file'] {
 }
 
 label.custom-label2 {
-    background-color: green;
+    background-color: rebeccapurple;
     border-radius: 5px;
     color: #fff;
     cursor: pointer;

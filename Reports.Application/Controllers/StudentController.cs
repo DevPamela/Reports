@@ -150,7 +150,7 @@ public class StudentController : Controller
     [HttpPost]
     public async Task<ActionResult> UpdateStudent(Student student)
     {
-        await _studentService.UpdateStudent(student); //TODO ver genero chegando errado, ver data de nascimento que não está preencida, acrescentar botões de voltar, ver cookies de autenticação
+        await _studentService.UpdateStudent(student); 
 
         return RedirectToAction("Index", "Home");
     }

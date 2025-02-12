@@ -18,14 +18,9 @@ namespace Reports.Domain.Interfaces.Service
         /// <param name="goalName"></param>
         /// <param name="description"></param>
         /// <returns></returns>
-        Task AddGoalInColletionAsync(string collectionName, string goalName, string description);
+        Task AddGoalsAsync(string collectionName, string goalName, string description, bool isGirlsGoal, int teacherId);
 
-        /// <summary>
-        /// Get the paragraph text using the IsSatisfactory property.
-        /// </summary>
-        /// <param name="assessment"></param>
-        /// <returns></returns>
-        Task<string> GetDescriptionForParagrafAsync(Assessment assessment);
+
 
         /// <summary>
         /// Get the <see cref="Goal"/> list.
@@ -39,5 +34,19 @@ namespace Reports.Domain.Interfaces.Service
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Goal> GetGoalByIdAsync(int id);
+        /// <summary>
+        /// Get a Goal by Teacher Id.
+        /// </summary>
+        /// <param name="teacherId"></param>
+        /// <returns></returns>
+        Task<List<Goal>> GetGoalsListAsyncByTeacherId(int teacherId);
+
+        /// <summary>
+        /// Get a description to be written in the report.
+        /// </summary>
+        /// <param name="assessment"></param>
+        /// <param name="teacherId"></param>
+        /// <returns></returns>
+        Task<string> GetDescriptionForParagrafAsync(Assessment assessment, int teacherId, bool isAGirl);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Reports.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initialdatabase : Migration
+    public partial class InitialDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -216,7 +216,7 @@ namespace Reports.Infrastructure.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TeacherId = table.Column<int>(type: "int", nullable: false),
-                    IsSelected = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,14 +239,22 @@ namespace Reports.Infrastructure.Migrations
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     AtendedDescription = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    IsSelected = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     ParciallyAtendedDescription = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UnatendedDescription = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TeacherId = table.Column<int>(type: "int", nullable: true)
+                    TeacherId = table.Column<int>(type: "int", nullable: true),
+                    GoalType = table.Column<string>(type: "varchar(13)", maxLength: 13, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GirlsAtendedDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GirlsParciallyAtendedDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GirlsUnatendedDescription = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -273,7 +281,7 @@ namespace Reports.Infrastructure.Migrations
                     Absences = table.Column<int>(type: "int", nullable: false),
                     TeacherId = table.Column<int>(type: "int", nullable: false),
                     ClassRoomId = table.Column<int>(type: "int", nullable: false),
-                    IsSelected = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {

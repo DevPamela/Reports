@@ -9,19 +9,20 @@
 h2 {
     color: black;
     font-family: verdana;
-    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    font-size: 17px; 
     text-align:center;
 }
 h3 {
-    color: red;
-    font-family: verdana;
-    font-size: 17px; /* Aqui você controla o tamanho da fonte */
+    color: black;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 17px; 
     text-align: left;
 }
 .button {
     color: black;
     font-family: Arial;
-    font-size: 15px; /* Aqui você controla o tamanho da fonte */
+    font-size: 15px; 
     text-align: center;
     font-weight: bold;
     align-content: center;

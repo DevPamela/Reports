@@ -41,7 +41,7 @@ public static class DependencyInjection
             services.AddScoped<ITeacherRepository, TeacherRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
-        services.AddOpenIddict()
+            services.AddOpenIddict()
         .AddCore(options =>
         {
             // Configure OpenIddict to use the Entity Framework Core stores.

@@ -7,5 +7,6 @@ namespace Reports.Application.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string collectionName { get; set; }
+        public bool IsGirl{ get; set; }
     }
 }

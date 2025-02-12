@@ -9,7 +9,7 @@
         <form asp-controller="Student" asp-action="DeleteStudent" method="post">
             @Html.AntiForgeryToken()
             <h2>Você realmente deseja deletar o aluno da lista? Após a confirmação, não será possível desfazer essa ação.</h2>
-            <!-- Campo oculto para o ID do aluno -->
+        
             <input type="hidden" asp-for="Student.Id" />
 
             <div class="form-group col-md-5">
@@ -18,9 +18,11 @@
                 <input type="text" asp-for="Student.Name" class="form-control" placeholder="@Model.Student.Name.ToUpper()" readonly>
             </div>
 
-            <br>
+            <br> <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-red">DELETAR</button>
+                <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+            </div>
 
-            <button type="submit" class="btn btn-red">DELETAR</button>
         </form>
     </div>
 </body>

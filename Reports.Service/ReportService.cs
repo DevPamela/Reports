@@ -95,14 +95,13 @@ namespace Reports.Service
         {
             try
             {
-                var students = await _studentService.GetStudentsListAsync();
+                var students = await _studentService.GetStudentsListAsync();//TODO salvar apenas o primeiro nome no banco, ver como se comporta com muitos parágrafos e bem etruturado
                 foreach (var student in students)
                 {
                     var list = await CreateReportForStudents(report, student);
                     report.StudentId = student.Id;
                     await SetStudentIdForReport(report);
-                    // await AddReport(list);
-
+                   
                     await CreateReportFile(report);
                 }
             }
@@ -124,7 +123,7 @@ namespace Reports.Service
             {
                 XWPFDocument doc = new XWPFDocument();
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                
+
                 string reportsFolder = Path.Combine(path, "Relatorios");
 
                 await CreateReportsFolder(reportsFolder);
@@ -141,21 +140,19 @@ namespace Reports.Service
                 }
 
                 var IsAGirl = report.Student.IsAGirl();
-                 
-               var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
+
+                var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
 
                 foreach (var a in assessments)
                 {
                     try
                     {
                         var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                        string validation = IsAGirl ? "a" : "o";
                         var name = studentName.Split(' ');
                         var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
 
-
-                        string param = string.Format(goalDescription, validation, name[0]);
+                        string param = string.Format(goalDescription, name[0]);
                         await CreateParagraph(param, doc);
 
                     }
@@ -170,7 +167,7 @@ namespace Reports.Service
                 {
                     await CreateParagraph(report.LastParagraph, doc);
                 }
-                
+
                 XWPFParagraph pageBreak = doc.CreateParagraph();
                 await SaveDocument(reportsFolder, doc, report.Student.Name);
 
@@ -187,15 +184,13 @@ namespace Reports.Service
             {
                 var IsAGirl = report.Student.IsAGirl();
                 var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                string validation = IsAGirl ? "a" : "o";
                 var name = studentName.Split(' ');
 
                 var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a);
+                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
 
-                string param = string.Format(goalDescription, validation, name[0]);
 
-                await CreateParagraph(param, doc);
+                await CreateParagraph(goalDescription, doc);
             });
 
             // Aguarda todas as tasks serem concluídas em paralelo
@@ -239,11 +234,11 @@ namespace Reports.Service
         /// <param name="path"></param>
         static async Task SaveDocument(string path, XWPFDocument doc, string studentName)
         {
-                using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
-                    FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
-                {
-                    await Task.Run(() => doc.Write(fs));
-                };
+            using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
+                FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+            {
+                await Task.Run(() => doc.Write(fs));
+            };
         }
 
         /// <summary>
@@ -276,7 +271,7 @@ namespace Reports.Service
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
             var sixthLine = $"Faltas: {absences}";
-            string[] param = {secondLine, thirdLine, fourthLine, fifthLine, sixthLine };
+            string[] param = { secondLine, thirdLine, fourthLine, fifthLine, sixthLine };
 
             foreach (var p in param)
             {
@@ -290,19 +285,19 @@ namespace Reports.Service
         /// <returns></returns>
         private async Task CreateReportsFolder(string reportsFolder)
         {
-             await Task.Run(() =>
-            { 
-            try
-            {
-                if (!Directory.Exists(reportsFolder))
-                {
-                    Directory.CreateDirectory(reportsFolder);
-                }
-            }
-            catch
-            {
-            }
-        });
+            await Task.Run(() =>
+           {
+               try
+               {
+                   if (!Directory.Exists(reportsFolder))
+                   {
+                       Directory.CreateDirectory(reportsFolder);
+                   }
+               }
+               catch
+               {
+               }
+           });
         }
         /// <inheritdoc />
         Task IReportService.GetReportById(Report report)

@@ -27,7 +27,11 @@ public class StudentService : IStudentService
             var repo = await _studentRepository.GetByNameAsync(student.Name);
             repo.Gender = student.Gender;
             repo.Name = student.Name;
-            repo.ClassRoomId = student.ClassRoomId;
+            if(student.ClassRoomId != 0)
+            {
+                repo.ClassRoomId = student.ClassRoomId;
+            }
+
             if (student.Birthdate != DateOnly.MinValue && student.Birthdate < DateOnly.FromDateTime(DateTime.Now))
                 repo.Birthdate = student.Birthdate;
 

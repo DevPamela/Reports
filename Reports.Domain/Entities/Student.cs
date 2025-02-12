@@ -22,7 +22,7 @@ namespace Reports.Domain.Entities
         public List<Report> Reports { get; set; } = [];
         public List<Goal> Goals { get; set; } = [];
         public List<Assessment> Assessments { get; set; } = [];
-        public bool IsSelected { get; set; }
+        public bool IsActive { get; set; }
 
         public bool IsAGirl()
         {

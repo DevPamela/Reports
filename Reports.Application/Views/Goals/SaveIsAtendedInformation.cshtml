@@ -38,7 +38,10 @@
         <br />
 
         <br />
-        <input type="submit" id="enviar" value="Enviar" />
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <input type="submit" value="Enviar" class="btn btn-primary" />
+            <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+        </div>
     }
 </div>
 
@@ -48,20 +51,15 @@
    @*  <span id="loadingIcon" class="spinner-border" role="status" style="display: none;"> *@
     <i id="loadingIcon" class="spinner-border loadingIcon" style="display: none;"></i>
         <br/>
-    <div class="loadingMessage" id="loadingMessage">Aguarde, isso pode levar alguns segundos</div>
-    <span class="sr-only">Loading...</span>
-@* </span> *@
+    <div class="loadingMessage" id="loadingMessage">Que tal tomar um café enquanto escrevemos seus relatórios?</div>
 </div>
-
 
 <script>
     $(document).ready(function () {
-        $('#enviar').click(function () {
-            $('#loadingIcon').show(); // Mostra o ícone de loading quando o botão for clicado
+        $('form').submit(function () {
+            $('#loadingIcon').show();
             $('#overlay').show();
             $('#loadingMessage').show();
-            // Faça a chamada AJAX para o seu controller aqui
-
         });
     });
 </script>

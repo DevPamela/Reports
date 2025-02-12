@@ -12,7 +12,7 @@ public class SelectableEntity<T> where T : ISelectable
     /// <param name="item"></param>
     public void ClearSelection(T item)
     {
-        item.IsSelected = false;
+        item.IsActive = false;
     }
 
     /// <summary>
@@ -21,7 +21,7 @@ public class SelectableEntity<T> where T : ISelectable
     /// <param name="item"></param>
     public void SetSelectionAsTrue(T item)
     {
-        item.IsSelected = true;
+        item.IsActive = true;
     }
 }
 

@@ -1,18 +1,78 @@
-﻿@model GoalsViewModel;
+﻿@model List<GoalsViewModel>
+
 @{
-    ViewData["Title"] = "AddGoal";
+    ViewData["Title"] = "Adicionar Objetivo";
 }
 
-<h1>AddGoal</h1>
+<h1>Adicionar Objetivo</h1>
 
 @using (Html.BeginForm("AddGoal", "Goals", FormMethod.Post))
 {
-    @Html.TextBoxFor(model => model.Name, new {style = "width: 350px;", placeholder = "Qual o nome do seu Objetivo?"})
+    <div id="goals-container">
+        <div class="goal-item">
+            <label>Nome do Objetivo:</label>
+            @Html.TextBox("goals[0].Name", null, new { style = "width: 350px;", placeholder = "Qual o nome do seu Objetivo?" })
+            <br /><br />
+
+            <label>Descrição:</label>
+            @Html.TextBox("goals[0].Description", null, new { style = "width: 350px;", placeholder = "Escreva seu parágrafo" })
+            <br /><br />
+
+            <label>Classificação:</label>
+            @Html.DropDownList("goals[0].collectionName", new SelectList(new[]
+                     {
+        new { Value = "Satisfatório", Text = "Satisfatório" },
+        new { Value = "Parcialmente satisfatório", Text = "Parcialmente satisfatório" },
+        new { Value = "Insatisfatório", Text = "Insatisfatório" }
+        }, "Value", "Text"), "Selecione", new { style = "width: 350px;" })
+            <br /><br />
+
+            <label>É um objetivo para meninas?</label>
+            <input type="checkbox" name="goals[0].IsGirl" value="true" />
+            <br /><br />
+        </div>
+    </div>
+
+    <button type="button" id="add-goal-btn">Adicionar Outro Objetivo</button>
     <br />
-    <br />
-    @Html.TextBoxFor(model => model.Description, new {style = "width: 350px;", placeholder = "Escreva seu paragrafo" })
-    <br />
-     <br />
     <br />
     <input type="submit" value="Enviar" />
 }
+
+<script>
+    let goalIndex = 1;
+
+    document.getElementById("add-goal-btn").addEventListener("click", function () {
+        let container = document.getElementById("goals-container");
+
+        let newGoal = document.createElement("div");
+        newGoal.classList.add("goal-item");
+
+        newGoal.innerHTML = `
+            <hr>
+            <label>Nome do Objetivo:</label>
+            <input type="text" name="goals[${goalIndex}].Name" style="width: 350px;" placeholder="Qual o nome do seu Objetivo?" />
+            <br /><br />
+
+            <label>Descrição:</label>
+            <input type="text" name="goals[${goalIndex}].Description" style="width: 350px;" placeholder="Escreva seu parágrafo" />
+            <br /><br />
+
+            <label>Classificação:</label>
+            <select name="goals[${goalIndex}].collectionName" style="width: 350px;">
+                <option value="">Selecione</option>
+                <option value="Satisfatório">Satisfatório</option>
+                <option value="Parcialmente satisfatório">Parcialmente satisfatório</option>
+                <option value="Insatisfatório">Insatisfatório</option>
+            </select>
+            <br /><br />
+
+            <label>É um objetivo para meninas?</label>
+            <input type="checkbox" name="goals[${goalIndex}].IsGirl" value="true" />
+            <br /><br />
+        `;
+
+        container.appendChild(newGoal);
+        goalIndex++;
+    });
+</script>

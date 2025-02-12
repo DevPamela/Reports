@@ -7,26 +7,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Classroom\SelectClassroomForReport.cshtml.css" />
     <None Remove="Views\Goals\Index.cshtml.css" />
     <None Remove="Views\Goals\SaveStudentGoalsResults.cshtml.css" />
     <None Remove="Views\Goals\SelectGoalsForReport.cshtml.css" />
     <None Remove="Views\Home\Index.cshtml.css" />
     <None Remove="Views\Reports\Index.cshtml.css" />
     <None Remove="Views\Reports\Success.cshtml.css" />
+    <None Remove="Views\Student\GetAbsencesNumber.cshtml.css" />
     <None Remove="Views\Student\Index.cshtml.css" />
     <None Remove="Views\Student\RemoveStudent.cshtml.css" />
+    <None Remove="Views\Student\SelectStudentsForReport.cshtml.css" />
     <None Remove="Views\Student\Success.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Views\Classroom\SelectClassroomForReport.cshtml.css" />
     <Content Include="Views\Goals\Index.cshtml.css" />
     <Content Include="Views\Goals\SaveStudentGoalsResults.cshtml.css" />
     <Content Include="Views\Goals\SelectGoalsForReport.cshtml.css" />
     <Content Include="Views\Home\Index.cshtml.css" />
     <Content Include="Views\Reports\Index.cshtml.css" />
     <Content Include="Views\Reports\Success.cshtml.css" />
+    <Content Include="Views\Student\GetAbsencesNumber.cshtml.css" />
     <Content Include="Views\Student\Index.cshtml.css" />
     <Content Include="Views\Student\RemoveStudent.cshtml.css" />
+    <Content Include="Views\Student\SelectStudentsForReport.cshtml.css" />
   </ItemGroup>
 
   <ItemGroup>

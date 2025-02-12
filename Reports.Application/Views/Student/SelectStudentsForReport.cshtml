@@ -2,7 +2,8 @@
 
 <br />
 <br />
-<h1>Selecione os alunos que você deseja escrever relatório</h1>
+<h1>Escolha os alunos para gerar o relatório</h1>
+<h2>Observe: apenas os alunos selecionados terão seus relatórios gerados. Fique à vontade para selecionar quantos desejar.</h2>
 <br />
 <br />
 <input type="checkbox" id="select-all" /> SELECIONAR TODOS
@@ -23,8 +24,12 @@
         </div>
     }
     <br />
-    <button type="submit" class="btn btn-primary">Enviar</button>
+    <div style="display: flex; gap: 10px;">
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+        <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+    </div>
 }
+
 <script>
     document.getElementById('select-all').addEventListener('change', function () {
         const checkboxes = document.querySelectorAll('.student');

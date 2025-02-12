@@ -59,11 +59,11 @@ namespace Reports.Application.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-
+            
             try
             {
-                var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);//chamar o register teacher
-                //cadastrar teacher 
+                var user = await _userService.RegisterUserAsync(model.Username, model.Email, model.Password);
+               
                 var teacher = new Teacher { Name = model.Username, UserId = user.Id };
                 await _teacherService.RegisterTeacher(teacher);
                 return RedirectToAction("Login");

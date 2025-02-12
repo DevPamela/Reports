@@ -2,6 +2,7 @@
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using System.Text;
+using Org.BouncyCastle.Asn1.X509;
 
 
 namespace Reports.Service
@@ -17,13 +18,15 @@ namespace Reports.Service
         public GoalService(
             IStudentService studentService,
             IGoalRepository goalRepository,
-            IUnitOfWork unitOfWork, IAssessmentService assessmentService, IBulkInsertHelper bulkInsertHelper)
+            IUnitOfWork unitOfWork, IAssessmentService assessmentService,
+            IBulkInsertHelper bulkInsertHelper)
         {
             _studentService = studentService;
             _goalRepository = goalRepository;
             _unitOfWork = unitOfWork;
             _assessmentService = assessmentService;
             _bulkInsertHelper = bulkInsertHelper;
+
         }
 
         public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
@@ -47,7 +50,7 @@ namespace Reports.Service
         public async Task<List<Student>> SetGoalsForStudentList(List<Goal> goals)
         {
             var selectedStudents = await _studentService.GetByIsSelectedProperty();
-            
+
 
             foreach (var student in selectedStudents)
             {
@@ -101,69 +104,96 @@ namespace Reports.Service
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddGoalInColletionAsync(string collectionName, string goalName, string description)
+        public async Task AddGoalsAsync(string collectionName, string goalName, string description, bool isGirlsGoal, int teacherId)
         {
-            var goal = await _goalRepository.GetByNameAsync(goalName);
-            var newDescription = await SetPronounForGender(description);
-            if (goal == null)
+            // Busca um GirlsGoal pelo nome
+            var existingGoal = await _goalRepository.GetGirlsGoalByNameAsync(goalName);
+
+            // Se não existir, cria um novo GirlsGoal
+            if (existingGoal == null)
             {
-                goal = new Goal { Name = goalName };
-                _goalRepository.Add(goal);
+                existingGoal = new GirlsGoal
+                {
+                    Name = goalName,
+                    TeacherId = teacherId
+                };
+
+                _goalRepository.Add(existingGoal);
             }
 
-            switch (collectionName)
-            {
-                case "Satisfatório":
-                    goal.AtendedDescription = newDescription;
-                    break;
-                case "Parcialmente satisfatório":
-                    goal.ParciallyAtendedDescription = newDescription;
-                    break;
-                case "Insatisfatório":
-                    goal.UnatendedDescription = newDescription;
-                    break;
-            }
+            // Define a descrição corretamente
+            SetGoalDescription(existingGoal, collectionName, description, isGirlsGoal);
 
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment)
+        public async Task<string> GetDescriptionForParagrafAsync(Assessment assessment, int teacherId, bool isGirl)
         {
             var assessmentName = assessment.Goal.Name;
-            var name = await _goalRepository.GetByNameAsync(assessment.Goal.Name);
+            var name = await _goalRepository.GetGirlsGoalsByNameAndTeacherIdAsync(assessment.Goal.Name, teacherId);
             if (name == null)
             {
                 return assessmentName;
             }
             return assessmentName = assessment.IsSatisfactory switch
             {
-                "S" => name.AtendedDescription,
-                "PS" => name.ParciallyAtendedDescription,
-                "I" => name.UnatendedDescription
+                "S" => isGirl ? name.GirlsAtendedDescription : name.AtendedDescription,
+                "PS" => isGirl ? name.GirlsParciallyAtendedDescription : name.ParciallyAtendedDescription,
+                "I" => isGirl ? name.GirlsUnatendedDescription : name.UnatendedDescription,
+                _ => string.Empty // Se não for nenhum dos casos acima, retorna uma string vazia
             };
         }
 
+
+        private void SetGoalDescription(Goal goal, string collectionName, string newDescription, bool isGirl)
+        {
+            // Mapeia o nome da coleção para as propriedades correspondentes
+            var propertyMappings = new Dictionary<string, Action<Goal, string>>
+    {
+        { "Satisfatório", (g, desc) => g.AtendedDescription = desc },
+        { "Parcialmente satisfatório", (g, desc) => g.ParciallyAtendedDescription = desc },
+        { "Insatisfatório", (g, desc) => g.UnatendedDescription = desc }
+    };
+            if (!isGirl)
+            {
+                // Atribui a descrição para o Goal
+                if (propertyMappings.TryGetValue(collectionName, out var setProperty))
+                {
+                    setProperty(goal, newDescription);
+                }
+            }
+            else
+            {
+                // Se for um GirlsGoal, atribui as descrições específicas para meninas
+                if (goal is GirlsGoal girlsGoal)
+                {
+                    var girlsPropertyMappings = new Dictionary<string, Action<GirlsGoal, string>>
+        {
+            { "Satisfatório", (g, desc) => g.GirlsAtendedDescription = desc },
+            { "Parcialmente satisfatório", (g, desc) => g.GirlsParciallyAtendedDescription = desc },
+            { "Insatisfatório", (g, desc) => g.GirlsUnatendedDescription = desc }
+        };
+
+                    if (girlsPropertyMappings.TryGetValue(collectionName, out var setGirlsProperty))
+                    {
+                        setGirlsProperty(girlsGoal, newDescription);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
         public async Task<List<Goal>> GetGoalsListAsync() =>
             await _goalRepository.GetAllAsync();
 
+        /// <inheritdoc />
+        public async Task<List<Goal>> GetGoalsListAsyncByTeacherId(int teacherId) =>
+            await _goalRepository.GetGoalsByTeacherIdAsync(teacherId);
+
+        /// <inheritdoc />
         public async Task<Goal> GetGoalByIdAsync(int id) =>
            await _goalRepository.GetByIdAsync(id);
 
-
-        public async Task<string> SetPronounForGender(string description)
-        {
-            return await Task.Run(() =>
-            {
-                var adjustedDescription = new StringBuilder(description);
-
-                adjustedDescription.Replace("O Aluno", "{0} alun{0}");
-
-                adjustedDescription.Replace("Nome do aluno", "{1}");
-
-                adjustedDescription.Replace("(o)", "{0}");
-
-                return adjustedDescription.ToString();
-            });
-        }
+      
     }
 }

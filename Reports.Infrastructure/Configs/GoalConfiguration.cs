@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Reports.Domain.Entities;
+using System.Security.AccessControl;
 
 namespace Reports.Infrastructure.Configs;
 internal class GoalConfiguration : IEntityTypeConfiguration<Goal>
@@ -10,11 +11,14 @@ internal class GoalConfiguration : IEntityTypeConfiguration<Goal>
         builder
         .HasKey(g => g.Id);
 
+        builder.HasDiscriminator<string>("GoalType") 
+           .HasValue<Goal>("Goal") 
+           .HasValue<GirlsGoal>("GirlsGoal"); 
         builder
             .HasOne(g => g.Teacher)
             .WithMany(t => t.Goals)
             .HasForeignKey(g => g.TeacherId)
-            .IsRequired(false); // Optional relationship
+            .IsRequired(false); 
 
         builder
             .HasMany(g => g.Students)
@@ -30,5 +34,5 @@ internal class GoalConfiguration : IEntityTypeConfiguration<Goal>
                     .HasForeignKey(a => a.GoalId)
             );
     }
-            
+
 }

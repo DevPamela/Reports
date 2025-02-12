@@ -36,4 +36,25 @@ public interface IGoalRepository
     /// <param name="goal"></param>
     /// <returns></returns>
     Task<List<Goal>> GetByIsSelectedProperty();
-}
+
+    /// <summary>
+    /// Retrieve the goal from the data store by Teacher id.
+    /// </summary>
+    /// <param name="teacherId"></param>
+    /// <returns></returns>
+    Task<List<Goal>> GetGoalsByTeacherIdAsync(int teacherId);
+    /// <summary>
+    /// Retrieve one oal from the data store by its name and teacher id.
+    /// </summary>
+    /// <param name="name">The goal's name.</param>
+    /// <returns>A goal, or null in case it wasn't found.</returns>
+    Task<GirlsGoal?> GetGirlsGoalsByNameAndTeacherIdAsync(string name, int teacherId);
+
+    /// <summary>
+    ///Retrieve one GirlGoal from the data store by its name.
+    /// </summary>
+    /// <param name="goalName"></param>
+    /// <returns></returns>
+    Task<GirlsGoal?> GetGirlsGoalByNameAsync(string goalName);
+    
+    }

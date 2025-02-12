@@ -12,8 +12,8 @@ using Reports.Infrastructure.DbContexts;
 namespace Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241216175617_initialdatabase")]
-    partial class initialdatabase
+    [Migration("20250209234042_InitialDatabase")]
+    partial class InitialDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -260,7 +260,7 @@ namespace Reports.Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsSelected")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
@@ -289,7 +289,12 @@ namespace Reports.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsSelected")
+                    b.Property<string>("GoalType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("varchar(13)");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
@@ -315,6 +320,10 @@ namespace Reports.Infrastructure.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("Goals");
+
+                    b.HasDiscriminator<string>("GoalType").HasValue("Goal");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Reports.Domain.Entities.Report", b =>
@@ -366,7 +375,7 @@ namespace Reports.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("ENUM('Male', 'Female')");
 
-                    b.Property<bool>("IsSelected")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
@@ -437,6 +446,25 @@ namespace Reports.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Reports.Domain.Entities.GirlsGoal", b =>
+                {
+                    b.HasBaseType("Reports.Domain.Entities.Goal");
+
+                    b.Property<string>("GirlsAtendedDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GirlsParciallyAtendedDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("GirlsUnatendedDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("GirlsGoal");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>

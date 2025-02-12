@@ -1,0 +1,17 @@
+﻿h1 {
+    color: rebeccapurple;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: black;
+    font-family: verdana;
+    font-size: 12px; 
+    text-align: justify;
+}
+
+

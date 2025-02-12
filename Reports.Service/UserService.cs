@@ -18,7 +18,7 @@ namespace Reports.Service
         // Register a new user
         public async Task<User> RegisterUserAsync(string username, string email, string password)
         {
-            if (await _userRepository.AnyAsync(u => u.Username == username || u.Email == email))
+            if (await _userRepository.AnyAsync(u => u.Email == email))
             {
                 throw new InvalidOperationException("A user with the same username or email already exists.");
             }
@@ -32,8 +32,8 @@ namespace Reports.Service
                 PasswordHash = hashedPassword
             };
 
-            await _userRepository.AddUserAsync(user); // Use the repository to add the user
-            await _unitOfWork.SaveChangesAsync(); // Commit changes via Unit of Work
+            await _userRepository.AddUserAsync(user); 
+            await _unitOfWork.SaveChangesAsync(); 
 
             return user;
         }

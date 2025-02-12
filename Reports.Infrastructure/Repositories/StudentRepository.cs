@@ -50,7 +50,7 @@ namespace Reports.Infrastructure.Repositories
 
         public async Task<List<Student>> GetByIsSelectedProperty() =>
          await _dbContext.Students
-             .Where(student => student.IsSelected == true)
+             .Where(student => student.IsActive == true)
              .ToListAsync();
 
         public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)

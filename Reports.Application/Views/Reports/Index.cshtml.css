@@ -8,22 +8,22 @@
 h2 {
     color: black;
     font-family: verdana;
-    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    font-size: 12px; 
     text-align: justify;
   
 }
 h3 {
     color: red;
     font-family: verdana;
-    font-size: 12px; /* Aqui você controla o tamanho da fonte */
+    font-size: 12px; 
     text-align: justify;
     font-weight: bold;
 }
 body {
-    background-color: lightblue; /* Aqui você muda a cor de fundo */
+    background-color: lightblue; 
 }
 .placeholder-small {
-    font-size: 8px; /* ou qualquer tamanho desejado */
+    font-size: 8px; 
 }
 .body-buttons {
     text-align: center;
