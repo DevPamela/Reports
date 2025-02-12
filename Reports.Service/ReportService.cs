@@ -95,7 +95,7 @@ namespace Reports.Service
         {
             try
             {
-                var students = await _studentService.GetStudentsListAsync();//TODO salvar apenas o primeiro nome no banco, ver como se comporta com muitos parágrafos e bem etruturado
+                var students = await _studentService.GetStudentsListAsync();
                 foreach (var student in students)
                 {
                     var list = await CreateReportForStudents(report, student);

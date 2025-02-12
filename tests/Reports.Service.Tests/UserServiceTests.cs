@@ -31,7 +31,7 @@ public class UserServiceTests
 
             _mockUserRepository
     .Setup(repo => repo.AnyAsync(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile()(new User { Email = email }))))
-    .ReturnsAsync(true); // Simula que o email já está registrado
+    .ReturnsAsync(true); 
 
 
         // Act & Assert
@@ -51,15 +51,15 @@ public class UserServiceTests
 
         _mockUserRepository
            .Setup(repo => repo.AnyAsync(It.Is<Expression<Func<User, bool>>>(expr => expr.Compile()(new User { Email = email }))))
-            .ReturnsAsync(false); // Simula que o email não está registrado
+            .ReturnsAsync(false); 
 
         _mockUserRepository
             .Setup(repo => repo.AddUserAsync(It.IsAny<User>()))
-            .Returns(Task.CompletedTask); // Simula sucesso na adição do usuário
+            .Returns(Task.CompletedTask); 
 
         _mockUnitOfWork
      .Setup(uow => uow.SaveChangesAsync(default))
-     .Callback(() => Task.CompletedTask); // Chama diretamente o Task.CompletedTask
+     .Callback(() => Task.CompletedTask); 
 
 
 
@@ -81,7 +81,7 @@ public class UserServiceTests
 
         _mockUserRepository
             .Setup(repo => repo.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((User?)null); // Simula que o usuário não foi encontrado
+            .ReturnsAsync((User?)null); 
 
         // Act
         var result = await _userService.ValidateUserAsync(email, password);
@@ -99,18 +99,18 @@ public class UserServiceTests
         var storedUser = new User
         {
             Email = email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("correctpassword") // Senha correta é "correctpassword"
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("correctpassword") 
         };
 
         _mockUserRepository
             .Setup(repo => repo.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(storedUser); // Simula que o usuário foi encontrado
+            .ReturnsAsync(storedUser); 
 
         // Act
         var result = await _userService.ValidateUserAsync(email, password);
 
         // Assert
-        Assert.Null(result); // Senha incorreta
+        Assert.Null(result); 
     }
 
     [Fact]
@@ -122,12 +122,12 @@ public class UserServiceTests
         var storedUser = new User
         {
             Email = email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) // Senha correta
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) 
         };
 
         _mockUserRepository
             .Setup(repo => repo.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(storedUser); // Simula que o usuário foi encontrado
+            .ReturnsAsync(storedUser); 
 
         // Act
         var result = await _userService.ValidateUserAsync(email, password);

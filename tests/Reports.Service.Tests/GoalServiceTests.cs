@@ -40,7 +40,7 @@ public class GoalServiceTests
         _mockGoalRepository.Setup(r => r.GetByNameAsync("Goal1")).ReturnsAsync(goal1);
         _mockGoalRepository.Setup(r => r.GetByNameAsync("Goal2")).ReturnsAsync(goal2);
 
-        // Simula o GetByIsSelectedProperty retornando uma lista de alunos selecionados
+       
         var students = new List<Student>
         {
             new Student { Id = 1, Name = "Student1", Goals = new List<Goal>() },
@@ -55,8 +55,8 @@ public class GoalServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2, result.Count); // Deveria retornar a lista de estudantes
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(default), Times.Once); // Verifica se SaveChangesAsync foi chamado uma vez
+        Assert.Equal(2, result.Count); 
+        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(default), Times.Once); 
     }
 
     [Fact]
