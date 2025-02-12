@@ -133,7 +133,7 @@ namespace Reports.Service
             var name = await _goalRepository.GetGirlsGoalsByNameAndTeacherIdAsync(assessment.Goal.Name, teacherId);
             if (name == null)
             {
-                return assessmentName;
+                return  ;
             }
             return assessmentName = assessment.IsSatisfactory switch
             {

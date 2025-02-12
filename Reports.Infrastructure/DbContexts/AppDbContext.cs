@@ -2,6 +2,7 @@
 using OpenIddict.EntityFrameworkCore.Models;
 using Reports.Domain.Entities;
 using Reports.Domain.Interfaces.Repositories;
+using Reports.Domain.Models;
 using Reports.Infrastructure.Configs;
 
 namespace Reports.Infrastructure.DbContexts;
