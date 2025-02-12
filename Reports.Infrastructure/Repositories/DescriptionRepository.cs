@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Models;
 using Reports.Infrastructure.DbContexts;
 
 namespace Reports.Infrastructure.Repositories;
-internal class DescriptionRepository
+internal class DescriptionRepository : IDescriptionRepository
 {
     private readonly AppDbContext _dbContext;
 

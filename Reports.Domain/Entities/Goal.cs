@@ -9,9 +9,6 @@ namespace Reports.Domain.Entities
         public int StudentId { get; set; }
         public string Name { get; set; } = string.Empty;
         public bool IsActive { get; set; } = false;
-        public string AtendedDescription { get; set; } = string.Empty;
-        public string ParciallyAtendedDescription { get; set; } = string.Empty;
-        public string UnatendedDescription { get; set; } = string.Empty;
         public int? TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public List<Student> Students { get; set; } = new();
