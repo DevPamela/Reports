@@ -10,11 +10,17 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="title">
-                <div class="card-header">O primeiro passo para simplificar seu dia é cadastrar os seus alunos</div>
+                <div class="card-header">
+                    Para começar, cadastre seus alunos. Não se preocupe, é bem simples.
+                    Você deverá baixar a planilha de Excel clicando no botão abaixo, 
+                    <br />preencher com os dados dos seus alunos, clicar no botão roxo ao final da página e selecionar o arquivo já preenchido.
+                </div>
+                <br/>
+                <a href="@Url.Content("~/files/Modelo.xlsx")" class="btn btn-secondary" download>
+                    📥 Baixar Modelo Excel
+                </a>
             </div>
-            <br />
-            <div class="card-header">Clique no botão abaixo e escolha o arquivo excel que contém a sua lista de alunos.</div>
-            <br />
+          <br/>
             <div class="warning">
                 Atenção: Não se esqueça de se certificar de que em seu arquivo os campos nome, data de nascimento e faltas estão devidamente preenchidos, a ausência desses itens vai
                 impossibilitar a geração dos relatórios

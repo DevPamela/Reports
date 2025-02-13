@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using Reports.Domain.Entities;
@@ -92,6 +93,11 @@ public class ExcelParserService : IExcelParserService
 
         for (var i = 1; i <= sheet.LastRowNum; i++)
         {
+            var row = sheet.GetRow(i);
+            if (row == null || row.Cells.All(cell => cell.CellType == CellType.Blank))
+            {
+                break;
+            }
             if (result.Errors.Count >= StudentProcessingErrorThreshold)
             {
                 return result.WithError(
