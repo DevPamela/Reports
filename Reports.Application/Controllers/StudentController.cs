@@ -1,17 +1,16 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Extensions;
 using Reports.Application.Models;
-using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
+using Reports.Domain.Interfaces.Service;
 using Reports.Service.UseCases.RegisterStudentsFromFile;
-using Microsoft.AspNetCore.Authorization;
-
 
 namespace Reports.Application.Controllers;
 
 [Authorize]
-public class StudentController : Controller
+public class StudentController : BaseController<StudentController>
 {
     private readonly IStudentService _studentService;
     private readonly IClassroomService _classroomService;
@@ -20,18 +19,23 @@ public class StudentController : Controller
     public StudentController(
         IStudentService studentService,
         IClassroomService classroomService,
-        ITeacherService teacherService)
+        ITeacherService teacherService,
+        ILogger<StudentController> logger) : base(logger)
     {
         _studentService = studentService;
         _classroomService = classroomService;
         _teacherService = teacherService;
     }
+
     public IActionResult Index()
     {
+        Logger.LogInformation("Student Index page accessed.");
         return View();
     }
+
     public ActionResult Error()
     {
+        Logger.LogWarning("An error page was accessed.");
         return View();
     }
 
@@ -41,32 +45,48 @@ public class StudentController : Controller
         [FromServices] IValidator<RegisterStudentsFromFileViewModel> validator,
         RegisterStudentsFromFileViewModel viewModel)
     {
-        var validationResult = await validator.ValidateAsync(viewModel);
+        var userId = GetUserIdFromSession();
 
-        if (!validationResult.IsValid)
+        try
         {
-            validationResult.AddToModelState(ModelState);
+            Logger.LogInformation("Registering students from file: {FileName}", viewModel.ExcelFile.FileName);
+
+            var validationResult = await validator.ValidateAsync(viewModel);
+            if (!validationResult.IsValid)
+            {
+                Logger.LogWarning("Validation failed for file: {FileName}.", viewModel.ExcelFile.FileName);
+                validationResult.AddToModelState(ModelState);
+                return View(nameof(Index), viewModel);
+            }
+
+            var teacher = await _teacherService.GetByUserIdAsync(int.Parse(userId));
+            var stream = viewModel.ExcelFile.OpenReadStream();
+            var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, teacher.Id);
+            var response = await useCase.ExecuteAsync(request);
+
+            if (response.IsFailed)
+            {
+                Logger.LogWarning("Failed to register students from file: {FileName}.", viewModel.ExcelFile.FileName);
+                response.AddToModelState(ModelState);
+                return View(nameof(Index), viewModel);
+            }
+            SetNotification("Turma cadastrada com sucesso!", Enums.NotificationType.Success);
+            Logger.LogInformation("Students registered successfully from file: {FileName}.", viewModel.ExcelFile.FileName);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred for User {UserId} during student registration.", userId);
+            ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
             return View(nameof(Index), viewModel);
         }
-        var user = User.FindFirst("UserId")?.Value;
-
-        var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
-        var stream = viewModel.ExcelFile.OpenReadStream();
-        var request = new RegisterStudentsFromFileRequest(stream, viewModel.ClassroomName, teacher.Id);
-        var response = await useCase.ExecuteAsync(request);
-
-        if (response.IsFailed)
-        {
-            response.AddToModelState(ModelState);
-            return View(nameof(Index), viewModel);
-        }
-
-        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     public async Task<ActionResult> GetStudentByName(string name)
     {
+        Logger.LogInformation("Retrieving student by name: {StudentName}", name);
+
         var student = await _studentService.GetStudentByNameAsync(name);
         return Ok(student);
     }
@@ -74,26 +94,22 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<ActionResult> SelectStudentsForReport()
     {
+        Logger.LogInformation("Selecting students for a report.");
+
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
-
         var students = await _studentService.GetStudentsListAsync();
-
-
         var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses);
         await _studentService.ClearSelection(students);
-        var model = new StudentViewModel()
-        {
-            Students = filteredStudents
-        };
 
-        return View(model);
+        return View(new StudentViewModel { Students = filteredStudents });
     }
 
     [HttpPost]
-    public async Task<ActionResult> SetIsSelectedPropertyStudentAstrue(List<int> studentsId)
+    public async Task<ActionResult> SetIsSelectedPropertyStudentAsTrue(List<int> studentsId)
     {
-        var students = await _studentService.GetStudentsByIdListAsync(studentsId);
+        Logger.LogInformation("Setting 'IsSelected' property to true for students.");
 
+        var students = await _studentService.GetStudentsByIdListAsync(studentsId);
         await _studentService.SetStudentAsTrue(students);
 
         return RedirectToAction("GetAbsencesNumber", "Student");
@@ -102,99 +118,108 @@ public class StudentController : Controller
     [HttpGet]
     public async Task<ActionResult> GetAbsencesNumber()
     {
-        var studentList = await _studentService.GetByIsSelectedProperty();
+        Logger.LogInformation("Accessing student absence data.");
 
-        var model = new StudentViewModel
-        {
-            Students = studentList
-        };
-        return View(model);
+        var studentList = await _studentService.GetByIsSelectedProperty();
+        return View(new StudentViewModel { Students = studentList });
     }
 
     [HttpPost]
     public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
     {
-        await _studentService.SetAbsencesNumber(students);
+        Logger.LogInformation("Setting absence numbers for students.");
 
+        await _studentService.SetAbsencesNumber(students);
         return RedirectToAction("SelectGoalsForReport", "Goals");
     }
 
     [HttpGet]
     public async Task<ActionResult> StudentsList()
     {
-        var students = await _studentService.GetStudentsListAsync();
-        var model = new StudentViewModel
-        {
-            Students = students
-        };
+        Logger.LogInformation("Retrieving the student list.");
 
-        return View(model);
+        var students = await _studentService.GetStudentsListAsync();
+        return View(new StudentViewModel { Students = students });
     }
 
     [HttpGet]
     public async Task<ActionResult> EditStudent(int id)
     {
-        var user = User.FindFirst("UserId")?.Value;
-        var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(user));
+        Logger.LogInformation("Accessing edit page for student with ID: {StudentId}", id);
+
+        var userId = GetUserIdFromSession();
+        var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(userId));
         var student = await _studentService.GetByIdAsync(id);
         var classroom = await _classroomService.GetByTeacherId(teacherId.Id);
-        var model = new ClassroomAndStudentViewModel
-        {
-            Student = student,
-            Classes = classroom
-        };
 
-        return View(model);
+        return View(new ClassroomAndStudentViewModel { Student = student, Classes = classroom });
     }
 
     [HttpPost]
     public async Task<ActionResult> UpdateStudent(Student student)
     {
-        await _studentService.UpdateStudent(student); 
+        Logger.LogInformation("Updating student with ID: {StudentId}", student.Id);
 
+        await _studentService.UpdateStudent(student);
         return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     public async Task<ActionResult> RemoveStudent(int id)
     {
+        Logger.LogInformation("Accessing remove page for student with ID: {StudentId}", id);
+
         var student = await _studentService.GetByIdAsync(id);
-        var model = new StudentViewModel
-        {
-            Student = student
-        };
-        return View(model);
+        return View(new StudentViewModel { Student = student });
     }
 
     [HttpPost]
     public async Task<ActionResult> DeleteStudent(Student student)
     {
-        await _studentService.DeleteStudent(student);
+        try
+        {
+            Logger.LogInformation("Deleting student with ID: {StudentId}", student.Id);
 
-        return RedirectToAction("Index", "Home");
+            await _studentService.DeleteStudent(student);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred while deleting student with ID: {StudentId}.", student.Id);
+            ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
+            return View("RemoveStudent", new StudentViewModel { Student = student });
+        }
     }
 
     public async Task<ActionResult> AddNewStudent()
     {
+        Logger.LogInformation("Accessing add new student page.");
+
         var classes = await _classroomService.GetAllAsync();
-
-        var model = new ClassroomAndStudentViewModel()
-        {
-            // Classes = classes //TODO
-        };
-
-        return View(model);
+        return View(new ClassroomAndStudentViewModel { Classes = classes });
     }
 
     [HttpPost]
     public async Task<ActionResult> AddStudent(Student student)
     {
-        var user = User.FindFirst("UserId")?.Value;
-        var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
-        student.Teacher = teacher;
-        student.TeacherId = teacher.Id;
-        await _studentService.AddStudentAsync(student);
+        try
+        {
+            Logger.LogInformation("Adding a new student.");
 
-        return RedirectToAction("Index", "Home");
+            var userId = GetUserIdFromSession();
+            var teacher = await _teacherService.GetByUserIdAsync(int.Parse(userId));
+            student.Teacher = teacher;
+            student.TeacherId = teacher.Id;
+            await _studentService.AddStudentAsync(student);
+
+            Logger.LogInformation("Successfully added student with ID: {StudentId}", student.Id);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred for User {UserId} while adding a student.", GetUserIdFromSession());
+            ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
+            return View("AddNewStudent");
+        }
     }
 }

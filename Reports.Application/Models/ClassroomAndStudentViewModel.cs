@@ -1,5 +1,4 @@
 ﻿using Reports.Domain.Entities;
-using Reports.Domain.Entities.Responses;
 
 namespace Reports.Application.Models
 {

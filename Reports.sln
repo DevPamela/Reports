@@ -21,11 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.Application.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.Tests.TestHelpers", "tests\Reports.Tests.TestHelpers\Reports.Tests.TestHelpers.csproj", "{1ECEE6ED-2686-42CC-9AE1-7E3CD2270F2B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{13C89153-9C6B-4A47-A819-CB0C406453B8}"
-	ProjectSection(SolutionItems) = preProject
-		.runsettings = .runsettings
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

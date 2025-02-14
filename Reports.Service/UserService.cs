@@ -20,7 +20,7 @@ namespace Reports.Service
         {
             if (await _userRepository.AnyAsync(u => u.Email == email))
             {
-                throw new InvalidOperationException("A user with the same username or email already exists.");
+                throw new InvalidOperationException("Esse email já está em uso.");
             }
 
             var hashedPassword = HashPassword(password);

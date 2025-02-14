@@ -20,7 +20,7 @@
         <label for="Nome" class="form-label">NOME</label>
         <input type="text" asp-for="Student.Name" class="form-control">
     </div>
-   
+   <br/>
     <div class="form-group">
         <label for="Nome" class="form-label">GÊNERO</label>
         <select name="Student.Gender" style="width: 10em;" maxlength="10">
@@ -28,11 +28,13 @@
             <option value="MASCULINO">MASCULINO</option>
         </select>
     </div>
+    <br/>
     <div class="form-group col-md-3">
         <label for="Nome" class="form-label">DATA DE NASCIMENTO</label>
         <input type="date" asp-for="Student.Birthdate" id="dataNascimento"
                class="form-control" onkeydown="return false">
     </div>
+    <br/>
     <div class="form-group">
         <label for="Class" class="form-label">TURMA</label>
         <select name="Student.ClassRoomId" class="form-control" style="width: 10em;" maxlength="10">
@@ -43,7 +45,8 @@
         </select>
     </div>
     <br />
-
-    <button type="submit">Enviar</button>
-    <a href="javascript:history.back()" class="btn btn-secondary mt-3">Voltar</a>
+    <div style="display: flex; gap: 10px;">
+        <input type="submit" value="Alterar" class="btn btn-primary" />
+        <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
+    </div>
 </form>

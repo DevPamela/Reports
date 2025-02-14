@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Reports.Application.Validators;
+﻿using Reports.Application.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace Reports.Application.Models
 {

@@ -12,8 +12,8 @@ using Reports.Infrastructure.DbContexts;
 namespace Reports.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250209234042_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20250213202847_initialdatabase")]
+    partial class initialdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
