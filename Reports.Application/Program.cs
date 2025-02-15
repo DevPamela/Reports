@@ -8,7 +8,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 // Configure Logging
-ApplicationConfiguration.ConfigureLogging(builder);
+ApplicationConfiguration.ConfigureLogger(builder);
 
 // Configure Services
 ApplicationConfiguration.ConfigureServices(builder);

@@ -16,7 +16,7 @@ namespace Reports.Application
         /// <summary>
         /// Configures logging for the application.
         /// </summary>
-        public static void ConfigureLogging(WebApplicationBuilder builder)
+        public static void ConfigureLogger(WebApplicationBuilder builder)
         {
             var basePath = Path.Combine(AppContext.BaseDirectory, "logs");
             if (!Directory.Exists(basePath))
@@ -39,8 +39,13 @@ namespace Reports.Application
                    outputTemplate: outputTemplate
                )
                .CreateLogger();
-
+            
             builder.Host.UseSerilog();
+            builder.Logging.ClearProviders();
+
+            // Configure Microsoft's Logging to use Serilog
+            builder.Logging.ClearProviders(); // Clear default providers
+            builder.Logging.AddSerilog(Log.Logger);
         }
 
         /// <summary>
