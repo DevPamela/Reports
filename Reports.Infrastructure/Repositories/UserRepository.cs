@@ -28,5 +28,10 @@ namespace Reports.Infrastructure.Repositories
         {
             await _dbContext.Users.AddAsync(user);
         }
+
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }

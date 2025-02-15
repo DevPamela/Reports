@@ -48,6 +48,7 @@ namespace Reports.Application.Controllers
                 // Store user details in session
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
                 HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("LastActiveTime", DateTime.UtcNow.ToString());
 
                 // Create claims for cookie authentication
                 var claims = new List<Claim>

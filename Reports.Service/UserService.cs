@@ -15,6 +15,11 @@ namespace Reports.Service
             _userRepository = userRepository;
         }
 
+        public Task<User?> GetUserByIdAsync(string userId)
+        {
+            return _userRepository.GetUserByIdAsync(int.Parse(userId));
+        }
+
         // Register a new user
         public async Task<User> RegisterUserAsync(string username, string email, string password)
         {

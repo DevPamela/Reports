@@ -8,5 +8,6 @@ namespace Reports.Domain.Interfaces.Repositories
         Task<bool> AnyAsync(Expression<Func<User, bool>> predicate);
         Task<User?> GetByEmailAsync(string email);
         Task AddUserAsync(User user);
+        Task<User?> GetUserByIdAsync(int userId);
     }
 }

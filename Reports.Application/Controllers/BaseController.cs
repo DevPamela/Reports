@@ -100,11 +100,10 @@ namespace Reports.Application.Controllers
         /// <returns>The UserId if available, otherwise null.</returns>
         protected string GetUserIdFromSession()
         {
-            var user = User.FindFirst("UserId")?.Value;
-            var userId = HttpContext.Session.GetString("UserId");
+            var userId = HttpContext.Session.GetString("UserId") ?? User.FindFirst("UserId")?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                Logger.LogWarning("UserId not found in session.");
+                Logger.LogWarning("UserId not found in session or claims.");
                 return null;
             }
             return userId;
@@ -116,10 +115,10 @@ namespace Reports.Application.Controllers
         /// <returns>The Username if available, otherwise null.</returns>
         protected string GetUsernameFromSession()
         {
-            var username = HttpContext.Session.GetString("Username");
+            var username = HttpContext.Session.GetString("Username") ?? User.Identity?.Name;
             if (string.IsNullOrEmpty(username))
             {
-                Logger.LogWarning("Username not found in session.");
+                Logger.LogWarning("Username not found in session or claims.");
                 return null;
             }
             return username;

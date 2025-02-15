@@ -75,11 +75,6 @@ namespace Reports.Application
                 options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
             });
 
-            builder.Services.AddServiceLayer();
-            builder.Services.AddInfrastructure(configuration);
-
-            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
             // Add session services
             builder.Services.AddSession(options =>
             {
@@ -121,9 +116,20 @@ namespace Reports.Application
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SameSite = SameSiteMode.Strict;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionConfig.IdleTimeoutMinutes);
+                    options.SlidingExpiration = true;
                 });
 
             builder.Services.AddAuthorization();
+
+
+
+
+            builder.Services.AddServiceLayer();
+            builder.Services.AddInfrastructure(configuration);
+
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+           
         }
 
         /// <summary>
@@ -159,7 +165,7 @@ namespace Reports.Application
         public static void ConfigureMiddlewares(WebApplication app)
         {
             app.UseMiddleware<GlobalExceptionMiddleware>();
-            //app.UseMiddleware<CorrelationIdMiddleware>();
+            app.UseMiddleware<SessionExpirationMiddleware>();
             app.UseMiddleware<NotificationMiddleware>();
         }
 
@@ -185,7 +191,8 @@ namespace Reports.Application
                 app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                app.MapDefaultControllerRoute();
+                app.MapControllers();
+
             }
             catch (Exception ex)
             {

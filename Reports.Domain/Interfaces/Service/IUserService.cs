@@ -6,5 +6,6 @@ namespace Reports.Domain.Interfaces.Service
     {
         Task<User> RegisterUserAsync(string username, string email, string password);
         Task<User?> ValidateUserAsync(string username, string password);
+        Task<User?> GetUserByIdAsync(string userId);
     }
 }
