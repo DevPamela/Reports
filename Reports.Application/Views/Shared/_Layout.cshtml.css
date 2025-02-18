@@ -5,8 +5,8 @@
     bottom: 20px;
     background-color: #25d366;
     color: white;
-    width: 60px;  Largura igual à altura 
-    height: 60px;  Altura igual à largura 
+    width: 60px;  
+    height: 60px;  
     font-size: 28px;
     padding: 15px;
     border-radius: 50%;
@@ -27,18 +27,6 @@ button.accept-policy {
     font-size: 1rem;
     line-height: inherit;
 }
-.menu {
-  
-    margin-left: 100px;
-}
-
-.navbar-toggler {
-    position: absolute;
-    right: 0;
-}
-
-
-
 .logo {
     position: absolute;
      width: 7%;
@@ -52,33 +40,27 @@ button.accept-policy {
 }
 
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-
-.navbar {
-    flex-grow: 1;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
+.wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 2rem; 
-    background: radial-gradient(circle, #FF8C00, #FF69B4, #9370DB);
-    border-bottom: 1px solid #000;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);*/  Ajustando a sombra 
+    flex-direction: column;
+    min-height: 100vh; 
 }
 
-.navbar-light {
-    background-color: #fff;
-    Adapte a cor de fundo conforme necessário
+.content {
+    flex-grow: 1;
 }
 
-.bg-white {
-    background-color: #fff;
-}
-
-.mb-3 {
-    margin-bottom: 1rem;
+footer {
+    border-top: 1px solid #ccc;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
 }
