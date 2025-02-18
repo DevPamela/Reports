@@ -15,6 +15,11 @@ public interface IStudentRepository
     /// </summary>
     /// <returns>A List of students.</returns>
     Task<List<Student>> GetAllAsync();
+    /// <summary>
+    /// Retrieve all selected students for the report from the data store.
+    /// </summary>
+    /// <returns></returns>
+    Task<List<Student>> GetStudentByIsActiveAsync();
 
     /// <summary>
     /// Delete a student from the database.

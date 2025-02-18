@@ -1,6 +1,6 @@
 ﻿using NPOI.SS.UserModel;
-using Reports.Domain.Enums;
 using Reports.Domain.Entities;
+using Reports.Domain.Enums;
 using Reports.Service.ExcelParser.Interfaces;
 
 namespace Reports.Service.ExcelParser.Factories;
@@ -34,6 +34,7 @@ public class StudentFactory : IStudentFactory
     public Student CreateStudent(IRow row)
     {
         var name = row.GetCell(_nameColumn.Index).StringCellValue.Trim();
+        var formatedName = GetTheFirstNameAndAbreviatedeSecondName(name);
         var birthdate = row.GetCell(_birthdateColumn.Index).DateOnlyCellValue!.Value;
         var gender = row.GetCell(_genderColumn.Index).StringCellValue
             .Equals("Masculino", StringComparison.OrdinalIgnoreCase)
@@ -42,9 +43,33 @@ public class StudentFactory : IStudentFactory
 
         return new Student
         {
-            Name = name,
+            Name = formatedName,
             Birthdate = birthdate,
             Gender = gender,
         };
+    }
+
+    private string GetTheFirstNameAndAbreviatedeSecondName(string fullName)
+    {
+        var ignorar = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        { "de", "da", "das", "do", "dos" };
+
+        var partes = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        var primeiroNome = partes[0];
+
+        string segundoNomeAbreviado = "";
+        foreach (var parte in partes.Skip(1))
+        {
+            if (!ignorar.Contains(parte)) 
+            {
+                segundoNomeAbreviado = parte.Substring(0, 1).ToUpper() + "."; 
+                break;
+            }
+        }
+
+        var nomeFormatado = segundoNomeAbreviado != "" ? $"{primeiroNome} {segundoNomeAbreviado}" : primeiroNome;
+
+        return nomeFormatado;
     }
 }

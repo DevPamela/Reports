@@ -60,6 +60,9 @@ public class StudentService : IStudentService
     public async Task<List<Student>> GetStudentsListAsync() =>
         await _studentRepository.GetAllAsync();
 
+    public async Task<List<Student>> GetStudentByIsActiveAsync() =>
+        await _studentRepository.GetStudentByIsActiveAsync();
+
     /// <summary>
     /// Gets student data by name.
     /// </summary>
@@ -149,5 +152,4 @@ public class StudentService : IStudentService
 
     public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)
         => await _studentRepository.GetStudentsByIdListAsync(ids);
-
 }

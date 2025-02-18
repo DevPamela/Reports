@@ -10,11 +10,11 @@
 
                 @if (Model.HasClassRoom)
                 {
-                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-primary mb-2 w-50">Criar relatório</a>
-                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-secondary mb-2 w-50">Editar turma</a>
-                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-success mb-2 w-50">Adicionar aluno</a>
-                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-danger mb-2 w-50">Remover aluno</a>
-                    <a href="@Url.Action("SelectGoalsForReport", "Goals")" class="btn btn-info mb-2 w-50">Ver últimos relatórios</a>
+                    <a href="@Url.Action("SelectClassroomForReport", "Classroom")" class="btn btn-primary mb-2 w-50">Criar relatório</a>
+                    <a href="@Url.Action("StudentsList", "Student")" class="btn btn-secondary mb-2 w-50">Editar aluno</a>
+                    <a href="@Url.Action("AddNewStudent", "Student")" class="btn btn-success mb-2 w-50">Adicionar aluno</a>
+                    <a href="@Url.Action("StudentsList", "Student")" class="btn btn-danger mb-2 w-50">Remover aluno</a>
+                    <a href="@Url.Action("Index", "Goals")" class="btn btn-danger mb-2 w-50"> Criar objetivos</a>
                 }
                 else
                 {

@@ -30,6 +30,11 @@ public interface IStudentService
     /// <param name="id"></param>
     /// <returns></returns>
     Task<Student?> GetByIdAsync(int id);
+    /// <summary>
+    /// Get all studets selected for the report.
+    /// </summary>
+    /// <returns></returns>
+    Task<List<Student?>> GetStudentByIsActiveAsync();
 
     /// <summary>
     /// Update student.

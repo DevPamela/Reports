@@ -16,7 +16,8 @@ namespace Reports.Service
         private readonly IReportRepository _reportRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAssessmentService _assessmentService;
-        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService, IReportRepository reportRepository, IUnitOfWork unitOfWork, IClassroomService classroomService, ITeacherService teacherService, IAssessmentService assessmentService)
+        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService, IReportRepository reportRepository,
+            IUnitOfWork unitOfWork, IClassroomService classroomService, ITeacherService teacherService, IAssessmentService assessmentService)
         {
             _formatterService = formatterService;
             _studentService = studentService;
@@ -95,7 +96,7 @@ namespace Reports.Service
         {
             try
             {
-                var students = await _studentService.GetStudentsListAsync();
+                var students = await _studentService.GetStudentByIsActiveAsync();
                 foreach (var student in students)
                 {
                     var list = await CreateReportForStudents(report, student);
@@ -109,7 +110,6 @@ namespace Reports.Service
             {
                 new Exception(e.Message);
             }
-
         }
 
         /// <summary>
@@ -152,8 +152,7 @@ namespace Reports.Service
                         var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
                         var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
 
-                        string param = string.Format(goalDescription, name[0]);
-                        await CreateParagraph(param, doc);
+                        await GenerateParagraphsAsync(assessments, doc, report);
 
                     }
                     catch (Exception ex)
@@ -170,7 +169,6 @@ namespace Reports.Service
 
                 XWPFParagraph pageBreak = doc.CreateParagraph();
                 await SaveDocument(reportsFolder, doc, report.Student.Name);
-
             }
             catch (Exception e)
             {
@@ -180,24 +178,34 @@ namespace Reports.Service
 
         public async Task GenerateParagraphsAsync(IEnumerable<Assessment> assessments, XWPFDocument doc, Report report)
         {
-            var tasks = assessments.Select(async a =>
+            var isAGirl = report.Student.IsAGirl();
+            var studentName = CapitalizeFirstName(report.Student.Name);
+
+            foreach (var a in assessments)
             {
-                var IsAGirl = report.Student.IsAGirl();
-                var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                var name = studentName.Split(' ');
-
                 var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
-
-                //string param = string.Format(goalDescription, validation, name[0]);
+                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, isAGirl);
+                 
+                if (!string.IsNullOrEmpty(goalDescription))
+                {
+                    goalDescription = goalDescription.Replace("{aluno}", studentName);
+                }
 
                 await CreateParagraph(goalDescription, doc);
-            });
-
-            // Aguarda todas as tasks serem concluídas em paralelo
-            await Task.WhenAll(tasks);
+            }
         }
 
+        private string CapitalizeFirstName(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))//TODO função de baixar relatório
+                return string.Empty;
+
+            var firstName = fullName.Split(' ').FirstOrDefault();
+            if (string.IsNullOrEmpty(firstName))
+                return string.Empty;
+
+            return firstName.Substring(0, 1).ToUpper() + firstName.Substring(1).ToLower();
+        }
 
         /// <summary>
         /// Creates the paragraphs.
@@ -279,6 +287,7 @@ namespace Reports.Service
                 await CreateParagraphForHeader(p, doc);
             }
         }
+
         /// <summary>
         /// Generates the Report folder.
         /// </summary>
@@ -300,6 +309,7 @@ namespace Reports.Service
                }
            });
         }
+
         /// <inheritdoc />
         Task IReportService.GetReportById(Report report)
         {

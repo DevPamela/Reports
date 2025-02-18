@@ -1,63 +1,67 @@
 ﻿@using Reports.Application.Models
 @model RegisterStudentsFromFileViewModel
+
 @{
     ViewData["Title"] = "Adicionar aluno";
 }
+
 <br />
 <br />
 <br />
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
             <div class="title">
                 <div class="card-header">
                     Para começar, cadastre seus alunos. Não se preocupe, é bem simples.
-                    Você deverá baixar a planilha de Excel clicando no botão abaixo, 
+                    Você deverá baixar a planilha de Excel clicando no botão abaixo,
                     <br />preencher com os dados dos seus alunos, clicar no botão roxo ao final da página e selecionar o arquivo já preenchido.
                 </div>
-                <br/>
+                <br />
                 <a href="@Url.Content("~/files/Modelo.xlsx")" class="btn btn-secondary" download>
                     📥 Baixar Modelo Excel
                 </a>
             </div>
-          <br/>
+            <br />
             <div class="warning">
                 Atenção: Não se esqueça de se certificar de que em seu arquivo os campos nome, data de nascimento e faltas estão devidamente preenchidos, a ausência desses itens vai
-                impossibilitar a geração dos relatórios
+                impossibilitar a geração dos relatórios.
             </div>
             <br />
             <div asp-validation-summary="All" id="validation-errors" class="d-flex justify-content-center text-danger"></div>
+
             <form asp-action="RegisterStudentsFromFile" id="register-students-form" enctype="multipart/form-data" method="post">
                 @Html.AntiForgeryToken()
-                <div class="form-container">
-                    <div class="form-group">
-                        <h5 for="classroom-name-input" class="custom-label">Escreva o nome da sua turma:</h5>
-                        <input asp-for="ClassroomName" type="text" id="classroom-name-input" class="form-control small-input" placeholder="Ex: Infantil IV" />
-                    </div>
+
+                <div class="form-group">
+                    <h5 for="classroom-name-input" class="custom-label">Escreva o nome da sua turma:</h5>
+                    <input asp-for="ClassroomName" type="text" id="classroom-name-input" class="form-control small-input"
+                           placeholder="Ex: Infantil IV" required />
+                    <span asp-validation-for="ClassroomName" class="text-danger"></span>
                 </div>
+
                 <div class="text-center">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-sm-4  offset-sm-4 center-content ">
+                            <div class="col-sm-4 offset-sm-4 center-content">
                                 <label for="excel-input" class="custom-label2">Clique aqui e selecione a sua lista de alunos &#187;</label>
-                                <input asp-for="ExcelFile" id="excel-input" type="file" accept=".xls, .xlsx" hidden>
+                                <input asp-for="ExcelFile" id="excel-input" type="file" accept=".xls, .xlsx" hidden required>
+                                <span asp-validation-for="ExcelFile" class="text-danger"></span>
                             </div>
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
+                            <br /><br /><br /><br /><br /><br /><br />
                             <div style="display: flex; justify-content: center; gap: 10px;">
                                 <input id="submit-button" type="submit" value="Enviar" class="btn btn-primary" />
-    <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
-</div>
-
+                                <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
+
+            @section Scripts {
+                @{
+                    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+                }
+            }
+

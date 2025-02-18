@@ -27,13 +27,19 @@ namespace Reports.Application.Controllers
             Logger.LogInformation("Fetching all classrooms for report selection.");
             try
             {
+
                 var classrooms = await _classroomService.GetAllAsync();
-
-                Logger.LogInformation("Successfully fetched {ClassroomCount} classrooms.", classrooms.Count);
-
-                var classModel = new ClassroomViewModel
+                var ClassroomViewModel = classrooms.Select(s => new ClassroomViewModel
                 {
-                    Classes = classrooms
+                    Id = s.Id,
+                    Name = s.Name,
+                }).ToList();
+
+                
+                Logger.LogInformation("Successfully fetched {ClassroomCount} classrooms.", classrooms.Count);
+                var classModel = new ClassroomViewModelList
+                {
+                    Classes = ClassroomViewModel
                 };
 
                 return View(classModel);
@@ -52,6 +58,17 @@ namespace Reports.Application.Controllers
             Logger.LogInformation("Setting 'IsSelected' property for {ClassCount} classrooms.", selectedClasses.Count);
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return RedirectToAction("SelectStudentsForReport", "Student");
+                }
+
+                if (selectedClasses == null || selectedClasses.Count == 0)
+                {
+                    ModelState.AddModelError("SelectedClasses", "Selecione pelo menos uma turma.");
+                    return RedirectToAction("SelectStudentsForReport", "Classroom");
+                }
+
                 foreach (var classroomId in selectedClasses)
                 {
                     var classroom = await _classroomService.GetById(classroomId);

@@ -1,4 +1,4 @@
-﻿@model StudentViewModel
+﻿@model StudentViewModelList
 
 <br />
 <br />
@@ -12,7 +12,7 @@
     <table border="1">
         <tr>
             <th>Nome</th>
-            <th>Faltas</th> <!-- Nova coluna -->
+            <th>Faltas</th> 
         </tr>
         @for (int i = 0; i < Model.Students.Count; i++)
         {
@@ -22,7 +22,7 @@
                 <td>
                     <input type="hidden" name="Students[@i].Id" value="@student.Id" />
                     <input type="hidden" name="Students[@i].Name" value="@student.Name" />
-                    <input type="number" name="Students[@i].Absences" value="0" min="0" /> <!-- Campo para o número de faltas -->
+                    <input type="number" name="Students[@i].Absences" value="0" min="0" />
                 </td>
             </tr>
         }

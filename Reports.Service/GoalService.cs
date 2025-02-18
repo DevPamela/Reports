@@ -106,10 +106,8 @@ namespace Reports.Service
 
         public async Task AddGoalsAsync(string collectionName, string goalName, string description, bool isGirlsGoal, int teacherId)
         {
-            // Busca um GirlsGoal pelo nome
-            var existingGoal = await _goalRepository.GetGirlsGoalByNameAsync(goalName);
+            var existingGoal = await _goalRepository.GetGirlsGoalsByNameAndTeacherIdAsync(goalName, teacherId);
 
-            // Se não existir, cria um novo GirlsGoal
             if (existingGoal == null)
             {
                 existingGoal = new GirlsGoal
@@ -121,7 +119,6 @@ namespace Reports.Service
                 _goalRepository.Add(existingGoal);
             }
 
-            // Define a descrição corretamente
             SetGoalDescription(existingGoal, collectionName, description, isGirlsGoal);
 
             await _unitOfWork.SaveChangesAsync();
@@ -147,7 +144,7 @@ namespace Reports.Service
 
         private void SetGoalDescription(Goal goal, string collectionName, string newDescription, bool isGirl)
         {
-            // Mapeia o nome da coleção para as propriedades correspondentes
+            
             var propertyMappings = new Dictionary<string, Action<Goal, string>>
     {
         { "Satisfatório", (g, desc) => g.AtendedDescription = desc },
@@ -156,7 +153,6 @@ namespace Reports.Service
     };
             if (!isGirl)
             {
-                // Atribui a descrição para o Goal
                 if (propertyMappings.TryGetValue(collectionName, out var setProperty))
                 {
                     setProperty(goal, newDescription);
@@ -164,7 +160,6 @@ namespace Reports.Service
             }
             else
             {
-                // Se for um GirlsGoal, atribui as descrições específicas para meninas
                 if (goal is GirlsGoal girlsGoal)
                 {
                     var girlsPropertyMappings = new Dictionary<string, Action<GirlsGoal, string>>

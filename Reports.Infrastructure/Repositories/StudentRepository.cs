@@ -20,6 +20,9 @@ namespace Reports.Infrastructure.Repositories
         public async Task<List<Student>> GetAllAsync() =>
             await _dbContext.Students.ToListAsync();
 
+        public async Task<List<Student>> GetStudentByIsActiveAsync()=>
+            await _dbContext.Students.Where(_ => _.IsActive == true).ToListAsync();
+
         public void DeleteAsync(Student student) =>
              _dbContext.Students.Remove(student);
 

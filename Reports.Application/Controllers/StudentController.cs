@@ -93,21 +93,27 @@ public class StudentController : BaseController<StudentController>
 
     [HttpGet]
     public async Task<ActionResult> SelectStudentsForReport()
-    {
-        Logger.LogInformation("Selecting students for a report.");
-
+     {
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
         var students = await _studentService.GetStudentsListAsync();
         var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses);
         await _studentService.ClearSelection(students);
 
-        return View(new StudentViewModel { Students = filteredStudents });
+        var filteredStudentsViewModel = filteredStudents.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+        }).ToList();
+
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpPost]
     public async Task<ActionResult> SetIsSelectedPropertyStudentAsTrue(List<int> studentsId)
-    {
+     {
         Logger.LogInformation("Setting 'IsSelected' property to true for students.");
+
 
         var students = await _studentService.GetStudentsByIdListAsync(studentsId);
         await _studentService.SetStudentAsTrue(students);
@@ -121,7 +127,14 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Accessing student absence data.");
 
         var studentList = await _studentService.GetByIsSelectedProperty();
-        return View(new StudentViewModel { Students = studentList });
+        var filteredStudentsViewModel = studentList.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+        }).ToList();
+
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpPost]
@@ -139,7 +152,14 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Retrieving the student list.");
 
         var students = await _studentService.GetStudentsListAsync();
-        return View(new StudentViewModel { Students = students });
+        var filteredStudentsViewModel = students.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+        }).ToList();
+
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpGet]
@@ -161,6 +181,7 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Updating student with ID: {StudentId}", student.Id);
 
         await _studentService.UpdateStudent(student);
+        SetNotification("Dados do aluno alterados com sucesso!", Enums.NotificationType.Success);
         return RedirectToAction("Index", "Home");
     }
 
@@ -170,7 +191,14 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Accessing remove page for student with ID: {StudentId}", id);
 
         var student = await _studentService.GetByIdAsync(id);
-        return View(new StudentViewModel { Student = student });
+
+        var studentViewModel = new StudentViewModel
+        {
+            Id = student.Id,
+            Name = student.Name,
+            Birthdate = student.Birthdate,
+        };
+        return View(new StudentViewModelList { Student = studentViewModel });
     }
 
     [HttpPost]
@@ -181,13 +209,21 @@ public class StudentController : BaseController<StudentController>
             Logger.LogInformation("Deleting student with ID: {StudentId}", student.Id);
 
             await _studentService.DeleteStudent(student);
+            SetNotification("Aluno deletado da base de dados!", Enums.NotificationType.Success);
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
+            var studentViewModel = new StudentViewModel
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Birthdate = student.Birthdate,
+              
+            };
             Logger.LogError(ex, "An error occurred while deleting student with ID: {StudentId}.", student.Id);
             ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
-            return View("RemoveStudent", new StudentViewModel { Student = student });
+            return View("RemoveStudent", new StudentViewModelList { Student = studentViewModel });
         }
     }
 

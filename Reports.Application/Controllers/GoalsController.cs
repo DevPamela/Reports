@@ -33,15 +33,13 @@ namespace Reports.Application.Controllers
           
             return View(viewModel);
         }
-
-        
+                
         public async Task<ActionResult> SelectGoalsForReport()
         {
             Logger.LogInformation("Fetching goals list for report selection.");
             try
             {
-            var user = User.FindFirst("UserId")?.Value;
-
+                var user = GetUserIdFromSession();
             var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
             var goals = await _goalService.GetGoalsListAsyncByTeacherId(teacher.Id);
 
@@ -58,7 +56,6 @@ namespace Reports.Application.Controllers
                 return await ErrorAsync(null, "Failed to fetch goals for the report.");
             }
         }
-
 
         [HttpPost]
         public async Task<ActionResult> SaveStudentGoalsResults(List<string> goals)
@@ -85,8 +82,8 @@ namespace Reports.Application.Controllers
             try
             {
                 var goalName = goalsViewModels[0].Name;
-                var user = User.FindFirst("UserId")?.Value;
-
+              
+              var user = GetUserIdFromSession();
                 var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
                 foreach (var goalViewModel in goalsViewModels)
                 {
@@ -94,7 +91,6 @@ namespace Reports.Application.Controllers
                     var description = goalViewModel.Description;
                     var isGirlsGoal = goalViewModel.IsGirl;
 
-                    // Chama o serviço para adicionar a meta
                     await _goalService.AddGoalsAsync(collectionName, goalName, description, isGirlsGoal, teacher.Id);
                 }
 
