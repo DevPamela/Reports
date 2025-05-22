@@ -15,7 +15,7 @@ namespace Reports.Domain.Interfaces.Service
         /// Add Satisfactory description.
         /// </summary>
         /// <param name="student"></param>
-        Task AddIsAtendedInformation(List<Student> student);
+        Task AddIsAtendedInformation(List<Student> student, int teacherId);
 
         /// <summary>
         /// Get <see cref="Assessment"> list.

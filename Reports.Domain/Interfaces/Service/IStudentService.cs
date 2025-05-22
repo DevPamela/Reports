@@ -15,7 +15,7 @@ public interface IStudentService
     /// Get the student list frm database.
     /// </summary>
     /// <returns></returns>
-    Task<List<Student>> GetStudentsListAsync();
+    Task<List<Student>> GetStudentsListAsync(int teacherId);
 
     /// <summary>
     /// Get student by name.
@@ -55,7 +55,7 @@ public interface IStudentService
     /// </summary>
     /// <param name="students"></param>
     /// <returns>A boolean indicating that the student has been selected to write the report.</returns>
-    Task SetStudentAsTrue(List<Student> students);
+    Task SetStudentAsTrue(List<Student> students, int teacherId);
     /// <summary>
     /// Defines the number of absences for each student.
     /// </summary>

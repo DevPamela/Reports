@@ -3,6 +3,8 @@ using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using System.Collections.Generic;
+using MathNet.Numerics.Distributions;
+using System.IO.Compression;
 
 namespace Reports.Service
 {
@@ -76,39 +78,20 @@ namespace Reports.Service
             });
         }
 
-        /// <summary>
-        /// Saves report.
-        /// </summary>
-        /// <param name="reports"></param>
-        /// <returns></returns>
-        public async Task AddReport(List<Report> reports)
-        {
-            foreach (var report in reports)
-            {
-                _reportRepository.Add(report);
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-        }
-
         /// <inheritdoc />
-        public async Task CreateReportAsync(Report report)
+        public async Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report)
         {
             try
             {
                 var students = await _studentService.GetStudentByIsActiveAsync();
-                foreach (var student in students)
-                {
-                    var list = await CreateReportForStudents(report, student);
-                    report.StudentId = student.Id;
-                    await SetStudentIdForReport(report);
-                   
-                    await CreateReportFile(report);
-                }
+                
+
+                var reportFile = await CreateReportFile(report, students);
+                return reportFile;
             }
             catch (Exception e)
             {
-                new Exception(e.Message);
+                throw new Exception(e.Message);
             }
         }
 
@@ -117,64 +100,90 @@ namespace Reports.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        private async Task CreateReportFile(Report report)
+        private async Task<(byte[] ZipContent, string ZipFileName)> CreateReportFile(Report report, List<Student>students)
         {
             try
             {
-                XWPFDocument doc = new XWPFDocument();
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var reports = new List<(byte[] Content, string FileName)>();
 
-                string reportsFolder = Path.Combine(path, "Relatorios");
-
-                await CreateReportsFolder(reportsFolder);
-                await CreateHeader(report.Student, doc);
-
-                if (report.Name != null)
+                foreach (var student in students)
                 {
-                    await CreateTitle(report, doc);
-                }
+                    var list = await CreateReportForStudents(report, student);
+                    report.StudentId = student.Id;
+                    await SetStudentIdForReport(report);
+                    XWPFDocument doc = new XWPFDocument();
+                                    
+                    await CreateHeader(report.Student, doc);
 
-                if (report.FirtsParagraph != null)
-                {
-                    await CreateParagraph(report.FirtsParagraph, doc);
-                }
-
-                var IsAGirl = report.Student.IsAGirl();
-
-                var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
-
-                foreach (var a in assessments)
-                {
-                    try
+                    if (report.Name != null)
                     {
-                        var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                        var name = studentName.Split(' ');
-                        var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
-
-                        await GenerateParagraphsAsync(assessments, doc, report);
-
+                        await CreateTitle(report, doc);
                     }
-                    catch (Exception ex)
+
+                    if (report.FirtsParagraph != null)
                     {
-                        Console.WriteLine($"Error: {ex.Message}");
+                        var studentName = CapitalizeFirstName(report.Student.Name);
+                        var paragraphFormated = report.FirtsParagraph.Replace("{aluno}", studentName);
+                        await CreateParagraph(paragraphFormated, doc);
+                    }
+
+                    var IsAGirl = report.Student.IsAGirl();
+
+                    var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
+
+                    foreach (var a in assessments)
+                    {
+                        try
+                        {
+                            var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
+                            var name = studentName.Split(' ');
+                            var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
+                            var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
+
+                            await GenerateParagraphsAsync(assessments, doc, report);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                    }
+
+                    if (report.LastParagraph != null)
+                    {
+                        var studentName = CapitalizeFirstName(report.Student.Name);
+                        var paragraphFormated = report.LastParagraph.Replace("{aluno}", studentName);
+                        await CreateParagraph(paragraphFormated, doc);
+                    }
+
+                    XWPFParagraph pageBreak = doc.CreateParagraph();
+                    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
+
+                    var reportBytes = await SaveDocument(doc, report.Student.Name);
+                    reports.Add(( reportBytes, student.Name + ".docx"));
+                }
+                using var memoryStream = new MemoryStream();
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var (content, fileName) in reports)
+                    {
+                        // Correção: fileName como nome da entrada
+                        var entry = archive.CreateEntry(fileName);
+
+                        using (var entryStream = entry.Open())
+                        {
+                            // Correção: escrever o conteúdo byte[]
+                            await entryStream.WriteAsync(content, 0, content.Length);
+                        }
                     }
                 }
-
-
-                if (report.FirtsParagraph != null)
-                {
-                    await CreateParagraph(report.LastParagraph, doc);
-                }
-
-                XWPFParagraph pageBreak = doc.CreateParagraph();
-                await SaveDocument(reportsFolder, doc, report.Student.Name);
+                return (memoryStream.ToArray(), $"Relatorios_{DateTime.Now:yyyyMMdd}.zip");
             }
             catch (Exception e)
             {
-                new Exception(e.Message);
+                throw new Exception("Erro ao gerar o relatório.", e);
             }
-        }
+        }        
 
         public async Task GenerateParagraphsAsync(IEnumerable<Assessment> assessments, XWPFDocument doc, Report report)
         {
@@ -185,10 +194,10 @@ namespace Reports.Service
             {
                 var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
                 var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, isAGirl);
-                 
+
                 if (!string.IsNullOrEmpty(goalDescription))
                 {
-                    goalDescription = goalDescription.Replace("{aluno}", studentName);
+                    goalDescription = goalDescription.Replace("{aluno}", studentName);//TODO capitalização e ver linhas demais
                 }
 
                 await CreateParagraph(goalDescription, doc);
@@ -197,7 +206,7 @@ namespace Reports.Service
 
         private string CapitalizeFirstName(string fullName)
         {
-            if (string.IsNullOrWhiteSpace(fullName))//TODO função de baixar relatório
+            if (string.IsNullOrWhiteSpace(fullName))
                 return string.Empty;
 
             var firstName = fullName.Split(' ').FirstOrDefault();
@@ -241,15 +250,18 @@ namespace Reports.Service
         /// <param name="doc"></param>
         /// <param name="word"></param>
         /// <param name="path"></param>
-        static async Task SaveDocument(string path, XWPFDocument doc, string studentName)
+        public static async Task<byte[]> SaveDocument(XWPFDocument doc, string Name)
         {
-            using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
-                FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
-            {
-                await Task.Run(() => doc.Write(fs));
-            };
-        }
+            var paragraph = doc.CreateParagraph();
+            var run = paragraph.CreateRun();
 
+            using (var exportData = new MemoryStream())
+            {
+                doc.Write(exportData);
+                return exportData.ToArray();
+            }
+        }
+    
         /// <summary>
         /// Create the report title.
         /// </summary>
@@ -286,34 +298,6 @@ namespace Reports.Service
             {
                 await CreateParagraphForHeader(p, doc);
             }
-        }
-
-        /// <summary>
-        /// Generates the Report folder.
-        /// </summary>
-        /// <param name="reportsFolder"></param>
-        /// <returns></returns>
-        private async Task CreateReportsFolder(string reportsFolder)
-        {
-            await Task.Run(() =>
-           {
-               try
-               {
-                   if (!Directory.Exists(reportsFolder))
-                   {
-                       Directory.CreateDirectory(reportsFolder);
-                   }
-               }
-               catch
-               {
-               }
-           });
-        }
-
-        /// <inheritdoc />
-        Task IReportService.GetReportById(Report report)
-        {
-            throw new NotImplementedException();
         }
     }
 }

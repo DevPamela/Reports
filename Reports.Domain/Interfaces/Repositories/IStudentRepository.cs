@@ -14,7 +14,7 @@ public interface IStudentRepository
     /// Retrieve all students from the data store.
     /// </summary>
     /// <returns>A List of students.</returns>
-    Task<List<Student>> GetAllAsync();
+    Task<List<Student>> GetStudentsByTeacherIdListAsync(int TeacherId);
     /// <summary>
     /// Retrieve all selected students for the report from the data store.
     /// </summary>
@@ -32,7 +32,7 @@ public interface IStudentRepository
     /// </summary>
     /// <param name="name">The student's name.</param>
     /// <returns>A student, or null in case it wasn't found.</returns>
-     Task<Student?> GetByNameAsync(string name);
+     Task<Student?> GetByNameAsync(string name, int teacherId);
 
     /// <summary>
     /// Get by id.

@@ -16,9 +16,7 @@ namespace Reports.Infrastructure.Repositories
         public void Add(Student student) =>
             _dbContext.Students.Add(student);
 
-        /// <inheritdoc />
-        public async Task<List<Student>> GetAllAsync() =>
-            await _dbContext.Students.ToListAsync();
+     
 
         public async Task<List<Student>> GetStudentByIsActiveAsync()=>
             await _dbContext.Students.Where(_ => _.IsActive == true).ToListAsync();
@@ -31,9 +29,9 @@ namespace Reports.Infrastructure.Repositories
 
 
         /// <inheritdoc />
-        public async Task<Student?> GetByNameAsync(string name) =>
+        public async Task<Student?> GetByNameAsync(string name, int teacherId) =>
             await _dbContext.Students
-                .FirstOrDefaultAsync(s => s.Name == name);
+                .FirstOrDefaultAsync(s => s.Name == name & s.TeacherId == teacherId);
 
         /// <inheritdoc />
         public async Task<Student?> GetByIdAsync(int id) =>
@@ -60,6 +58,12 @@ namespace Reports.Infrastructure.Repositories
         {
             return await _dbContext.Students
                 .Where(student => ids.Contains(student.Id))
+                .ToListAsync();
+        }
+        public async Task<List<Student>> GetStudentsByTeacherIdListAsync(int TeacherId)
+        {
+            return await _dbContext.Students
+                .Where(student => student.TeacherId == TeacherId)
                 .ToListAsync();
         }
     }

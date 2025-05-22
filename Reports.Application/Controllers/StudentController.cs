@@ -94,8 +94,9 @@ public class StudentController : BaseController<StudentController>
     [HttpGet]
     public async Task<ActionResult> SelectStudentsForReport()
      {
+        var userId = GetUserIdFromSession();
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
-        var students = await _studentService.GetStudentsListAsync();
+        var students = await _studentService.GetStudentsListAsync(int.Parse(userId));
         var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses);
         await _studentService.ClearSelection(students);
 
@@ -114,9 +115,9 @@ public class StudentController : BaseController<StudentController>
      {
         Logger.LogInformation("Setting 'IsSelected' property to true for students.");
 
-
+        var userId = GetUserIdFromSession();
         var students = await _studentService.GetStudentsByIdListAsync(studentsId);
-        await _studentService.SetStudentAsTrue(students);
+        await _studentService.SetStudentAsTrue(students, int.Parse(userId));
 
         return RedirectToAction("GetAbsencesNumber", "Student");
     }
@@ -149,14 +150,16 @@ public class StudentController : BaseController<StudentController>
     [HttpGet]
     public async Task<ActionResult> StudentsList()
     {
-        Logger.LogInformation("Retrieving the student list.");
-
-        var students = await _studentService.GetStudentsListAsync();
+        var userId = GetUserIdFromSession();
+        Logger.LogInformation($"Retrieving the student list for teacher id: {userId}.");
+        
+        var students = await _studentService.GetStudentsListAsync(int.Parse(userId));
         var filteredStudentsViewModel = students.Select(s => new StudentViewModel
         {
             Id = s.Id,
             Name = s.Name,
             Birthdate = s.Birthdate,
+            Gender= s.Gender,
         }).ToList();
 
         return View(new StudentViewModelList { Students = filteredStudentsViewModel });

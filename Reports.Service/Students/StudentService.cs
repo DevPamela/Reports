@@ -20,11 +20,11 @@ public class StudentService : IStudentService
         _bulkInsertHelper = bulkInsertHelper;
     }
 
-    public async Task UpdateStudent(Student student)
+    public async Task UpdateStudent(Student student, int teacherId)
     {
         try
         {
-            var repo = await _studentRepository.GetByNameAsync(student.Name);
+            var repo = await _studentRepository.GetByNameAsync(student.Name, teacherId);
             repo.Gender = student.Gender;
             repo.Name = student.Name;
             if(student.ClassRoomId != 0)
@@ -57,8 +57,8 @@ public class StudentService : IStudentService
     /// Gets student list.
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Student>> GetStudentsListAsync() =>
-        await _studentRepository.GetAllAsync();
+    public async Task<List<Student>> GetStudentsListAsync(int teacherId) =>
+        await _studentRepository.GetStudentsByTeacherIdListAsync(teacherId);
 
     public async Task<List<Student>> GetStudentByIsActiveAsync() =>
         await _studentRepository.GetStudentByIsActiveAsync();
@@ -68,8 +68,8 @@ public class StudentService : IStudentService
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<Student?> GetStudentByNameAsync(string name) =>
-        await _studentRepository.GetByNameAsync(name);
+    public async Task<Student?> GetStudentByNameAsync(string name, int teacherId) =>
+        await _studentRepository.GetByNameAsync(name, teacherId);
 
     /// <summary>
     /// Clears the "IsSelected" property.
@@ -92,9 +92,10 @@ public class StudentService : IStudentService
     /// </summary>
     /// <param name="student"></param>
     /// <returns></returns>
-    public async Task SetStudentAsTrue(List<Student> students)
+    public async Task SetStudentAsTrue(List<Student> students, int teacherId)
     {
-        var studentList = await _studentRepository.GetAllAsync();
+        
+        var studentList = await _studentRepository.GetStudentsByTeacherIdListAsync(teacherId);
         await ClearSelection(studentList);
         SelectableEntity<Student> selectableSomeEntity = new SelectableEntity<Student>();
         foreach (var student in students)
@@ -152,4 +153,14 @@ public class StudentService : IStudentService
 
     public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)
         => await _studentRepository.GetStudentsByIdListAsync(ids);
+
+    public Task<Student?> GetStudentByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateStudent(Student student)
+    {
+        throw new NotImplementedException();
+    }
 }

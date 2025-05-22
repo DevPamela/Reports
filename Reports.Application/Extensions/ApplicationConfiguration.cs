@@ -39,7 +39,7 @@ namespace Reports.Application
                    outputTemplate: outputTemplate
                )
                .CreateLogger();
-            
+
             builder.Host.UseSerilog();
             builder.Logging.ClearProviders();
 
@@ -122,14 +122,12 @@ namespace Reports.Application
 
             builder.Services.AddAuthorization();
 
-
-
-
+           
             builder.Services.AddServiceLayer();
             builder.Services.AddInfrastructure(configuration);
 
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-           
+
         }
 
         /// <summary>

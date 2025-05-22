@@ -27,8 +27,8 @@ namespace Reports.Application.Controllers
             Logger.LogInformation("Fetching all classrooms for report selection.");
             try
             {
-
-                var classrooms = await _classroomService.GetAllAsync();
+                var userId = GetUserIdFromSession();
+                var classrooms = await _classroomService.GetByTeacherId(int.Parse(userId));
                 var ClassroomViewModel = classrooms.Select(s => new ClassroomViewModel
                 {
                     Id = s.Id,

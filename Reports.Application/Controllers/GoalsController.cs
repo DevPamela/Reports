@@ -113,7 +113,8 @@ namespace Reports.Application.Controllers
             Logger.LogInformation("Saving 'Is Attended' information for {StudentCount} students.", students.Count);
             try
             {
-                await _assessmentService.AddIsAtendedInformation(students);
+                var userId = GetUserIdFromSession();
+                await _assessmentService.AddIsAtendedInformation(students, int.Parse(userId));
                 Logger.LogInformation("Successfully saved 'Is Attended' information.");
                 return View();
             }
