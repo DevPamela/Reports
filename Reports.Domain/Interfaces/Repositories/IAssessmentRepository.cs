@@ -14,7 +14,7 @@ public interface IAssessmentRepository
     /// Retrieve all assessments from the data store.
     /// </summary>
     /// <returns>A List of goals.</returns>
-    Task<List<Assessment>> GetAllAsync();
+    //Task<List<Assessment>> GetAllAsync(int teacherId);
 
     /// <summary>
     /// Update a existent <see cref="Assessment"/>.
@@ -27,7 +27,7 @@ public interface IAssessmentRepository
     /// </summary>
     /// <param name="name">The goal's name.</param>
     /// <returns>A goal, or null in case it wasn't found.</returns>
-    Task<Assessment?> GetByNameAsync(string name);
+    Task<Assessment?> GetByNameAsync(string name, int teacherId);
 
     /// <summary>
     ///  Retrieve one <see cref="Assessment"> from the data store by id.

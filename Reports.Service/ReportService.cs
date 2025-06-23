@@ -79,12 +79,12 @@ namespace Reports.Service
         }
 
         /// <inheritdoc />
-        public async Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report)
+        public async Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report, int teacherId)
         {
             try
             {
-                var students = await _studentService.GetStudentByIsActiveAsync();
-                
+                var students = await _studentService.GetStudentByIsActiveAsync(teacherId);
+
 
                 var reportFile = await CreateReportFile(report, students);
                 return reportFile;
@@ -100,7 +100,7 @@ namespace Reports.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        private async Task<(byte[] ZipContent, string ZipFileName)> CreateReportFile(Report report, List<Student>students)
+        private async Task<(byte[] ZipContent, string ZipFileName)> CreateReportFile(Report report, List<Student> students)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace Reports.Service
                     report.StudentId = student.Id;
                     await SetStudentIdForReport(report);
                     XWPFDocument doc = new XWPFDocument();
-                                    
+
                     await CreateHeader(report.Student, doc);
 
                     if (report.Name != null)
@@ -123,7 +123,7 @@ namespace Reports.Service
                     if (report.FirtsParagraph != null)
                     {
                         var studentName = CapitalizeFirstName(report.Student.Name);
-                        var paragraphFormated = report.FirtsParagraph.Replace("{aluno}", studentName);
+                        var paragraphFormated = report.FirtsParagraph.Replace("{aluno} ", studentName + " ").Replace("  ", " ").Trim();
                         await CreateParagraph(paragraphFormated, doc);
                     }
 
@@ -140,7 +140,7 @@ namespace Reports.Service
                             var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
                             var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
 
-                            await GenerateParagraphsAsync(assessments, doc, report);
+                            await GenerateParagraphsAsync(a, doc, report);
 
                         }
                         catch (Exception ex)
@@ -152,27 +152,26 @@ namespace Reports.Service
                     if (report.LastParagraph != null)
                     {
                         var studentName = CapitalizeFirstName(report.Student.Name);
-                        var paragraphFormated = report.LastParagraph.Replace("{aluno}", studentName);
+                        var paragraphFormated = report.LastParagraph.Replace("{aluno}", studentName + " ").Replace("  ", " ").Trim(); ;
                         await CreateParagraph(paragraphFormated, doc);
                     }
 
                     XWPFParagraph pageBreak = doc.CreateParagraph();
                     pageBreak.CreateRun().AddBreak(BreakType.PAGE);
 
-                    var reportBytes = await SaveDocument(doc, report.Student.Name);
-                    reports.Add(( reportBytes, student.Name + ".docx"));
+                    var reportBytes = await SaveDocument(doc);
+                    reports.Add((reportBytes, student.Name + ".docx"));
                 }
                 using var memoryStream = new MemoryStream();
                 using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                 {
                     foreach (var (content, fileName) in reports)
                     {
-                        // Correção: fileName como nome da entrada
+
                         var entry = archive.CreateEntry(fileName);
 
                         using (var entryStream = entry.Open())
                         {
-                            // Correção: escrever o conteúdo byte[]
                             await entryStream.WriteAsync(content, 0, content.Length);
                         }
                     }
@@ -183,25 +182,22 @@ namespace Reports.Service
             {
                 throw new Exception("Erro ao gerar o relatório.", e);
             }
-        }        
+        }
 
-        public async Task GenerateParagraphsAsync(IEnumerable<Assessment> assessments, XWPFDocument doc, Report report)
+        public async Task GenerateParagraphsAsync(Assessment assessment, XWPFDocument doc, Report report)
         {
             var isAGirl = report.Student.IsAGirl();
             var studentName = CapitalizeFirstName(report.Student.Name);
 
-            foreach (var a in assessments)
+            var goal = await _goalService.GetGoalByIdAsync(assessment.GoalId);
+            var goalDescription = await _goalService.GetDescriptionForParagrafAsync(assessment, report.Student.TeacherId, isAGirl);
+
+            if (!string.IsNullOrEmpty(goalDescription))
             {
-                var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, isAGirl);
-
-                if (!string.IsNullOrEmpty(goalDescription))
-                {
-                    goalDescription = goalDescription.Replace("{aluno}", studentName);//TODO capitalização e ver linhas demais
-                }
-
-                await CreateParagraph(goalDescription, doc);
+                goalDescription = goalDescription.Replace("{aluno}", studentName + " ").Replace("  ", " ").Trim(); ;
             }
+
+            await CreateParagraph(goalDescription, doc);
         }
 
         private string CapitalizeFirstName(string fullName)
@@ -250,7 +246,7 @@ namespace Reports.Service
         /// <param name="doc"></param>
         /// <param name="word"></param>
         /// <param name="path"></param>
-        public static async Task<byte[]> SaveDocument(XWPFDocument doc, string Name)
+        public static async Task<byte[]> SaveDocument(XWPFDocument doc)
         {
             var paragraph = doc.CreateParagraph();
             var run = paragraph.CreateRun();
@@ -261,7 +257,7 @@ namespace Reports.Service
                 return exportData.ToArray();
             }
         }
-    
+
         /// <summary>
         /// Create the report title.
         /// </summary>
@@ -285,13 +281,13 @@ namespace Reports.Service
             var classroom = await _classroomService.GetById(student.ClassRoomId);
             var firstLine = classroom.Name;
             var teacher = await _teacherService.GetByIdAsync(student.TeacherId);
-            var secondLine = student.Name.ToUpper();
+            var secondLine = $"ALUNO: {student.Name.ToUpper()}";
             var absences = student.Absences;
             var thirdLine = $"PROFESSORA: {teacher.Name.ToUpper()}";
 
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
-            var sixthLine = $"Faltas: {absences}";
+            var sixthLine = $"FALTAS: {absences}";
             string[] param = { secondLine, thirdLine, fourthLine, fifthLine, sixthLine };
 
             foreach (var p in param)

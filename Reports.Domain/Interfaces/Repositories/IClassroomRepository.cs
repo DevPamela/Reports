@@ -15,14 +15,14 @@ namespace Reports.Domain.Interfaces.Repositories
         /// Retrieve all <see cref="ClassRoom"/> from data store.
         /// </summary>
         /// <returns></returns>
-        Task<List<ClassRoom>> GetAllAsync();
+        Task<List<ClassRoom>> GetAllAsync(int teacherId);
 
         /// <summary>
         /// Retrieve one <see cref="ClassRoom"/>by name.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        Task<ClassRoom?> GetByNameAsync(string name);
+        Task<ClassRoom?> GetByNameAsync(string name, int teacherId);
 
         /// <summary>
         /// Retrieve one <see cref="ClassRoom"/> by id.

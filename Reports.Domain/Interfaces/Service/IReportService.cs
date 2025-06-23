@@ -10,7 +10,7 @@ namespace Reports.Domain.Interfaces.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report);
+        Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report, int teacherId);
 
     }
 }

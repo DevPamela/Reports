@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Reports.Application.Models;
 using Reports.Domain.Entities;
 using Reports.Domain.Interfaces.Service;
+using Reports.Service.Classroom;
+using Reports.Service.Students;
 
 namespace Reports.Application.Controllers
 {
@@ -63,7 +65,8 @@ namespace Reports.Application.Controllers
             Logger.LogInformation("Saving student goals results for {GoalCount} goals.", goals.Count);
             try
             {
-                var students = await _goalService.SaveStudentsGoalsAsync(goals);
+                var userId = GetUserIdFromSession();
+                var students = await _goalService.SaveStudentsGoalsAsync(goals, int.Parse(userId));
                 Logger.LogInformation("Successfully saved goals results for students.");
                 return View(students);
             }
@@ -95,7 +98,7 @@ namespace Reports.Application.Controllers
                 }
 
                 Logger.LogInformation("Successfully added goals with name {GoalName}.", goalName);
-                SetNotification("Paragrago criado com sucesso!", Enums.NotificationType.Success);
+                SetNotification("Paragrafo criado com sucesso!", Enums.NotificationType.Success);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -123,6 +126,53 @@ namespace Reports.Application.Controllers
                 var userId = GetUserIdFromSession();
                 Logger.LogError(ex, "An error occurred for User {UserId} while saving 'Is Attended' information.", userId);
                 return await ErrorAsync(null, "Failed to save 'Is Attended' information.");
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GoalsList()
+        {
+            var userId = GetUserIdFromSession();
+            Logger.LogInformation($"Retrieving the student list for teacher id: {userId}.");
+
+            var goals = await _goalService.GetGoalsListAsyncByTeacherId(int.Parse(userId));
+         
+            return View(goals);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> EditGoal(int id)
+        {
+            Logger.LogInformation("Accessing edit page for Goals with ID: {GoalId}", id);
+
+            var userId = GetUserIdFromSession();
+            var teacherId = await _teacherService.GetByUserIdAsync(int.Parse(userId));
+            var goal = await _goalService.GetGoalByIdAsync(id);
+
+            return View(goal);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UpdateGoal(Goal goal)
+        {
+            Logger.LogInformation("Updating goals to the database.");
+            try
+            {
+                var user = GetUserIdFromSession();
+                var teacher = await _teacherService.GetByUserIdAsync(int.Parse(user));
+               
+                await _goalService.UpdateStudent(goal, teacher.Id);
+             
+                Logger.LogInformation($"Successfully updated goal with name {goal.Name}.");
+                SetNotification("Paragrafo editado com sucesso!", Enums.NotificationType.Success);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                var userId = GetUserIdFromSession();
+                Logger.LogError(ex, "An error occurred for User {UserId} while adding goals.", userId);
+                TempData["ErrorMessage"] = $"Encontramos um problema ao cadastrar seu objetivo! Por favor tente novamente.";
+                return View("Index");
             }
         }
     }

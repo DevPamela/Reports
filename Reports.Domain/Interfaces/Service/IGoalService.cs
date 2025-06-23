@@ -1,4 +1,5 @@
 ﻿using Reports.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace Reports.Domain.Interfaces.Service
 {
@@ -9,7 +10,7 @@ namespace Reports.Domain.Interfaces.Service
         /// </summary>
         /// <param name="goals"></param>
         /// <returns></returns>
-        Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals);
+        Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals, int teacherId);
 
         /// <summary>
         /// Save a new <see cref="Goal">.
@@ -19,14 +20,6 @@ namespace Reports.Domain.Interfaces.Service
         /// <param name="description"></param>
         /// <returns></returns>
         Task AddGoalsAsync(string collectionName, string goalName, string description, bool isGirlsGoal, int teacherId);
-
-
-
-        /// <summary>
-        /// Get the <see cref="Goal"/> list.
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Goal>> GetGoalsListAsync();
 
         /// <summary>
         /// Get a specific <see cref="Goal"/>by Id.
@@ -48,5 +41,7 @@ namespace Reports.Domain.Interfaces.Service
         /// <param name="teacherId"></param>
         /// <returns></returns>
         Task<string> GetDescriptionForParagrafAsync(Assessment assessment, int teacherId, bool isAGirl);
+        Task<Goal> GetByNameAsync(string goal, int teacherId);
+        Task UpdateStudent(Goal goal, int teacherId);
     }
 }

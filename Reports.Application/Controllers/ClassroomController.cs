@@ -71,8 +71,9 @@ namespace Reports.Application.Controllers
 
                 foreach (var classroomId in selectedClasses)
                 {
+                    var userId = GetUserIdFromSession();
                     var classroom = await _classroomService.GetById(classroomId);
-                    await _classroomService.SetClassroomAsTrue(classroom);
+                    await _classroomService.SetClassroomAsTrue(classroom, int.Parse(userId));
                 }
 
                 Logger.LogInformation("Successfully updated 'IsSelected' property for classrooms.");

@@ -18,12 +18,6 @@ namespace Reports.Domain.Interfaces.Service
         Task AddIsAtendedInformation(List<Student> student, int teacherId);
 
         /// <summary>
-        /// Get <see cref="Assessment"> list.
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Assessment>> GetAllAssessmentsAsync();
-
-        /// <summary>
         /// Get the <see cref="Assessment"> by <see cref="Student"/> Id .
         /// </summary>
         /// <param name="id"></param>

@@ -40,7 +40,6 @@ public static class DependencyInjection
             services.AddScoped<IClassroomRepository, ClassroomRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IBulkInsertHelper, BulkInsertHelper>();
             services.AddOpenIddict()
         .AddCore(options =>
         {

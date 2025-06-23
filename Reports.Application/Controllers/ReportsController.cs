@@ -30,33 +30,7 @@ namespace Reports.Application.Controllers
             return View();
         }
 
-        public ActionResult Success()
-        {
-            Logger.LogInformation("Reports Success page accessed.");
-            return View();
-        }
-        [HttpGet]
-        public IActionResult DownloadReport()
-        {
-            try
-            {
-                
-                if (HttpContext.Session.TryGetValue("GeneratedReport", out var reportBytes))
-                {
-                    return File(reportBytes,
-                              "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                              "Relatorio.docx");
-                }
-
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error downloading report");
-                return StatusCode(500);
-            }
-        }
-
+     
         [HttpPost]
         public async Task<ActionResult> CreateReport(DataViewModel data)
         {
@@ -64,8 +38,9 @@ namespace Reports.Application.Controllers
 
             try
             {
+                var userId = GetUserIdFromSession();
                 var report = data.Report;
-                var (zipContent, zipFileName) = await _service.CreateReportAsync(report);
+                var (zipContent, zipFileName) = await _service.CreateReportAsync(report, int.Parse(userId));
 
               
                 var tempFile = Path.GetTempFileName();

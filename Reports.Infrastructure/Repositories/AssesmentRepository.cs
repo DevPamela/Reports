@@ -2,6 +2,7 @@
 using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Entities;
 using Reports.Infrastructure.DbContexts;
+using System.Linq;
 
 namespace Reports.Infrastructure.Repositories;
 internal class AssessmentRepository : IAssessmentRepository
@@ -16,14 +17,14 @@ internal class AssessmentRepository : IAssessmentRepository
         _dbContext.Assessments.Add(assesment);
 
     /// <inheritdoc />
-    public async Task<List<Assessment>> GetAllAsync() =>
-        await _dbContext.Assessments.ToListAsync();
+    //public async Task<List<Assessment>> GetAllAsync(int teacherId) =>
+    //    await _dbContext.Assessments.Where(a => a.);
 
     public void Update(Assessment assessment) =>
         _dbContext.Assessments.Update(assessment);
 
     /// <inheritdoc />
-    public async Task<Assessment?> GetByNameAsync(string name) =>
+    public async Task<Assessment?> GetByNameAsync(string name, int teacherId) =>
         await _dbContext.Assessments
             .FirstOrDefaultAsync(a => a.StudentId == 0);
     public async Task<Assessment?> GetByIdAsync(int id) =>

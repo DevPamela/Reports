@@ -86,8 +86,8 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> GetStudentByName(string name)
     {
         Logger.LogInformation("Retrieving student by name: {StudentName}", name);
-
-        var student = await _studentService.GetStudentByNameAsync(name);
+        var userId = GetUserIdFromSession();
+        var student = await _studentService.GetStudentByNameAsync(name, int.Parse(userId));
         return Ok(student);
     }
 
@@ -97,8 +97,8 @@ public class StudentController : BaseController<StudentController>
         var userId = GetUserIdFromSession();
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
         var students = await _studentService.GetStudentsListAsync(int.Parse(userId));
-        var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses);
-        await _studentService.ClearSelection(students);
+        var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses, int.Parse(userId));
+        await _studentService.ClearSelection(students, int.Parse(userId));
 
         var filteredStudentsViewModel = filteredStudents.Select(s => new StudentViewModel
         {
@@ -116,7 +116,7 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Setting 'IsSelected' property to true for students.");
 
         var userId = GetUserIdFromSession();
-        var students = await _studentService.GetStudentsByIdListAsync(studentsId);
+        var students = await _studentService.GetStudentsByIdListAsync(studentsId, int.Parse(userId));
         await _studentService.SetStudentAsTrue(students, int.Parse(userId));
 
         return RedirectToAction("GetAbsencesNumber", "Student");
@@ -126,8 +126,8 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> GetAbsencesNumber()
     {
         Logger.LogInformation("Accessing student absence data.");
-
-        var studentList = await _studentService.GetByIsSelectedProperty();
+        var userId = GetUserIdFromSession();
+        var studentList = await _studentService.GetByIsSelectedProperty(int.Parse(userId));
         var filteredStudentsViewModel = studentList.Select(s => new StudentViewModel
         {
             Id = s.Id,
@@ -142,8 +142,8 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
     {
         Logger.LogInformation("Setting absence numbers for students.");
-
-        await _studentService.SetAbsencesNumber(students);
+        var userId = GetUserIdFromSession();
+        await _studentService.SetAbsencesNumber(students, int.Parse(userId));
         return RedirectToAction("SelectGoalsForReport", "Goals");
     }
 
@@ -233,8 +233,8 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> AddNewStudent()
     {
         Logger.LogInformation("Accessing add new student page.");
-
-        var classes = await _classroomService.GetAllAsync();
+        var userId = GetUserIdFromSession();
+        var classes = await _classroomService.GetAllAsync(int.Parse(userId));
         return View(new ClassroomAndStudentViewModel { Classes = classes });
     }
 

@@ -24,11 +24,11 @@ namespace Reports.Service.Classroom
                 TeacherId = teacherId
             };
 
-            await AddClassroom(classroom);
+            await AddClassroom(classroom,  teacherId);
         }
-        public async Task AddClassroom(ClassRoom classRoom)
+        public async Task AddClassroom(ClassRoom classRoom, int teacherId)
         {
-            await ClearIsSelectedProperty();
+            await ClearIsSelectedProperty(teacherId);
 
             if (classRoom.Name == string.Empty != null)
             {
@@ -40,20 +40,20 @@ namespace Reports.Service.Classroom
 
         public async Task<List<ClassRoom>> GetByTeacherId(int id) => await _classroomRepository.GetClassroomByTeacherId(id);
         public async Task<ClassRoom> GetById(int id) => await _classroomRepository.GetByIdAsync(id);
-        public async Task<List<ClassRoom>> GetAllAsync() => await _classroomRepository.GetAllAsync();
-        public async Task SetClassroomAsTrue(ClassRoom classroom)
+        public async Task<List<ClassRoom>> GetAllAsync(int teacherId) => await _classroomRepository.GetAllAsync(teacherId);
+        public async Task SetClassroomAsTrue(ClassRoom classroom, int teacherId)
         {
-            await ClearIsSelectedProperty();
+            await ClearIsSelectedProperty(teacherId);
             SelectableEntity<ClassRoom> selectableSomeEntity = new SelectableEntity<ClassRoom>();
             selectableSomeEntity.SetSelectionAsTrue(classroom);
 
             await _unitOfWork.SaveChangesAsync();
         }
-        private async Task ClearIsSelectedProperty()
+        private async Task ClearIsSelectedProperty(int teacherId)
         {
             SelectableEntity<ClassRoom> selectableSomeEntity = new SelectableEntity<ClassRoom>();
 
-            var classes = await _classroomRepository.GetAllAsync();
+            var classes = await _classroomRepository.GetAllAsync(teacherId);
             foreach(var classroom in classes)
             {
                 selectableSomeEntity.ClearSelection(classroom);

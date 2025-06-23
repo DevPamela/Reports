@@ -17,16 +17,16 @@ public class ClassroomRepository : IClassroomRepository
         _dbContext.Classroom.Add(classRoom);
 
     /// <inheritdoc />
-    public async Task<List<ClassRoom>> GetAllAsync() =>
-        await _dbContext.Classroom.ToListAsync();
+    public async Task<List<ClassRoom>> GetAllAsync(int teacherId) =>
+        await _dbContext.Classroom.Where(_ => _.TeacherId == teacherId).ToListAsync();
 
     public void Update(ClassRoom classRoom) =>
         _dbContext.Classroom.Update(classRoom);
 
     /// <inheritdoc />
-    public async Task<ClassRoom?> GetByNameAsync(string name) =>
+    public async Task<ClassRoom?> GetByNameAsync(string name, int teacherId) =>
         await _dbContext.Classroom
-            .FirstOrDefaultAsync(a => a.Name == name);
+            .FirstOrDefaultAsync(_ => _.Name == name & _.TeacherId == teacherId);
 
     /// <inheritdoc />
     public async Task<ClassRoom?> GetByIdAsync(int id) =>

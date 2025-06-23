@@ -18,13 +18,9 @@ internal class GoalRepository : IGoalRepository
         _dbContext.Goals.Add(goal);
 
     /// <inheritdoc />
-    public async Task<List<Goal>> GetAllAsync() =>
-        await _dbContext.Goals.ToListAsync();
-
-    /// <inheritdoc />
-    public async Task<Goal?> GetByNameAsync(string name) =>
+    public async Task<Goal?> GetByNameAsync(string goal, int teacherId) =>
         await _dbContext.Goals
-            .FirstOrDefaultAsync(g => g.Name == name);
+            .FirstOrDefaultAsync(g => g.Name == goal & g.TeacherId == teacherId);
 
     /// <inheritdoc />
     public async Task<GirlsGoal?> GetGirlsGoalsByNameAndTeacherIdAsync(string name, int teacherId) =>
@@ -47,16 +43,16 @@ internal class GoalRepository : IGoalRepository
               .FirstOrDefaultAsync(s => s.Id == id);
 
     /// <inheritdoc />
-    public async Task<List<Goal>> GetByIsSelectedProperty() =>
+    public async Task<List<Goal>> GetByIsSelectedProperty(int teacherId) =>
    await _dbContext.Goals
-       .Where(g => g.IsActive == true).ToListAsync();
+       .Where(g => g.IsActive == true & g.TeacherId == teacherId).ToListAsync();
 
     /// <inheritdoc />
-    public async Task<GirlsGoal?> GetGirlsGoalByNameAsync(string goalName)
+    public async Task<GirlsGoal?> GetGirlsGoalByNameAsync(string goalName, int teacherId)
     {
         return await _dbContext.Goals
             .OfType<GirlsGoal>() 
-            .Where(g => g.Name == goalName)
+            .Where(g => g.Name == goalName & g.TeacherId == teacherId)
             .FirstOrDefaultAsync();
     }
 }

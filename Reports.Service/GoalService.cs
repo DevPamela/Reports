@@ -1,9 +1,6 @@
-﻿using Reports.Domain.Interfaces.Repositories;
+﻿using Reports.Domain.Entities;
+using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
-using Reports.Domain.Entities;
-using System.Text;
-using Org.BouncyCastle.Asn1.X509;
-
 
 namespace Reports.Service
 {
@@ -13,43 +10,39 @@ namespace Reports.Service
         private readonly IGoalRepository _goalRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAssessmentService _assessmentService;
-        private readonly IBulkInsertHelper _bulkInsertHelper;
 
         public GoalService(
             IStudentService studentService,
             IGoalRepository goalRepository,
-            IUnitOfWork unitOfWork, IAssessmentService assessmentService,
-            IBulkInsertHelper bulkInsertHelper)
+            IUnitOfWork unitOfWork, IAssessmentService assessmentService)
         {
             _studentService = studentService;
             _goalRepository = goalRepository;
             _unitOfWork = unitOfWork;
             _assessmentService = assessmentService;
-            _bulkInsertHelper = bulkInsertHelper;
-
         }
 
-        public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals)
+        public async Task<List<Student>> SaveStudentsGoalsAsync(List<string> goals, int teacherId)
         {
-            await SetAllPropertiesToFalse();
+            await SetAllPropertiesToFalse(teacherId);
 
             foreach (var g in goals)
             {
-                var goal = await _goalRepository.GetByNameAsync(g);
+                var goal = await _goalRepository.GetByNameAsync(g, teacherId);
 
                 SetIsSelectedAsTrue(goal);
             }
             await _unitOfWork.SaveChangesAsync();
-            var goalsList = await _goalRepository.GetByIsSelectedProperty();
+            var goalsList = await _goalRepository.GetByIsSelectedProperty(teacherId);
 
-            var students = await SetGoalsForStudentList(goalsList);
+            var students = await SetGoalsForStudentList(goalsList, teacherId);
 
             return students;
         }
 
-        public async Task<List<Student>> SetGoalsForStudentList(List<Goal> goals)
+        public async Task<List<Student>> SetGoalsForStudentList(List<Goal> goals, int teacherId)
         {
-            var selectedStudents = await _studentService.GetByIsSelectedProperty();
+            var selectedStudents = await _studentService.GetByIsSelectedProperty(teacherId);
 
 
             foreach (var student in selectedStudents)
@@ -70,17 +63,17 @@ namespace Reports.Service
             SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
             selectableSomeEntity.SetSelectionAsTrue(goal);
         }
-        public async Task SetStudentId(Student student, Goal goal)
+        public async Task SetStudentId(Student student, Goal goal, int teacherId)
         {
-            var hasStudentId = await CheckIfHasStudentId(student);
+            var hasStudentId = await CheckIfHasStudentId(student, teacherId);
             if (!hasStudentId)
             {
                 goal.StudentId = student.Id;
             }
         }
-        public async Task<bool> CheckIfHasStudentId(Student student)
+        public async Task<bool> CheckIfHasStudentId(Student student, int teacherId)
         {
-            var goals = await _goalRepository.GetAllAsync();
+            var goals = await _goalRepository.GetGoalsByTeacherIdAsync(teacherId);
 
             foreach (var goal in goals)
             {
@@ -92,11 +85,10 @@ namespace Reports.Service
             }
             return false;
         }
-
-        public async Task SetAllPropertiesToFalse()
+                public async Task SetAllPropertiesToFalse(int teacherId)
         {
             SelectableEntity<Goal> selectableSomeEntity = new SelectableEntity<Goal>();
-            var goals = await _goalRepository.GetAllAsync();
+            var goals = await _goalRepository.GetGoalsByTeacherIdAsync(teacherId); 
             foreach (var goal in goals)
             {
                 selectableSomeEntity.ClearSelection(goal);
@@ -137,14 +129,12 @@ namespace Reports.Service
                 "S" => isGirl ? name.GirlsAtendedDescription : name.AtendedDescription,
                 "PS" => isGirl ? name.GirlsParciallyAtendedDescription : name.ParciallyAtendedDescription,
                 "I" => isGirl ? name.GirlsUnatendedDescription : name.UnatendedDescription,
-                _ => string.Empty 
+                _ => string.Empty
             };
         }
-
-
-        private void SetGoalDescription(Goal goal, string collectionName, string newDescription, bool isGirl)
+                private void SetGoalDescription(Goal goal, string collectionName, string newDescription, bool isGirl)
         {
-            
+
             var propertyMappings = new Dictionary<string, Action<Goal, string>>
     {
         { "Satisfatório", (g, desc) => g.AtendedDescription = desc },
@@ -178,10 +168,6 @@ namespace Reports.Service
         }
 
         /// <inheritdoc />
-        public async Task<List<Goal>> GetGoalsListAsync() =>
-            await _goalRepository.GetAllAsync();
-
-        /// <inheritdoc />
         public async Task<List<Goal>> GetGoalsListAsyncByTeacherId(int teacherId) =>
             await _goalRepository.GetGoalsByTeacherIdAsync(teacherId);
 
@@ -189,6 +175,24 @@ namespace Reports.Service
         public async Task<Goal> GetGoalByIdAsync(int id) =>
            await _goalRepository.GetByIdAsync(id);
 
-      
+        public async Task UpdateStudent(Goal goal, int teacherId)
+        {
+            try
+            {
+                var repo = await _goalRepository.GetByNameAsync(goal.Name, teacherId);
+                repo.AtendedDescription = goal.AtendedDescription ?? repo.AtendedDescription;
+                repo.UnatendedDescription = goal.UnatendedDescription ?? repo.UnatendedDescription;
+                repo.ParciallyAtendedDescription = goal.ParciallyAtendedDescription ?? repo.ParciallyAtendedDescription;
+
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Goal> GetByNameAsync(string goal, int teacherId) => await _goalRepository.GetByNameAsync(goal, teacherId);
     }
 }
