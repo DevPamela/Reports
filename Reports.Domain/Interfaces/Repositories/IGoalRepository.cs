@@ -11,17 +11,11 @@ public interface IGoalRepository
     void Add(Goal goal);
 
     /// <summary>
-    /// Retrieve all goals from the data store.
-    /// </summary>
-    /// <returns>A List of goals.</returns>
-    Task<List<Goal>> GetAllAsync();
-
-    /// <summary>
     /// Retrieve one goal from the data store by its name.
     /// </summary>
     /// <param name="name">The goal's name.</param>
     /// <returns>A goal, or null in case it wasn't found.</returns>
-    Task<Goal?> GetByNameAsync(string name);
+    Task<Goal?> GetByNameAsync(string goal, int teacherId);
 
     /// <summary>
     /// Get the goal by id.
@@ -35,7 +29,7 @@ public interface IGoalRepository
     /// </summary>
     /// <param name="goal"></param>
     /// <returns></returns>
-    Task<List<Goal>> GetByIsSelectedProperty();
+    Task<List<Goal>> GetByIsSelectedProperty(int teacherId);
 
     /// <summary>
     /// Retrieve the goal from the data store by Teacher id.
@@ -55,6 +49,6 @@ public interface IGoalRepository
     /// </summary>
     /// <param name="goalName"></param>
     /// <returns></returns>
-    Task<GirlsGoal?> GetGirlsGoalByNameAsync(string goalName);
+    Task<GirlsGoal?> GetGirlsGoalByNameAsync(string goalName, int teacherId);
     
     }

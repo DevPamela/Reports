@@ -86,31 +86,38 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> GetStudentByName(string name)
     {
         Logger.LogInformation("Retrieving student by name: {StudentName}", name);
-
-        var student = await _studentService.GetStudentByNameAsync(name);
+        var userId = GetUserIdFromSession();
+        var student = await _studentService.GetStudentByNameAsync(name, int.Parse(userId));
         return Ok(student);
     }
 
     [HttpGet]
     public async Task<ActionResult> SelectStudentsForReport()
-    {
-        Logger.LogInformation("Selecting students for a report.");
-
+     {
+        var userId = GetUserIdFromSession();
         var selectedClasses = TempData["SelectedClasses"] as IEnumerable<int>;
-        var students = await _studentService.GetStudentsListAsync();
-        var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses);
-        await _studentService.ClearSelection(students);
+        var students = await _studentService.GetStudentsListAsync(int.Parse(userId));
+        var filteredStudents = await _studentService.GetStudentsSelectedByClasses(selectedClasses, int.Parse(userId));
+        await _studentService.ClearSelection(students, int.Parse(userId));
 
-        return View(new StudentViewModel { Students = filteredStudents });
+        var filteredStudentsViewModel = filteredStudents.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+        }).ToList();
+
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpPost]
     public async Task<ActionResult> SetIsSelectedPropertyStudentAsTrue(List<int> studentsId)
-    {
+     {
         Logger.LogInformation("Setting 'IsSelected' property to true for students.");
 
-        var students = await _studentService.GetStudentsByIdListAsync(studentsId);
-        await _studentService.SetStudentAsTrue(students);
+        var userId = GetUserIdFromSession();
+        var students = await _studentService.GetStudentsByIdListAsync(studentsId, int.Parse(userId));
+        await _studentService.SetStudentAsTrue(students, int.Parse(userId));
 
         return RedirectToAction("GetAbsencesNumber", "Student");
     }
@@ -119,27 +126,43 @@ public class StudentController : BaseController<StudentController>
     public async Task<ActionResult> GetAbsencesNumber()
     {
         Logger.LogInformation("Accessing student absence data.");
+        var userId = GetUserIdFromSession();
+        var studentList = await _studentService.GetByIsSelectedProperty(int.Parse(userId));
+        var filteredStudentsViewModel = studentList.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+        }).ToList();
 
-        var studentList = await _studentService.GetByIsSelectedProperty();
-        return View(new StudentViewModel { Students = studentList });
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpPost]
     public async Task<ActionResult> SetAbsencesNumber(List<Student> students)
     {
         Logger.LogInformation("Setting absence numbers for students.");
-
-        await _studentService.SetAbsencesNumber(students);
+        var userId = GetUserIdFromSession();
+        await _studentService.SetAbsencesNumber(students, int.Parse(userId));
         return RedirectToAction("SelectGoalsForReport", "Goals");
     }
 
     [HttpGet]
     public async Task<ActionResult> StudentsList()
     {
-        Logger.LogInformation("Retrieving the student list.");
+        var userId = GetUserIdFromSession();
+        Logger.LogInformation($"Retrieving the student list for teacher id: {userId}.");
+        
+        var students = await _studentService.GetStudentsListAsync(int.Parse(userId));
+        var filteredStudentsViewModel = students.Select(s => new StudentViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Birthdate = s.Birthdate,
+            Gender= s.Gender,
+        }).ToList();
 
-        var students = await _studentService.GetStudentsListAsync();
-        return View(new StudentViewModel { Students = students });
+        return View(new StudentViewModelList { Students = filteredStudentsViewModel });
     }
 
     [HttpGet]
@@ -161,6 +184,7 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Updating student with ID: {StudentId}", student.Id);
 
         await _studentService.UpdateStudent(student);
+        SetNotification("Dados do aluno alterados com sucesso!", Enums.NotificationType.Success);
         return RedirectToAction("Index", "Home");
     }
 
@@ -170,7 +194,14 @@ public class StudentController : BaseController<StudentController>
         Logger.LogInformation("Accessing remove page for student with ID: {StudentId}", id);
 
         var student = await _studentService.GetByIdAsync(id);
-        return View(new StudentViewModel { Student = student });
+
+        var studentViewModel = new StudentViewModel
+        {
+            Id = student.Id,
+            Name = student.Name,
+            Birthdate = student.Birthdate,
+        };
+        return View(new StudentViewModelList { Student = studentViewModel });
     }
 
     [HttpPost]
@@ -181,21 +212,29 @@ public class StudentController : BaseController<StudentController>
             Logger.LogInformation("Deleting student with ID: {StudentId}", student.Id);
 
             await _studentService.DeleteStudent(student);
+            SetNotification("Aluno deletado da base de dados!", Enums.NotificationType.Success);
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
+            var studentViewModel = new StudentViewModel
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Birthdate = student.Birthdate,
+              
+            };
             Logger.LogError(ex, "An error occurred while deleting student with ID: {StudentId}.", student.Id);
             ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
-            return View("RemoveStudent", new StudentViewModel { Student = student });
+            return View("RemoveStudent", new StudentViewModelList { Student = studentViewModel });
         }
     }
 
     public async Task<ActionResult> AddNewStudent()
     {
         Logger.LogInformation("Accessing add new student page.");
-
-        var classes = await _classroomService.GetAllAsync();
+        var userId = GetUserIdFromSession();
+        var classes = await _classroomService.GetAllAsync(int.Parse(userId));
         return View(new ClassroomAndStudentViewModel { Classes = classes });
     }
 

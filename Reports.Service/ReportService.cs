@@ -3,6 +3,8 @@ using Reports.Domain.Interfaces.Repositories;
 using Reports.Domain.Interfaces.Service;
 using Reports.Domain.Entities;
 using System.Collections.Generic;
+using MathNet.Numerics.Distributions;
+using System.IO.Compression;
 
 namespace Reports.Service
 {
@@ -16,7 +18,8 @@ namespace Reports.Service
         private readonly IReportRepository _reportRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAssessmentService _assessmentService;
-        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService, IReportRepository reportRepository, IUnitOfWork unitOfWork, IClassroomService classroomService, ITeacherService teacherService, IAssessmentService assessmentService)
+        public ReportService(IFormatterService formatterService, IStudentService studentService, IGoalService goalService, IReportRepository reportRepository,
+            IUnitOfWork unitOfWork, IClassroomService classroomService, ITeacherService teacherService, IAssessmentService assessmentService)
         {
             _formatterService = formatterService;
             _studentService = studentService;
@@ -75,41 +78,21 @@ namespace Reports.Service
             });
         }
 
-        /// <summary>
-        /// Saves report.
-        /// </summary>
-        /// <param name="reports"></param>
-        /// <returns></returns>
-        public async Task AddReport(List<Report> reports)
-        {
-            foreach (var report in reports)
-            {
-                _reportRepository.Add(report);
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-        }
-
         /// <inheritdoc />
-        public async Task CreateReportAsync(Report report)
+        public async Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report, int teacherId)
         {
             try
             {
-                var students = await _studentService.GetStudentsListAsync();
-                foreach (var student in students)
-                {
-                    var list = await CreateReportForStudents(report, student);
-                    report.StudentId = student.Id;
-                    await SetStudentIdForReport(report);
-                   
-                    await CreateReportFile(report);
-                }
+                var students = await _studentService.GetStudentByIsActiveAsync(teacherId);
+
+
+                var reportFile = await CreateReportFile(report, students);
+                return reportFile;
             }
             catch (Exception e)
             {
-                new Exception(e.Message);
+                throw new Exception(e.Message);
             }
-
         }
 
         /// <summary>
@@ -117,87 +100,117 @@ namespace Reports.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        private async Task CreateReportFile(Report report)
+        private async Task<(byte[] ZipContent, string ZipFileName)> CreateReportFile(Report report, List<Student> students)
         {
             try
             {
-                XWPFDocument doc = new XWPFDocument();
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var reports = new List<(byte[] Content, string FileName)>();
 
-                string reportsFolder = Path.Combine(path, "Relatorios");
-
-                await CreateReportsFolder(reportsFolder);
-                await CreateHeader(report.Student, doc);
-
-                if (report.Name != null)
+                foreach (var student in students)
                 {
-                    await CreateTitle(report, doc);
-                }
+                    var list = await CreateReportForStudents(report, student);
+                    report.StudentId = student.Id;
+                    await SetStudentIdForReport(report);
+                    XWPFDocument doc = new XWPFDocument();
 
-                if (report.FirtsParagraph != null)
-                {
-                    await CreateParagraph(report.FirtsParagraph, doc);
-                }
+                    await CreateHeader(report.Student, doc);
 
-                var IsAGirl = report.Student.IsAGirl();
-
-                var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
-
-                foreach (var a in assessments)
-                {
-                    try
+                    if (report.Name != null)
                     {
-                        var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                        var name = studentName.Split(' ');
-                        var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                        var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
-
-                        string param = string.Format(goalDescription, name[0]);
-                        await CreateParagraph(param, doc);
-
+                        await CreateTitle(report, doc);
                     }
-                    catch (Exception ex)
+
+                    if (report.FirtsParagraph != null)
                     {
-                        Console.WriteLine($"Error: {ex.Message}");
+                        var studentName = CapitalizeFirstName(report.Student.Name);
+                        var paragraphFormated = report.FirtsParagraph.Replace("{aluno} ", studentName + " ").Replace("  ", " ").Trim();
+                        await CreateParagraph(paragraphFormated, doc);
+                    }
+
+                    var IsAGirl = report.Student.IsAGirl();
+
+                    var assessments = await _assessmentService.GetByStudentIdAsync(report.Student.Id);
+
+                    foreach (var a in assessments)
+                    {
+                        try
+                        {
+                            var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
+                            var name = studentName.Split(' ');
+                            var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
+                            var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
+
+                            await GenerateParagraphsAsync(a, doc, report);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error: {ex.Message}");
+                        }
+                    }
+
+                    if (report.LastParagraph != null)
+                    {
+                        var studentName = CapitalizeFirstName(report.Student.Name);
+                        var paragraphFormated = report.LastParagraph.Replace("{aluno}", studentName + " ").Replace("  ", " ").Trim(); ;
+                        await CreateParagraph(paragraphFormated, doc);
+                    }
+
+                    XWPFParagraph pageBreak = doc.CreateParagraph();
+                    pageBreak.CreateRun().AddBreak(BreakType.PAGE);
+
+                    var reportBytes = await SaveDocument(doc);
+                    reports.Add((reportBytes, student.Name + ".docx"));
+                }
+                using var memoryStream = new MemoryStream();
+                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var (content, fileName) in reports)
+                    {
+
+                        var entry = archive.CreateEntry(fileName);
+
+                        using (var entryStream = entry.Open())
+                        {
+                            await entryStream.WriteAsync(content, 0, content.Length);
+                        }
                     }
                 }
-
-
-                if (report.FirtsParagraph != null)
-                {
-                    await CreateParagraph(report.LastParagraph, doc);
-                }
-
-                XWPFParagraph pageBreak = doc.CreateParagraph();
-                await SaveDocument(reportsFolder, doc, report.Student.Name);
-
+                return (memoryStream.ToArray(), $"Relatorios_{DateTime.Now:yyyyMMdd}.zip");
             }
             catch (Exception e)
             {
-                new Exception(e.Message);
+                throw new Exception("Erro ao gerar o relatório.", e);
             }
         }
 
-        public async Task GenerateParagraphsAsync(IEnumerable<Assessment> assessments, XWPFDocument doc, Report report)
+        public async Task GenerateParagraphsAsync(Assessment assessment, XWPFDocument doc, Report report)
         {
-            var tasks = assessments.Select(async a =>
+            var isAGirl = report.Student.IsAGirl();
+            var studentName = CapitalizeFirstName(report.Student.Name);
+
+            var goal = await _goalService.GetGoalByIdAsync(assessment.GoalId);
+            var goalDescription = await _goalService.GetDescriptionForParagrafAsync(assessment, report.Student.TeacherId, isAGirl);
+
+            if (!string.IsNullOrEmpty(goalDescription))
             {
-                var IsAGirl = report.Student.IsAGirl();
-                var studentName = report.Student.Name.Substring(0, 1).ToUpper() + report.Student.Name.Substring(1).ToLower();
-                var name = studentName.Split(' ');
+                goalDescription = goalDescription.Replace("{aluno}", studentName + " ").Replace("  ", " ").Trim(); ;
+            }
 
-                var goal = await _goalService.GetGoalByIdAsync(a.GoalId);
-                var goalDescription = await _goalService.GetDescriptionForParagrafAsync(a, report.Student.TeacherId, IsAGirl);
-
-                //string param = string.Format(goalDescription, validation, name[0]);
-
-                await CreateParagraph(goalDescription, doc);
-            });
-
-            // Aguarda todas as tasks serem concluídas em paralelo
-            await Task.WhenAll(tasks);
+            await CreateParagraph(goalDescription, doc);
         }
 
+        private string CapitalizeFirstName(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+                return string.Empty;
+
+            var firstName = fullName.Split(' ').FirstOrDefault();
+            if (string.IsNullOrEmpty(firstName))
+                return string.Empty;
+
+            return firstName.Substring(0, 1).ToUpper() + firstName.Substring(1).ToLower();
+        }
 
         /// <summary>
         /// Creates the paragraphs.
@@ -233,13 +246,16 @@ namespace Reports.Service
         /// <param name="doc"></param>
         /// <param name="word"></param>
         /// <param name="path"></param>
-        static async Task SaveDocument(string path, XWPFDocument doc, string studentName)
+        public static async Task<byte[]> SaveDocument(XWPFDocument doc)
         {
-            using (FileStream fs = new FileStream($"{path}\\RELATORIO {studentName.Substring(0)}.docx",
-                FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true))
+            var paragraph = doc.CreateParagraph();
+            var run = paragraph.CreateRun();
+
+            using (var exportData = new MemoryStream())
             {
-                await Task.Run(() => doc.Write(fs));
-            };
+                doc.Write(exportData);
+                return exportData.ToArray();
+            }
         }
 
         /// <summary>
@@ -265,45 +281,19 @@ namespace Reports.Service
             var classroom = await _classroomService.GetById(student.ClassRoomId);
             var firstLine = classroom.Name;
             var teacher = await _teacherService.GetByIdAsync(student.TeacherId);
-            var secondLine = student.Name.ToUpper();
+            var secondLine = $"ALUNO: {student.Name.ToUpper()}";
             var absences = student.Absences;
             var thirdLine = $"PROFESSORA: {teacher.Name.ToUpper()}";
 
             var fourthLine = $"DATA DE NASCIMENTO: {student.Birthdate.ToString("dd/MM/yyyy")}";
             var fifthLine = $"TURMA: {firstLine.ToUpper()}";
-            var sixthLine = $"Faltas: {absences}";
+            var sixthLine = $"FALTAS: {absences}";
             string[] param = { secondLine, thirdLine, fourthLine, fifthLine, sixthLine };
 
             foreach (var p in param)
             {
                 await CreateParagraphForHeader(p, doc);
             }
-        }
-        /// <summary>
-        /// Generates the Report folder.
-        /// </summary>
-        /// <param name="reportsFolder"></param>
-        /// <returns></returns>
-        private async Task CreateReportsFolder(string reportsFolder)
-        {
-            await Task.Run(() =>
-           {
-               try
-               {
-                   if (!Directory.Exists(reportsFolder))
-                   {
-                       Directory.CreateDirectory(reportsFolder);
-                   }
-               }
-               catch
-               {
-               }
-           });
-        }
-        /// <inheritdoc />
-        Task IReportService.GetReportById(Report report)
-        {
-            throw new NotImplementedException();
         }
     }
 }

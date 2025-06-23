@@ -2,6 +2,7 @@
 @model List<string>
 @{
     ViewBag.Title = "Select goals";
+    bool hasGoals = Model != null && Model.Any();
 }
 
 <br />
@@ -14,26 +15,55 @@
 <h3>Atenção: Os relatórios terão apenas os objetivos que você selecionar. Para isso, clique na caixinha à esquerda de cada objetivo desejado</h3>
 <br />
 
-@using (Html.BeginForm("SaveStudentGoalsResults", "Goals", FormMethod.Post))
+@using (Html.BeginForm("SaveStudentGoalsResults", "Goals", FormMethod.Post, new { id = "goalsForm" }))
 {
-    foreach (var objetivo in Model)
+    if (!hasGoals)
     {
-        <div>
-            <label>
-                <input type="checkbox" name="goals" value="@objetivo"> @objetivo
-            </label>
-        </div>
+        <p style="color: red;">Você não tem nenhum objetivo cadastrado. Por favor, cadastre antes de continuar.</p>
     }
+    else
+    {
+        <div id="checkbox-group">
+            @foreach (var objetivo in Model)
+            {
+                <div>
+                    <label>
+                        <input type="checkbox" name="goals" value="@objetivo" class="goal-checkbox"> @objetivo
+                    </label>
+                </div>
+            }
+        </div>
+
+        <span id="error-message" style="color: red; display: none;">Por favor, selecione pelo menos um objetivo antes de continuar.</span>
+    }
+
     <br />
     <br />
     <div style="display: flex; gap: 10px;">
-        <input type="submit" value="Próximo" class="btn btn-primary" />
+        <input type="submit" value="Próximo" class="btn btn-primary" id="submitButton" @(hasGoals ? "" : "disabled") />
         <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
     </div>
-
 }
-<br/>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("goalsForm");
+        var checkboxes = document.querySelectorAll('.goal-checkbox');
+        var errorMessage = document.getElementById("error-message");
+        var submitButton = document.getElementById("submitButton");
+
+        form.addEventListener("submit", function (event) {
+            var checked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+            if (!checked) {
+                errorMessage.style.display = "block"; 
+                event.preventDefault(); 
+            } else {
+                errorMessage.style.display = "none"; 
+            }
+        });
+    });
+</script>
+
+<br />
 <h2>Quer tornar seu relatório personalizado? Clique no botão abaixo e <a href="@Url.Action("Index", "Goals")">crie seu próprio objetivo</a> para os relatórios</h2>
-
-
-

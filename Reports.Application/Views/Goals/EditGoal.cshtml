@@ -1,0 +1,53 @@
+﻿@using Reports.Domain.Entities
+@model Goal
+<br />
+<br />
+
+
+<h3>Editar Objetivo</h3>
+
+<form asp-controller="Goals" asp-action="UpdateGoal" method="post">
+    <!-- ID oculto, necessário para saber qual Goal atualizar -->
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="Name">Nome</label>
+        <input asp-for="Name" class="form-control" id="Name" placeholder="Digite o nome da meta" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="AtendedDescription">Descrição - Atendido</label>
+        <textarea asp-for="AtendedDescription" class="form-control" id="AtendedDescription" rows="3" required></textarea>
+        <span asp-validation-for="AtendedDescription" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="ParciallyAtendedDescription">Descrição - Parcialmente Atendido</label>
+        <textarea asp-for="ParciallyAtendedDescription" class="form-control" id="ParciallyAtendedDescription" rows="3" required></textarea>
+        <span asp-validation-for="ParciallyAtendedDescription" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="UnatendedDescription">Descrição - Não Atendido</label>
+        <textarea asp-for="UnatendedDescription" class="form-control" id="UnatendedDescription" rows="3" required></textarea>
+        <span asp-validation-for="UnatendedDescription" class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div style="display: flex; gap: 10px;">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button type="button" onclick="window.history.back()" class="btn btn-secondary">Cancelar</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

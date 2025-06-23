@@ -6,12 +6,20 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Cadastrar Turma</a></li>
-                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Classroom" asp-action="SelectClassroomForReport">Gerar Relatório</a></li>
-                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Student" asp-action="StudentsList">Lista de Alunos</a></li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Cadastrar Turma</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Classroom" asp-action="SelectClassroomForReport">Gerar Relatório</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Student" asp-action="StudentsList">Lista de Alunos</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Goals" asp-action="Index">Criar objetivos</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Tutorial">Ver tutorial</a></li>
+                }
+                
             </ul>
+            
             <ul class="navbar-nav">
                 @if (User.Identity.IsAuthenticated)
                 {

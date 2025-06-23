@@ -41,6 +41,12 @@ namespace Reports.Application.Controllers
             return View(home);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Tutorial()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             Logger.LogInformation("Privacy page accessed.");

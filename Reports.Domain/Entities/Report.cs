@@ -1,4 +1,6 @@
-﻿namespace Reports.Domain.Entities
+﻿using NPOI.HPSF;
+
+namespace Reports.Domain.Entities
 {
     public class Report
     {

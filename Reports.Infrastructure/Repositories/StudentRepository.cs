@@ -16,9 +16,10 @@ namespace Reports.Infrastructure.Repositories
         public void Add(Student student) =>
             _dbContext.Students.Add(student);
 
-        /// <inheritdoc />
-        public async Task<List<Student>> GetAllAsync() =>
-            await _dbContext.Students.ToListAsync();
+     
+
+        public async Task<List<Student>> GetStudentByIsActiveAsync(int teacherId) =>
+            await _dbContext.Students.Where(_ => _.IsActive == true && _.TeacherId == teacherId).ToListAsync();
 
         public void DeleteAsync(Student student) =>
              _dbContext.Students.Remove(student);
@@ -28,9 +29,9 @@ namespace Reports.Infrastructure.Repositories
 
 
         /// <inheritdoc />
-        public async Task<Student?> GetByNameAsync(string name) =>
+        public async Task<Student?> GetByNameAsync(string name, int teacherId) =>
             await _dbContext.Students
-                .FirstOrDefaultAsync(s => s.Name == name);
+                .FirstOrDefaultAsync(s => s.Name == name & s.TeacherId == teacherId);
 
         /// <inheritdoc />
         public async Task<Student?> GetByIdAsync(int id) =>
@@ -38,25 +39,31 @@ namespace Reports.Infrastructure.Repositories
                 .FirstOrDefaultAsync(s => s.Id == id);
 
         /// <inheritdoc />
-        public async Task<Student?> GetByClassroomIdAsync(int id) =>
+        public async Task<Student?> GetByClassroomIdAsync(int id, int teacherId) =>
        await _dbContext.Students
-           .Where(s => s.ClassRoomId == id)
+           .Where(s => s.ClassRoomId == id && s.TeacherId == teacherId)
            .FirstOrDefaultAsync();
 
-        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses) =>
+        public async Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses, int teacherId) =>
     await _dbContext.Students
-        .Where(student => selectedClasses.Contains(student.ClassRoomId))
+        .Where(student => selectedClasses.Contains(student.ClassRoomId) && student.TeacherId == teacherId)
         .ToListAsync();
 
-        public async Task<List<Student>> GetByIsSelectedProperty() =>
+        public async Task<List<Student>> GetByIsSelectedProperty(int teacherId) =>
          await _dbContext.Students
-             .Where(student => student.IsActive == true)
+             .Where(student => student.IsActive == true && student.TeacherId == teacherId)
              .ToListAsync();
 
-        public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids)
+        public async Task<List<Student>> GetStudentsByIdListAsync(List<int> ids, int teacherId)
         {
             return await _dbContext.Students
-                .Where(student => ids.Contains(student.Id))
+                .Where(student => ids.Contains(student.Id) && student.TeacherId == teacherId)
+                .ToListAsync();
+        }
+        public async Task<List<Student>> GetStudentsByTeacherIdListAsync(int TeacherId)
+        {
+            return await _dbContext.Students
+                .Where(student => student.TeacherId == TeacherId)
                 .ToListAsync();
         }
     }

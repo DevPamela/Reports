@@ -1,10 +1,15 @@
-﻿@{
-    ViewBag.Title = "Sucesso";
+﻿
+@{
+    ViewData["Title"] = "Relatórios Gerados com Sucesso";
 }
-<br/>
-<br/>
-<br />
-<br />
-<br />
-<h2>Seus relatórios foram criados com sucesso!</h2>
 
+<div class="alert alert-success">
+    <h4><i class="fas fa-check-circle"></i> Sucesso!</h4>
+    <p>Os relatórios foram gerados com sucesso.</p>
+    
+    <a href="@Url.Action("DownloadReports")" class="btn btn-primary mt-3">
+        <i class="fas fa-file-archive"></i> Baixar Relatórios (ZIP)
+    </a>
+    
+    <p class="mt-2 small">Nome do arquivo: @(TempData["ZipFileName"] ?? "Relatorios.zip")</p>
+</div>

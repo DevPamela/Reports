@@ -1,0 +1,26 @@
+﻿@using Reports.Domain.Entities
+@model List<Goal>
+<br />
+
+<h3>Objetivos</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Clique no objetivo que deseja alterar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var goal in Model)
+        {
+            <br />
+            <tr>
+                <td>
+                    <a asp-controller="Goals" asp-action="EditGoal" asp-route-id="@goal.Id">
+                        @goal.Name
+                    </a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

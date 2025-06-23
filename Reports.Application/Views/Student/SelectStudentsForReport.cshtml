@@ -1,4 +1,4 @@
-﻿@model StudentViewModel
+﻿@model StudentViewModelList
 
 <br />
 <br />
@@ -9,32 +9,50 @@
 <input type="checkbox" id="select-all" /> SELECIONAR TODOS
 <br />
 <br />
-@using (Html.BeginForm("SetIsSelectedPropertyStudentAstrue", "Student"))
+
+@using (Html.BeginForm("SetIsSelectedPropertyStudentAstrue", "Student", FormMethod.Post, new { id = "studentForm" }))
 {
-    @for (int i = 0; i < Model.Students.Count; i++)
-    {
-        <div>
-            <label>
-                
-                @Html.HiddenFor(m => m.Students[i].Id)
-                @Html.HiddenFor(m => m.Students[i].Name)
-                <input type="checkbox" class="student" name="studentsId" value="@Model.Students[i].Id" />
-                @Html.DisplayFor(m => m.Students[i].Name)
-            </label>
-        </div>
-    }
+    <div id="students-list">
+        @for (int i = 0; i < Model.Students.Count; i++)
+        {
+            <div>
+                <label>
+                    @Html.HiddenFor(m => m.Students[i].Id)
+                    @Html.HiddenFor(m => m.Students[i].Name)
+                    <input type="checkbox" class="student" name="studentsId" value="@Model.Students[i].Id" />
+                    @Html.DisplayFor(m => m.Students[i].Name)
+                </label>
+            </div>
+        }
+    </div>
+
+    <!-- Mensagem de erro -->
+    <span id="error-message" style="color: red; display: none;">Por favor, selecione pelo menos um aluno antes de continuar.</span>
+
     <br />
     <div style="display: flex; gap: 10px;">
-        <input type="submit" value="Próximo" class="btn btn-primary" />
+        <input type="submit" value="Próximo" class="btn btn-primary" id="submitButton" />
         <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
     </div>
 }
 
 <script>
-    document.getElementById('select-all').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('.student');
+    document.getElementById("select-all").addEventListener("change", function () {
+        const checkboxes = document.querySelectorAll(".student");
         checkboxes.forEach(checkbox => {
             checkbox.checked = this.checked;
         });
+    });
+
+    document.getElementById("studentForm").addEventListener("submit", function (event) {
+        const checkboxes = document.querySelectorAll(".student:checked");
+        const errorMessage = document.getElementById("error-message");
+
+        if (checkboxes.length === 0) {
+            errorMessage.style.display = "block"; // Exibe a mensagem de erro
+            event.preventDefault(); // Impede o envio do formulário
+        } else {
+            errorMessage.style.display = "none"; 
+        }
     });
 </script>

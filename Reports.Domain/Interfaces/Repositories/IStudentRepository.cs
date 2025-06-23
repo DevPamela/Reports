@@ -14,7 +14,12 @@ public interface IStudentRepository
     /// Retrieve all students from the data store.
     /// </summary>
     /// <returns>A List of students.</returns>
-    Task<List<Student>> GetAllAsync();
+    Task<List<Student>> GetStudentsByTeacherIdListAsync(int TeacherId);
+    /// <summary>
+    /// Retrieve all selected students for the report from the data store.
+    /// </summary>
+    /// <returns></returns>
+    Task<List<Student>> GetStudentByIsActiveAsync(int teacherId);
 
     /// <summary>
     /// Delete a student from the database.
@@ -27,7 +32,7 @@ public interface IStudentRepository
     /// </summary>
     /// <param name="name">The student's name.</param>
     /// <returns>A student, or null in case it wasn't found.</returns>
-     Task<Student?> GetByNameAsync(string name);
+     Task<Student?> GetByNameAsync(string name, int teacherId);
 
     /// <summary>
     /// Get by id.
@@ -41,25 +46,25 @@ public interface IStudentRepository
     /// </summary>
     /// <param name="student"></param>
     void Update(Student student);
-    Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses);
+    Task<List<Student>> GetStudentsSelectedByClasses(IEnumerable<int> selectedClasses, int teacherId);
 
     /// <summary>
     /// Get the student by classroom id.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<Student?> GetByClassroomIdAsync(int id);
+    Task<Student?> GetByClassroomIdAsync(int id, int techerId);
 
     /// <summary>
     /// Get pensar nisso
     /// </summary>
     /// <returns></returns>
-    Task<List<Student>> GetByIsSelectedProperty();
+    Task<List<Student>> GetByIsSelectedProperty(int teacherId);
 
     /// <summary>
     /// Get the student list by a list o ids.
     /// </summary>
     /// <param name="ids"></param>
     /// <returns></returns>
-    Task<List<Student>> GetStudentsByIdListAsync(List<int> ids);
+    Task<List<Student>> GetStudentsByIdListAsync(List<int> ids, int teacherId);
 }

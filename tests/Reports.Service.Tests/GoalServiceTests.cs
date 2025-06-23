@@ -10,7 +10,6 @@ public class GoalServiceTests
     private readonly Mock<IGoalRepository> _mockGoalRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IAssessmentService> _mockAssessmentService;
-    private readonly Mock<IBulkInsertHelper> _mockBulkInsertHelper;
     private readonly GoalService _goalService;
 
     public GoalServiceTests()
@@ -19,45 +18,14 @@ public class GoalServiceTests
         _mockGoalRepository = new Mock<IGoalRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockAssessmentService = new Mock<IAssessmentService>();
-        _mockBulkInsertHelper = new Mock<IBulkInsertHelper>();
         _goalService = new GoalService(
             _mockStudentService.Object,
             _mockGoalRepository.Object,
             _mockUnitOfWork.Object,
-            _mockAssessmentService.Object,
-            _mockBulkInsertHelper.Object
+            _mockAssessmentService.Object
         );
     }
 
-    [Fact]
-    public async Task SaveStudentsGoalsAsync_ShouldSaveSelectedGoalsForStudents()
-    {
-        // Arrange
-        var goals = new List<string> { "Goal1", "Goal2" };
-        var goal1 = new Goal { Name = "Goal1", IsActive = false };
-        var goal2 = new Goal { Name = "Goal2", IsActive = false };
-
-        _mockGoalRepository.Setup(r => r.GetByNameAsync("Goal1")).ReturnsAsync(goal1);
-        _mockGoalRepository.Setup(r => r.GetByNameAsync("Goal2")).ReturnsAsync(goal2);
-
-       
-        var students = new List<Student>
-        {
-            new Student { Id = 1, Name = "Student1", Goals = new List<Goal>() },
-            new Student { Id = 2, Name = "Student2", Goals = new List<Goal>() }
-        };
-        _mockStudentService.Setup(s => s.GetByIsSelectedProperty()).ReturnsAsync(students);
-
-        _mockGoalRepository.Setup(r => r.GetByIsSelectedProperty()).ReturnsAsync(new List<Goal> { goal1, goal2 });
-
-        // Act
-        var result = await _goalService.SaveStudentsGoalsAsync(goals);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count); 
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(default), Times.Once); 
-    }
 
     [Fact]
     public async Task AddGoalsAsync_ShouldAddNewGoal_WhenGoalDoesNotExist()

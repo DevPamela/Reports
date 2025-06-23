@@ -1,4 +1,5 @@
-﻿using Reports.Domain.Entities;
+﻿using NPOI.XWPF.UserModel;
+using Reports.Domain.Entities;
 
 namespace Reports.Domain.Interfaces.Service
 {
@@ -9,13 +10,7 @@ namespace Reports.Domain.Interfaces.Service
         /// </summary>
         /// <param name="report"></param>
         /// <param name="path"></param>
-        Task CreateReportAsync(Report report);
+        Task<(byte[] ZipContent, string ZipFileName)> CreateReportAsync(Report report, int teacherId);
 
-        /// <summary>
-        /// Gets the <see cref="Report"> by Id.
-        /// </summary>
-        /// <param name="report"></param>
-        /// <returns></returns>
-        Task GetReportById(Report report);
     }
 }

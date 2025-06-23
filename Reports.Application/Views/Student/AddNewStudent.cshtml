@@ -3,50 +3,101 @@
 @{
     ViewData["Title"] = "AddStudent";
 }
-<br/>
-<br />
+
 <br />
 <h4>Adicionar novo aluno</h4>
-
 <br />
-
 <h4>Preencha os dados abaixo e adicione seu novo aluno à lista existente</h4>
 
-<form asp-controller="Student" asp-action="AddStudent" method="post">
-    <div class="form-group col-md-5">
-        <br />
+<form id="studentForm" asp-controller="Student" asp-action="AddStudent" method="post">
     @Html.AntiForgeryToken()
-      
+
+    <div class="form-group col-md-5">
         <label for="Nome" class="form-label">NOME</label>
-        <input type="text" asp-for="Student.Name" class="form-control">
+        <input type="text" asp-for="Student.Name" class="form-control" required>
+        <span class="text-danger" id="nameError" style="display: none;">Por favor, insira o nome do aluno.</span>
     </div>
-   <br/>
+
+    <br />
     <div class="form-group">
-        <label for="Nome" class="form-label">GÊNERO</label>
-        <select name="Student.Gender" style="width: 10em;" maxlength="10">
+        <label for="Genero" class="form-label">GÊNERO</label>
+        <select name="Student.Gender" class="form-control" style="width: 10em;" required>
+            <option value="">Selecione...</option>
             <option value="FEMININO">FEMININO</option>
             <option value="MASCULINO">MASCULINO</option>
         </select>
+        <span class="text-danger" id="genderError" style="display: none;">Por favor, selecione um gênero.</span>
     </div>
-    <br/>
+
+    <br />
     <div class="form-group col-md-3">
-        <label for="Nome" class="form-label">DATA DE NASCIMENTO</label>
-        <input type="date" asp-for="Student.Birthdate" id="dataNascimento"
-               class="form-control" onkeydown="return false">
+        <label for="dataNascimento" class="form-label">DATA DE NASCIMENTO</label>
+        <input type="date" asp-for="Student.Birthdate" id="dataNascimento" class="form-control" required>
+        <span class="text-danger" id="birthdateError" style="display: none;">Por favor, insira a data de nascimento.</span>
     </div>
-    <br/>
+
+    <br />
     <div class="form-group">
         <label for="Class" class="form-label">TURMA</label>
-        <select name="Student.ClassRoomId" class="form-control" style="width: 10em;" maxlength="10">
+        <select name="Student.ClassRoomId" class="form-control" style="width: 10em;" required>
+            <option value="">Selecione...</option>
             @foreach (var item in Model.Classes)
             {
                 <option value="@item.Id">@item.Name</option>
             }
         </select>
+        <span class="text-danger" id="classError" style="display: none;">Por favor, selecione uma turma.</span>
     </div>
+
     <br />
     <div style="display: flex; gap: 10px;">
         <input type="submit" value="Alterar" class="btn btn-primary" />
         <button type="button" onclick="window.history.back()" class="btn btn-secondary">Voltar</button>
     </div>
 </form>
+
+<script>
+    document.getElementById("studentForm").addEventListener("submit", function (event) {
+        let valid = true;
+
+        const nameInput = document.querySelector('input[name="Student.Name"]');
+        const nameError = document.getElementById("nameError");
+        if (nameInput.value.trim() === "") {
+            nameError.style.display = "block";
+            valid = false;
+        } else {
+            nameError.style.display = "none";
+        }
+
+        const genderSelect = document.querySelector('select[name="Student.Gender"]');
+        const genderError = document.getElementById("genderError");
+        if (genderSelect.value === "") {
+            genderError.style.display = "block";
+            valid = false;
+        } else {
+            genderError.style.display = "none";
+        }
+
+        const birthdateInput = document.getElementById("dataNascimento");
+        const birthdateError = document.getElementById("birthdateError");
+        if (birthdateInput.value.trim() === "") {
+            birthdateError.style.display = "block";
+            valid = false;
+        } else {
+            birthdateError.style.display = "none";
+        }
+
+        const classSelect = document.querySelector('select[name="Student.ClassRoomId"]');
+        const classError = document.getElementById("classError");
+        if (classSelect.value === "") {
+            classError.style.display = "block";
+            valid = false;
+        } else {
+            classError.style.display = "none";
+        }
+
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>

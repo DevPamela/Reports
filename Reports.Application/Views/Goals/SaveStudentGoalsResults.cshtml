@@ -1,9 +1,11 @@
 ﻿@using Reports.Domain.Entities;
 @model List<Student>
 <br/>
-<br/>
-<br/>
+
 <br />
+<h1>Agora, atribua sua avaliação de cada objetivo traçado para cada aluno. As opções são:<br/>
+    Satisfatório, Parcialmente satisfatório e insatisfatório</h1>
+    <h2>Atenção, essa etapa é muito importante, a seleção do objetivo para o aluno, vai determinar o parágrafo que será escrito para o relatório individual, caso não preencha o valor usado para todos os alunos selecionados será satisátório</h2>
 @using (Html.BeginForm("SaveIsAtendedInformation", "Goals", FormMethod.Post))
 {
     <table border="1">
@@ -45,5 +47,4 @@
         <input type="submit" value="Próximo" class="btn btn-primary" />
         <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
     </div>
-
 }

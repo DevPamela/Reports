@@ -1,31 +1,51 @@
-﻿@model ClassroomViewModel
+﻿@model ClassroomViewModelList
 
 <br />
 <br />
 <br />
 <h3>Antes de gerar os relatórios, precisamos de algumas informações. Vamos guiá-lo por algumas páginas, mas prometemos que será rápido!</h3>
-<br/>
-<h4>Para começar, selecione a turma que você deseja escrever os relatórios</h4>
-<br/>
 <br />
-@using (Html.BeginForm("SetIsSelectedPropertyAstrue", "Classroom"))
+<h4>Para começar, selecione a turma que você deseja escrever os relatórios</h4>
+<br />
+<br />
+
+@using (Html.BeginForm("SetIsSelectedPropertyAstrue", "Classroom", FormMethod.Post, new { id = "classroomForm" }))
 {
-    @for (int i = 0; i < Model.Classes.Count; i++)
-    {
-        <div>
-            <label>
-                <h2>
-                @Html.HiddenFor(m => m.Classes[i].Id)
-                @Html.HiddenFor(m => m.Classes[i].Name)
-                <input type="checkbox" name="SelectedClasses" value="@Model.Classes[i].Id" />
-                @Html.DisplayFor(m => m.Classes[i].Name)
-                </h2>
-            </label>
-        </div>
-    }
+    <div id="classes-list">
+        @for (int i = 0; i < Model.Classes.Count; i++)
+        {
+            <div>
+                <label>
+                    <h2>
+                        @Html.HiddenFor(m => m.Classes[i].Id)
+                        @Html.HiddenFor(m => m.Classes[i].Name)
+                        <input type="checkbox" class="class-checkbox" name="SelectedClasses" value="@Model.Classes[i].Id" />
+                        @Html.DisplayFor(m => m.Classes[i].Name)
+                    </h2>
+                </label>
+            </div>
+        }
+    </div>
+
+    <span id="error-message" style="color: red; display: none;">Por favor, selecione pelo menos uma turma antes de continuar.</span>
+
     <br />
     <div style="display: flex; gap: 10px;">
         <input type="submit" value="Próximo" class="btn btn-primary" />
         <button type="button" onclick="window.history.back()" class="btn btn-primary">Voltar</button>
     </div>
 }
+
+<script>
+    document.getElementById("classroomForm").addEventListener("submit", function (event) {
+        const checkboxes = document.querySelectorAll(".class-checkbox:checked");
+        const errorMessage = document.getElementById("error-message");
+
+        if (checkboxes.length === 0) {
+            errorMessage.style.display = "block"; 
+            event.preventDefault(); 
+        } else {
+            errorMessage.style.display = "none"; 
+        }
+    });
+</script>

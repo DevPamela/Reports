@@ -10,7 +10,7 @@ namespace Reports.Domain.Interfaces.Service
         /// </summary>
         /// <param name="classRoom"></param>
         /// <returns></returns>
-        Task AddClassroom(ClassRoom classRoom);
+        Task AddClassroom(ClassRoom classRoom, int teacherId);
 
         /// <summary>
         /// Set the <see cref="ClassRoom"> name, student list and teacher id.
@@ -32,14 +32,14 @@ namespace Reports.Domain.Interfaces.Service
         /// Get all classrooms in the database.
         /// </summary>
         /// <returns></returns>
-        Task<List<ClassRoom>> GetAllAsync();
+        Task<List<ClassRoom>> GetAllAsync(int teacherId);
 
         /// <summary>
         /// Set IsSelected property as true.
         /// </summary>
         /// <param name="classroom"></param>
         /// <returns></returns>
-        Task SetClassroomAsTrue(ClassRoom classroom);
+        Task SetClassroomAsTrue(ClassRoom classroom, int teacherId);
 
         Task<List<ClassRoom>> GetByTeacherId(int id);
     }

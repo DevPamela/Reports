@@ -2,25 +2,27 @@
 
 <br />
 <h3>Alterar dados do aluno</h3>
-<form asp-controller="Student" asp-action="UpdateStudent" method="post">
-   
+<form id="updateStudentForm" asp-controller="Student" asp-action="UpdateStudent" method="post">
+
     <input type="hidden" asp-for="Student.Id" />
     <input type="hidden" asp-for="Student.ClassRoomId" />
 
     <div class="form-group col-md-5">
         <label for="Nome">NOME</label>
-        <input type="text" asp-for="Student.Name" class="form-control" id="Nome" placeholder="Digite o nome">
+        <input type="text" asp-for="Student.Name" class="form-control" id="Nome" placeholder="Digite o nome" required>
+        <span class="text-danger" id="nameError" style="display: none;">Por favor, insira o nome do aluno.</span>
     </div>
 
     <br />
 
     <div class="form-group">
         <label for="Genero">GÊNERO</label>
-        <select asp-for="Student.Gender" class="form-control" id="Genero" style="width: 10em;" maxlength="10">
+        <select asp-for="Student.Gender" class="form-control" id="Genero" style="width: 10em;" required>
             <option value="">SELECIONE</option>
             <option value="Female">FEMININO</option>
             <option value="Male">MASCULINO</option>
         </select>
+        <span class="text-danger" id="genderError" style="display: none;">Por favor, selecione um gênero.</span>
     </div>
 
     <br />
@@ -28,20 +30,22 @@
     <div class="form-group col-md-3">
         <label for="DataNascimento">DATA DE NASCIMENTO</label>
         <input type="date" asp-for="Student.Birthdate" id="DataNascimento"
-               class="form-control" onkeydown="return false" onclick="showDatePicker()">
+               class="form-control" onkeydown="return false" onclick="showDatePicker()" required>
+        <span class="text-danger" id="birthdateError" style="display: none;">Por favor, insira a data de nascimento.</span>
     </div>
 
     <br />
 
     <div class="form-group">
         <label for="Class">TURMA</label>
-        <select asp-for="Student.ClassRoomId" class="form-control" id="Class" style="width: 10em;" maxlength="10">
+        <select asp-for="Student.ClassRoomId" class="form-control" id="Class" style="width: 10em;" required>
             <option value="">SELECIONE</option>
             @foreach (var item in Model.Classes)
             {
                 <option value="@item.Id">@item.Name</option>
             }
         </select>
+        <span class="text-danger" id="classError" style="display: none;">Por favor, selecione uma turma.</span>
     </div>
 
     <br />
@@ -58,4 +62,48 @@
         input.focus();
         input.click();
     }
+
+    document.getElementById("updateStudentForm").addEventListener("submit", function (event) {
+        let valid = true;
+
+        const nameInput = document.getElementById("Nome");
+        const nameError = document.getElementById("nameError");
+        if (nameInput.value.trim() === "") {
+            nameError.style.display = "block";
+            valid = false;
+        } else {
+            nameError.style.display = "none";
+        }
+
+        const genderSelect = document.getElementById("Genero");
+        const genderError = document.getElementById("genderError");
+        if (genderSelect.value === "") {
+            genderError.style.display = "block";
+            valid = false;
+        } else {
+            genderError.style.display = "none";
+        }
+
+        const birthdateInput = document.getElementById("DataNascimento");
+        const birthdateError = document.getElementById("birthdateError");
+        if (birthdateInput.value.trim() === "") {
+            birthdateError.style.display = "block";
+            valid = false;
+        } else {
+            birthdateError.style.display = "none";
+        }
+
+        const classSelect = document.getElementById("Class");
+        const classError = document.getElementById("classError");
+        if (classSelect.value === "") {
+            classError.style.display = "block";
+            valid = false;
+        } else {
+            classError.style.display = "none";
+        }
+
+        if (!valid) {
+            event.preventDefault(); 
+        }
+    });
 </script>

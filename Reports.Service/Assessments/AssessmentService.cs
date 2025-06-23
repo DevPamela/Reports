@@ -40,13 +40,13 @@ namespace Reports.Service.Assessments
             }
         }
 
-        public async Task AddIsAtendedInformation(List<Student> students)
+        public async Task AddIsAtendedInformation(List<Student> students, int teacherId)
         {
-              await  ClearIsSatisfactoryValues();
+              await  ClearIsSatisfactoryValues(teacherId);
 
             foreach (var student in students)
             {
-                var studentName = await _studentRepository.GetByNameAsync(student.Name);
+                var studentName = await _studentRepository.GetByNameAsync(student.Name, teacherId);
 
                 if (studentName == null)
                 {
@@ -66,19 +66,19 @@ namespace Reports.Service.Assessments
             }
         }
 
-        public async Task ClearIsSatisfactoryValues()
+        public async Task ClearIsSatisfactoryValues(int studentId)
         {
-            var assessments = await _assessmentRepository.GetAllAsync();
+            var assessments = await _assessmentRepository.GetByStudentIdAsync(studentId);//TODO só do professor em questão
             foreach (var assessment in assessments)
             {
                 assessment.IsSatisfactory = "";
             }
              await _unitOfWork.SaveChangesAsync();
         }
-        public async Task<List<Assessment>> GetAllAssessmentsAsync() => await _assessmentRepository.GetAllAsync();
-
         public async Task<List<Assessment?>> GetByStudentIdAsync(int id) => await _assessmentRepository.GetByStudentIdAsync(id);
        
-        public async Task DeleteAllAsync(int studentId) => await _assessmentRepository.DeleteAllAsync(studentId);
+        public async Task DeleteAllAsync(int studentId) => await _assessmentRepository.DeleteAllAsync(studentId);//TODO do prfessor em questão
+
+     
     }
 }
