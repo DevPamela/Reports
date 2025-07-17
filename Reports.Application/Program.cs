@@ -26,8 +26,6 @@ ApplicationConfiguration.ConfigureDatabase(app);
 ApplicationConfiguration.ConfigureMiddlewares(app);
 ApplicationConfiguration.ConfigurePipeline(app);
 
-app.UseStaticFiles();
-
 app.Run();
 
 public partial class Program; // This is needed for integration tests.

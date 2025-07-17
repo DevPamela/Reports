@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 using Reports.Application.Middlewares;
 using Reports.Application.Models.Configuration;
 using Reports.Infrastructure;
@@ -135,23 +137,27 @@ namespace Reports.Application
         /// </summary>
         public static void ConfigureDatabase(WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 using var scope = app.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                using var transaction = dbContext.Database.BeginTransaction();
 
                 try
                 {
                     dbContext.Database.Migrate();
+                    transaction.Commit();
                     Console.WriteLine("Migrations applied successfully.");
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     Console.WriteLine($"An error occurred while applying migrations: {ex.Message}");
                 }
 
-                app.UseDeveloperExceptionPage();
-            }
+              //  app.UseDeveloperExceptionPage();
+            //}
 
             // Seed OpenIddict during application startup
             Reports.Infrastructure.Seeders.OpenIddictSeeder.SeedAsync(app.Services).GetAwaiter().GetResult();
@@ -176,8 +182,13 @@ namespace Reports.Application
             {
                 if (!app.Environment.IsDevelopment())
                 {
+                    app.UseForwardedHeaders(new ForwardedHeadersOptions
+                    {
+                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                    });
                     app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
                     app.UseExceptionHandler("/Home/Error");
+                    app.UseHttpsRedirection();
                 }
 
                 app.UseStaticFiles();
